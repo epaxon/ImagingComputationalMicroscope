@@ -1,4 +1,4 @@
-function install_icp()
+function install_icm()
 %% Run this to install ICP
 
 % @todo: check the version and for the right functions.

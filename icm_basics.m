@@ -1,6 +1,6 @@
-% A quick overview of ICP and the data
+% A quick overview of ICM and the data
 
-% ICP image data analysis is broken into stages: Pre-processing,
+% ICM image data analysis is broken into stages: Pre-processing,
 % PCA, then ICA. At each stage you can look at various things.
 % There are tabs at the bottom that control the display and give you access
 % to the run buttons. You can just click run ica and everything will get
@@ -23,34 +23,34 @@
 % things that are incomplete. Maybe we should put a versioning system
 % together if you guys are interested in further developing this.
 
-%% ICP Example
+%% ICM Example
 
-% Start an ICP 
-icp = ImageComponentParser();
+% Start an ICM 
+icm = ImagingComputationalMicroscope();
 
 %% Loading Data
-% ICP is designed to be both a useful GUI and a programatically accessible
+% ICM is designed to be both a useful GUI and a programatically accessible
 % interface to ICA based image analysis. All GUI functions call matlab
 % functions, which can be called from command line or in scripts.
-% Open the sample data using the ICP menu: 
-% :: ICP>Load Data. 
-% Then load sample_data.mat, and icp will read in the image data. 
+% Open the sample data using the ICM menu: 
+% :: ICM>Load Data. 
+% Then load sample_data.mat, and ICM will read in the image data. 
 % Programatically:
-icp.load_data('sample_data.mat');
+icm.load_data('sample_data.mat');
 
 % Alternatively data can be entered from a matlab variable:
 load('sample_data.mat'); % produces data
-icp.set_data(data);
+icm.set_data(data);
 
 %% Settings
 % In order to change the basic settings, pop-up menus can be accessed in
-% the GUI. To change the preprocessing settings, use the ICP menu: 
-% :: ICP>Edit Settings>PreProcessing
+% the GUI. To change the preprocessing settings, use the ICM menu: 
+% :: ICM>Edit Settings>PreProcessing
 % The settings can be accessed programatically in the settings struct, lets
 % set the preprocessing settings programatically:
 
-icp.data(1).settings.preprocessing.smooth_window = [1 1 1]; % Smooth over MxNxT pixels
-icp.data(1).settings.preprocessing.down_sample = [1 1 1];
+icm.data(1).settings.preprocessing.smooth_window = [1 1 1]; % Smooth over MxNxT pixels
+icm.data(1).settings.preprocessing.down_sample = [1 1 1];
 
 % The image data was previously down sampled so it would be a small file.
 % Above we set the preprocessing settings such that we use the same data.
@@ -59,22 +59,22 @@ icp.data(1).settings.preprocessing.down_sample = [1 1 1];
 
 % There are also settings for PCA and ICA you can see them here
 disp('PCA Settings:');
-disp(icp.data(1).settings.pca);
+disp(icm.data(1).settings.pca);
 disp('ICA Settings:');
-disp(icp.data(1).settings.ica);
+disp(icm.data(1).settings.ica);
 
 % An important setting for ica is [which_pcs] this tells ICA which
 % principal components to look at, and determines the number of ICs the
 % algorithm returns. Here we will use the first 100 PCs, to look at the
 % data. 
-icp.data(1).settings.ica.which_pcs = 1:100;
+icm.data(1).settings.ica.which_pcs = 1:100;
 
 %% Motion Correction
 % A simple image-registration based motion correction algorithm is part of
-% the ICP. The motion correction function can be changed to an outside
+% the ICM. The motion correction function can be changed to an outside
 % function and you can get the GUI to call it by changing the settings:
 
-icp.data(1).settings.preprocessing.motion_correction_func = @align_im_stack
+icm.data(1).settings.preprocessing.motion_correction_func = @align_im_stack
 % Note: you'll have to make sure the function arguments are the same as
 % [align_im_stack] in order for the GUI to call the function correctly.
 
@@ -82,7 +82,7 @@ icp.data(1).settings.preprocessing.motion_correction_func = @align_im_stack
 % The pre-processing stage is used to down sample the data, run filters,
 % and take other pre-processing steps.
 
-icp.run_preprocessing();
+icm.run_preprocessing();
 
 %% PCA
 % The next stage is to break the image pixels down into principal
@@ -92,7 +92,7 @@ icp.run_preprocessing();
 % amount of variance of the image data. This will typically show you the
 % most significant aspects of the data in the first few PCs. 
 
-icp.run_pca();
+icm.run_pca();
 
 % Once PCA is complete, the results can be viewed by opening the PCA tab
 % and examining the frames in the ROI Editor. Each frame corresponds to the
@@ -101,7 +101,7 @@ icp.run_pca();
 
 % The results of the PCA analysis are stored in the pca struct
 disp('PCA Results:');
-disp(icp.data(1).pca);
+disp(icm.data(1).pca);
 
 %% ICA
 % The next stage is to look for the individual cells using the ICA
@@ -111,8 +111,8 @@ disp(icp.data(1).pca);
 % statistics of the PCA decomposition. This will pull out signals coming
 % from a single cell. 
 
-icp.data(1).settings.ica.which_pcs = 1:50;
-icp.run_ica();
+icm.data(1).settings.ica.which_pcs = 1:50;
+icm.run_ica();
 
 % Note that ICA looks for a fixed number of components based on the number
 % of PCs it analyzes based on [settings.ica.which_pcs]. Asking for more or
@@ -124,10 +124,10 @@ icp.run_ica();
 
 % The results of ICA are stored in the ica struct
 disp('ICA Results:');
-disp(icp.data(1).ica);
+disp(icm.data(1).ica);
 
 %% ROI
-% Basic ROI analysis can be done inside ICP. Oval shaped ROIs can be drawn
+% Basic ROI analysis can be done inside ICM. Oval shaped ROIs can be drawn
 % using the ROI Editor. 
 % Create ROI: Click on an empty spot in the ROI editor and drag to draw
 %             a new oval, release to create the ROI.
@@ -148,7 +148,7 @@ disp(icp.data(1).ica);
 % factor in the segment tab. Then oval-shaped ROIs can be automatically
 % generated from the segmentation,
 
-icp.data(1).settings.segment.down_size = 2;
-icp.data(1).settings.segment.thresh = 3.2;
+icm.data(1).settings.segment.down_size = 2;
+icm.data(1).settings.segment.thresh = 3.2;
 
-icp.run_segmentation();
+icm.run_segmentation();

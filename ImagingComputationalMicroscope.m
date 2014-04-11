@@ -1,4 +1,4 @@
-classdef ImageComponentParser < hgsetget
+classdef ImagingComputationalMicroscope < hgsetget
     % class ImageComponentParser: gui to analyze the component ...
     % decompositions of imaging data.
     %
@@ -61,7 +61,7 @@ classdef ImageComponentParser < hgsetget
     
     methods
         %%%%%%%%%% Initialization %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function self = ImageComponentParser(parent, im_data)
+        function self = ImagingComputationalMicroscope(parent, im_data)
             % self = ImageComponentParser(parent, im_data): parses the
             % components of imaging data.
             %
