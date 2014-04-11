@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gui_advc</title>
+  <meta name="keywords" content="gui_advc">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FastICA_25</a> &gt; gui_advc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FastICA_25&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gui_advc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function gui_advc (action) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ This file is needed by FASTICAG</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gui_advc.html" class="code" title="function gui_advc (action)">gui_advc</a>	</li><li><a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a>	</li><li><a href="gui_help.html" class="code" title="function gui_help(which_help)">gui_help</a>	</li><li><a href="gui_l.html" class="code" title="function gui_l (x, y)">gui_l</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gui_advc.html" class="code" title="function gui_advc (action)">gui_advc</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function gui_advc (action)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% This file is needed by FASTICAG</span>
+0004 
+0005 <span class="comment">% This file holds the callbacks for advanced options -dialog</span>
+0006 
+0007 <span class="comment">% @(#)$Id: gui_advc.m,v 1.3 2003/09/08 11:28:58 jarmo Exp $</span>
+0008 
+0009 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0010 <span class="comment">% Global variables</span>
+0011 
+0012 <span class="comment">% Handle to the window</span>
+0013 <span class="keyword">global</span> hf_FastICA_AdvOpt;
+0014 
+0015 <span class="comment">% Handles to some of the controls in window</span>
+0016 <span class="keyword">global</span> hpm_FastICA_finetune;
+0017 <span class="keyword">global</span> he_FastICA_a1;
+0018 <span class="keyword">global</span> he_FastICA_a2;
+0019 <span class="keyword">global</span> he_FastICA_myy;
+0020 <span class="keyword">global</span> he_FastICA_epsilon;
+0021 <span class="keyword">global</span> he_FastICA_maxIterations;
+0022 <span class="keyword">global</span> he_FastICA_maxFinetune;
+0023 <span class="keyword">global</span> he_FastICA_sampleSize;
+0024 <span class="keyword">global</span> hpm_FastICA_initState;
+0025 <span class="keyword">global</span> hb_FastICA_initGuess;
+0026 <span class="keyword">global</span> ht_FastICA_initGuess;
+0027 <span class="keyword">global</span> hpm_FastICA_displayMode;
+0028 <span class="keyword">global</span> he_FastICA_displayInterval;
+0029 <span class="keyword">global</span> hpm_FastICA_verbose;
+0030 
+0031 <span class="comment">% Needed handles to the main window</span>
+0032 <span class="keyword">global</span> hf_FastICA_MAIN;
+0033 <span class="keyword">global</span> ht_FastICA_icaStatus;
+0034 <span class="keyword">global</span> ht_FastICA_numOfSamp;
+0035 <span class="keyword">global</span> hpm_FastICA_stabilization;
+0036 
+0037 <span class="comment">% Some of the main variables needed</span>
+0038 <span class="keyword">global</span> g_FastICA_initGuess;
+0039 <span class="keyword">global</span> g_FastICA_numOfIC;
+0040 <span class="keyword">global</span> g_FastICA_finetune;
+0041 <span class="keyword">global</span> g_FastICA_a1;
+0042 <span class="keyword">global</span> g_FastICA_a2;
+0043 <span class="keyword">global</span> g_FastICA_myy;
+0044 <span class="keyword">global</span> g_FastICA_epsilon;
+0045 <span class="keyword">global</span> g_FastICA_maxNumIte;
+0046 <span class="keyword">global</span> g_FastICA_maxFinetune;
+0047 <span class="keyword">global</span> g_FastICA_initState;
+0048 <span class="keyword">global</span> g_FastICA_sampleSize;
+0049 <span class="keyword">global</span> g_FastICA_displayMo;
+0050 <span class="keyword">global</span> g_FastICA_displayIn;
+0051 <span class="keyword">global</span> g_FastICA_verbose;
+0052 
+0053 <span class="keyword">global</span> c_FastICA_iSta_strV;
+0054 
+0055 <span class="comment">% What is the load type of load dialog</span>
+0056 <span class="keyword">global</span> g_FastICA_loadType;
+0057 
+0058 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0059 <span class="comment">% This should not take long...</span>
+0060 watchonInFigure = watchon;
+0061 
+0062 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0063 <span class="keyword">switch</span> action
+0064 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0065 <span class="keyword">case</span> <span class="string">'Checka1'</span>
+0066 
+0067  e_a1_val = str2num(get(he_FastICA_a1, <span class="string">'String'</span>));
+0068  <span class="keyword">if</span> e_a1_val &lt;= 0
+0069    set(he_FastICA_a1, <span class="string">'String'</span>, <span class="string">'0.1'</span>);
+0070  <span class="keyword">end</span>
+0071 
+0072 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0073 <span class="keyword">case</span> <span class="string">'Checka2'</span>
+0074   
+0075  e_a2_val = str2num(get(he_FastICA_a2, <span class="string">'String'</span>));
+0076  <span class="keyword">if</span> e_a2_val &lt;= 0
+0077    set(he_FastICA_a2, <span class="string">'String'</span>, <span class="string">'0.1'</span>);
+0078  <span class="keyword">end</span>
+0079 
+0080 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0081 <span class="keyword">case</span> <span class="string">'CheckMyy'</span>
+0082 
+0083  e_myy_val = str2num(get(he_FastICA_myy, <span class="string">'String'</span>));
+0084  <span class="keyword">if</span> e_myy_val &lt;= 0
+0085    set(he_FastICA_myy, <span class="string">'String'</span>, <span class="string">'0.1'</span>);
+0086  <span class="keyword">elseif</span> e_myy_val &gt; 1
+0087    set(he_FastICA_myy, <span class="string">'String'</span>, <span class="string">'1'</span>);
+0088  <span class="keyword">end</span>
+0089 
+0090 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0091 <span class="keyword">case</span> <span class="string">'CheckSampleSize'</span>
+0092   
+0093  e_sampleSize_val = str2num(get(he_FastICA_sampleSize, <span class="string">'String'</span>));
+0094  <span class="keyword">if</span> e_sampleSize_val &gt; 1
+0095    set(he_FastICA_sampleSize, <span class="string">'String'</span>, <span class="string">'1'</span>);
+0096  <span class="keyword">else</span> 
+0097    numOfSamp = str2num(get(ht_FastICA_numOfSamp, <span class="string">'String'</span>));
+0098    <span class="keyword">if</span> numOfSamp &lt; 1000
+0099      set(he_FastICA_sampleSize, <span class="string">'String'</span>, <span class="string">'1'</span>);
+0100      fprintf(<span class="string">'Can''t reduce sample size. Already less than 1000 samples.\n'</span>);
+0101    <span class="keyword">elseif</span> (e_sampleSize_val * numOfSamp) &lt; 1000
+0102      fprintf(<span class="string">'Can''t reduce sample size to less than 1000 samples.\n'</span>);
+0103      set(he_FastICA_sampleSize, <span class="string">'String'</span>, sprintf(<span class="string">'%0.3f'</span>,1000/numOfSamp));
+0104    <span class="keyword">end</span>
+0105  <span class="keyword">end</span>
+0106 
+0107 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0108 <span class="keyword">case</span> <span class="string">'loadGuess'</span>
+0109  
+0110  handle = findobj(<span class="string">'Tag'</span>,<span class="string">'f_FastICALoad'</span>);  <span class="comment">% Check if the window is already</span>
+0111  <span class="keyword">if</span> isempty(handle)                        <span class="comment">% open. If not then open it.</span>
+0112    pos = get(hf_FastICA_MAIN, <span class="string">'Position'</span>);
+0113    <a href="gui_l.html" class="code" title="function gui_l (x, y)">gui_l</a>(pos(1), pos(2));
+0114  <span class="keyword">else</span>
+0115    <span class="keyword">if</span> strcmp(g_FastICA_loadType, <span class="string">'guess'</span>)  <span class="comment">% Check if it was the same load</span>
+0116      figure(handle);                       <span class="comment">% window. If it wasn't then</span>
+0117    <span class="keyword">else</span>                                    <span class="comment">% close the other window first</span>
+0118      close(handle);                        <span class="comment">% and then open the load window</span>
+0119      fprintf(<span class="string">'''Load data'' -dialog closed!\n'</span>);
+0120      pos = get(hf_FastICA_MAIN, <span class="string">'Position'</span>);
+0121      <a href="gui_l.html" class="code" title="function gui_l (x, y)">gui_l</a>(pos(1), pos(2));
+0122    <span class="keyword">end</span>
+0123  <span class="keyword">end</span>
+0124  
+0125 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0126 <span class="keyword">case</span> <span class="string">'OK'</span>
+0127   
+0128  <a href="gui_advc.html" class="code" title="function gui_advc (action)">gui_advc</a> Apply;
+0129 
+0130  close(hf_FastICA_AdvOpt);
+0131 
+0132  <span class="comment">% Use return to avoid reaching the watchoff statement at the end</span>
+0133  <span class="comment">% (There used to be a 'break' statement here, but it resulted in</span>
+0134  <span class="comment">% errors in more recent version of Matlab -- jarmo)</span>
+0135  <span class="keyword">return</span>;
+0136 
+0137 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0138 <span class="keyword">case</span> <span class="string">'Apply'</span>
+0139 
+0140  newValues = 0;
+0141 
+0142  val = g_FastICA_finetune;
+0143  g_FastICA_finetune = get(hpm_FastICA_finetune, <span class="string">'Value'</span>);
+0144  <span class="keyword">if</span> (g_FastICA_finetune ~= val)
+0145    newValues = 1;
+0146  <span class="keyword">end</span>
+0147  
+0148  val = g_FastICA_a1;
+0149  g_FastICA_a1 = str2num(get(he_FastICA_a1, <span class="string">'String'</span>));
+0150  <span class="keyword">if</span> (g_FastICA_a1 ~= val)
+0151    newValues = 1;
+0152  <span class="keyword">end</span>
+0153 
+0154  val = g_FastICA_a2;
+0155  g_FastICA_a2 = str2num(get(he_FastICA_a2, <span class="string">'String'</span>));
+0156  <span class="keyword">if</span> (g_FastICA_a2 ~= val)
+0157    newValues = 1;
+0158  <span class="keyword">end</span>
+0159 
+0160  val = g_FastICA_myy;
+0161  g_FastICA_myy = str2num(get(he_FastICA_myy, <span class="string">'String'</span>));
+0162  <span class="keyword">if</span> (g_FastICA_myy ~= val)
+0163    newValues = 1;
+0164  <span class="keyword">end</span>
+0165 
+0166  <span class="comment">% If myy &lt; 1 then will use stabilazed code, and we don't care</span>
+0167  <span class="comment">% about the parameter stabilization :-)</span>
+0168  <span class="keyword">if</span> (g_FastICA_myy == 1)
+0169    set(hpm_FastICA_stabilization, <span class="string">'Enable'</span>, <span class="string">'on'</span>);
+0170  <span class="keyword">else</span>
+0171    set(hpm_FastICA_stabilization, <span class="string">'Enable'</span>, <span class="string">'off'</span>);
+0172  <span class="keyword">end</span>
+0173 
+0174  val = g_FastICA_epsilon;
+0175  g_FastICA_epsilon = str2num(get(he_FastICA_epsilon, <span class="string">'String'</span>));
+0176  <span class="keyword">if</span> (g_FastICA_epsilon ~= val)
+0177    newValues = 1;
+0178  <span class="keyword">end</span>
+0179 
+0180  val = g_FastICA_maxNumIte;
+0181  g_FastICA_maxNumIte = str2num(get(he_FastICA_maxIterations, <span class="string">'String'</span>));
+0182  <span class="keyword">if</span> (g_FastICA_maxNumIte ~= val)
+0183    newValues = 1;
+0184  <span class="keyword">end</span>
+0185  
+0186  val = g_FastICA_maxFinetune;
+0187  g_FastICA_maxFinetune = str2num(get(he_FastICA_maxFinetune, <span class="string">'String'</span>));
+0188  <span class="keyword">if</span> (g_FastICA_maxFinetune ~= val)
+0189    newValues = 1;
+0190  <span class="keyword">end</span>
+0191  
+0192  val = g_FastICA_sampleSize;
+0193  g_FastICA_sampleSize = str2num(get(he_FastICA_sampleSize, <span class="string">'String'</span>));
+0194  <span class="keyword">if</span> (g_FastICA_sampleSize ~= val)
+0195    newValues = 1;
+0196  <span class="keyword">end</span>
+0197 
+0198  val = g_FastICA_initState;
+0199  g_FastICA_initState = get(hpm_FastICA_initState, <span class="string">'Value'</span>);
+0200  <span class="keyword">if</span> (g_FastICA_initState ~= val)
+0201    newValues = 1;
+0202  <span class="keyword">end</span>
+0203 
+0204  val = g_FastICA_initGuess;
+0205  g_FastICA_initGuess = get(hb_FastICA_initGuess, <span class="string">'UserData'</span>);
+0206  <span class="keyword">if</span> min(size(val) == size(g_FastICA_initGuess)) == 0
+0207    newValues = 1;
+0208  <span class="keyword">else</span>
+0209    <span class="keyword">if</span> (g_FastICA_initGuess ~= val)
+0210      newValues = 1;
+0211    <span class="keyword">end</span>
+0212  <span class="keyword">end</span>
+0213  
+0214  g_FastICA_displayMo = get(hpm_FastICA_displayMode, <span class="string">'Value'</span>);
+0215  g_FastICA_displayIn = str2num(get(he_FastICA_displayInterval, <span class="string">'String'</span>));
+0216  g_FastICA_verbose = get(hpm_FastICA_verbose, <span class="string">'Value'</span>);
+0217  
+0218  <span class="keyword">if</span> newValues == 1
+0219    <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NullICA;
+0220  <span class="keyword">end</span>
+0221 
+0222 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0223 <span class="keyword">case</span> <span class="string">'Cancel'</span>
+0224   
+0225  close(hf_FastICA_AdvOpt);
+0226 
+0227  <span class="comment">% Use return to avoid reaching the watchoff statement at the end</span>
+0228  <span class="comment">% (There used to be a 'break' statement here, but it resulted in</span>
+0229  <span class="comment">% errors in more recent version of Matlab -- jarmo)</span>
+0230  <span class="keyword">return</span>;
+0231 
+0232 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0233 <span class="keyword">case</span> <span class="string">'Default'</span>
+0234   
+0235  <span class="comment">% set default values to controls</span>
+0236  set(hpm_FastICA_finetune, <span class="string">'Value'</span>,5);
+0237  set(he_FastICA_a1, <span class="string">'String'</span>,<span class="string">'1'</span>);
+0238  set(he_FastICA_a2, <span class="string">'String'</span>,<span class="string">'1'</span>);
+0239  set(he_FastICA_myy, <span class="string">'String'</span>,<span class="string">'1'</span>);
+0240  set(he_FastICA_epsilon, <span class="string">'String'</span>,<span class="string">'0.0001'</span>);
+0241  set(he_FastICA_maxIterations, <span class="string">'String'</span>,<span class="string">'1000'</span>);
+0242  set(he_FastICA_sampleSize, <span class="string">'String'</span>,<span class="string">'1'</span>);
+0243  set(hpm_FastICA_initState, <span class="string">'Value'</span>,1);
+0244  set(hpm_FastICA_displayMode, <span class="string">'Value'</span>,1);
+0245  set(he_FastICA_displayInterval, <span class="string">'String'</span>,<span class="string">'1'</span>);
+0246  set(hpm_FastICA_verbose, <span class="string">'Value'</span>,1);
+0247 
+0248 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0249 <span class="keyword">case</span> <span class="string">'Help'</span>
+0250 
+0251  <a href="gui_help.html" class="code" title="function gui_help(which_help)">gui_help</a>(<span class="string">'gui_advc'</span>);
+0252 
+0253 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0254 <span class="keyword">end</span>    <span class="comment">% switch</span>
+0255 
+0256 watchoff (watchonInFigure);</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

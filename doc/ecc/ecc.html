@@ -1,0 +1,447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ecc</title>
+  <meta name="keywords" content="ecc">
+  <meta name="description" content="%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ecc</a> &gt; ecc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ecc&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ecc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [results, warp, warpedImage] = ecc(image, template, levels, noi, transform, delta_p_init) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ECC image alignment algorithm
+[RESULTS, WARP, WARPEDiMAGE] = ECC(IMAGE, TEMPLATE, LEVELS, NOI, TRANSFORM, DELTA_P_INIT)
+
+ This m-file implements the ECC image alignment algorithm as it is
+ presented in the paper &quot;G.D.Evangelidis, E.Z.Psarakis, Parametric Image Alignment
+ using Enhanced Correlation Coefficient.IEEE Trans. on PAMI, vol.30, no.10, 2008&quot;
+
+ ------------------
+ Input variables:
+ IMAGE:        the profile needs to be warped in order to be similar to TEMPLATE,
+ TEMPLATE:     the profile needs to be reached,
+ NOI:          the number of iterations per level; the algorithm is executed
+               (NOI-1) times
+ LEVELS:       the number of levels in pyramid scheme (set LEVELS=1 for a
+               non pyramid implementation), the level-index 1
+               corresponds to the highest (original) image resolution
+ TRANSFORM:    the image transformation {'translation', 'euclidean', 'affine', 'homography'}
+ DELTA_P_INIT: the initial transformation matrix for original images (optional); The identity
+               transformation is the default value (see 'transform initialization'
+               subroutine in the code). In case of affine or euclidean transform, 
+               DELTA_P_INIT must be a 2x3 matrix, in homography case it must be a 3x3 matrix,
+               while with translation transform it must be a 2x1 vector.
+
+ For example, to initialize the warp with a rotation by x radians, DELTA_P_INIT must
+ be [cos(x) sin(x) 0 ; -sin(x) cos(x) 0] for affinity 
+ [cos(x) sin(x) 0 ; -sin(x) cos(x) 0 ; 0 0 1] for homography.
+
+
+ Output:
+
+ RESULTS:   A struct of size LEVELS x NOI with the following fields:
+
+ RESULTS(m,n).warp:     the warp needs to be applied to IMAGE at n-th iteration of m-th level,
+ RESULTS(m,n).rho:      the enhanced correlation coefficient value at n-th iteration of m-th level,
+ WARP :              the final estimated transformation [usually also stored in RESULTS(1,NOI).WARP ].  
+ WARPEDiMAGE:        the final warped image (it should be similar to TEMPLATE).
+
+ The first stored .warp and .rho values are due to the initialization. In
+ case of poor final alignment results check the warp initialization
+ and/or the overlap of the images.
+ -------------------
+ $ Ver: 1.4, 12/2/2013,  released by Georgios D. Evangelidis, INRIA, FRANCE
+ For any comment, please contact the author 
+ Email: georgios.evangelidis@inria.fr, evagelid@ceid.upatras.gr
+
+ This software is provided &quot;as is&quot; without any kind of warranty. Also, it
+ is provided for research purposes only. In any case, please cite the above paper.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="image_jacobian.html" class="code" title="function G = image_jacobian(gx, gy, jac, nop)">image_jacobian</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li><li><a href="next_level.html" class="code" title="function warp=next_level(warp_in, transform, high_flag)">next_level</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li><li><a href="param_update.html" class="code" title="function warp_out=param_update(warp_in,delta_p,transform)">param_update</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li><li><a href="spatial_interp.html" class="code" title="function out = spatial_interp(in, warp, str, transform, nx, ny)">spatial_interp</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li><li><a href="warp_jacobian.html" class="code" title="function J = warp_jacobian(nx, ny, warp, transform)">warp_jacobian</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ecc_demo.html" class="code" title="">ecc_demo</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li><li><a href="ecc_demo_partial_overlap.html" class="code" title="">ecc_demo_partial_overlap</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [results, warp, warpedImage] = ecc(image, template, levels, noi, transform, delta_p_init)</a>
+0002 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0003 <span class="comment">%ECC image alignment algorithm</span>
+0004 <span class="comment">%[RESULTS, WARP, WARPEDiMAGE] = ECC(IMAGE, TEMPLATE, LEVELS, NOI, TRANSFORM, DELTA_P_INIT)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% This m-file implements the ECC image alignment algorithm as it is</span>
+0007 <span class="comment">% presented in the paper &quot;G.D.Evangelidis, E.Z.Psarakis, Parametric Image Alignment</span>
+0008 <span class="comment">% using Enhanced Correlation Coefficient.IEEE Trans. on PAMI, vol.30, no.10, 2008&quot;</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% ------------------</span>
+0011 <span class="comment">% Input variables:</span>
+0012 <span class="comment">% IMAGE:        the profile needs to be warped in order to be similar to TEMPLATE,</span>
+0013 <span class="comment">% TEMPLATE:     the profile needs to be reached,</span>
+0014 <span class="comment">% NOI:          the number of iterations per level; the algorithm is executed</span>
+0015 <span class="comment">%               (NOI-1) times</span>
+0016 <span class="comment">% LEVELS:       the number of levels in pyramid scheme (set LEVELS=1 for a</span>
+0017 <span class="comment">%               non pyramid implementation), the level-index 1</span>
+0018 <span class="comment">%               corresponds to the highest (original) image resolution</span>
+0019 <span class="comment">% TRANSFORM:    the image transformation {'translation', 'euclidean', 'affine', 'homography'}</span>
+0020 <span class="comment">% DELTA_P_INIT: the initial transformation matrix for original images (optional); The identity</span>
+0021 <span class="comment">%               transformation is the default value (see 'transform initialization'</span>
+0022 <span class="comment">%               subroutine in the code). In case of affine or euclidean transform,</span>
+0023 <span class="comment">%               DELTA_P_INIT must be a 2x3 matrix, in homography case it must be a 3x3 matrix,</span>
+0024 <span class="comment">%               while with translation transform it must be a 2x1 vector.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% For example, to initialize the warp with a rotation by x radians, DELTA_P_INIT must</span>
+0027 <span class="comment">% be [cos(x) sin(x) 0 ; -sin(x) cos(x) 0] for affinity</span>
+0028 <span class="comment">% [cos(x) sin(x) 0 ; -sin(x) cos(x) 0 ; 0 0 1] for homography.</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% Output:</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">% RESULTS:   A struct of size LEVELS x NOI with the following fields:</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">% RESULTS(m,n).warp:     the warp needs to be applied to IMAGE at n-th iteration of m-th level,</span>
+0036 <span class="comment">% RESULTS(m,n).rho:      the enhanced correlation coefficient value at n-th iteration of m-th level,</span>
+0037 <span class="comment">% WARP :              the final estimated transformation [usually also stored in RESULTS(1,NOI).WARP ].</span>
+0038 <span class="comment">% WARPEDiMAGE:        the final warped image (it should be similar to TEMPLATE).</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">% The first stored .warp and .rho values are due to the initialization. In</span>
+0041 <span class="comment">% case of poor final alignment results check the warp initialization</span>
+0042 <span class="comment">% and/or the overlap of the images.</span>
+0043 <span class="comment">% -------------------</span>
+0044 <span class="comment">% $ Ver: 1.4, 12/2/2013,  released by Georgios D. Evangelidis, INRIA, FRANCE</span>
+0045 <span class="comment">% For any comment, please contact the author</span>
+0046 <span class="comment">% Email: georgios.evangelidis@inria.fr, evagelid@ceid.upatras.gr</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">% This software is provided &quot;as is&quot; without any kind of warranty. Also, it</span>
+0049 <span class="comment">% is provided for research purposes only. In any case, please cite the above paper.</span>
+0050 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0051 
+0052 tic;
+0053 
+0054 break_flag=0; 
+0055 
+0056 <span class="keyword">if</span> nargin&lt;5
+0057     error(<span class="string">'-&gt; Not enough input arguments'</span>);
+0058 <span class="keyword">end</span>
+0059 
+0060 transform = lower(transform);
+0061 <span class="keyword">if</span> ~(strcmp(transform,<span class="string">'affine'</span>)||strcmp(transform,<span class="string">'euclidean'</span>)||strcmp(transform,<span class="string">'homography'</span>)||strcmp(transform,<span class="string">'translation'</span>))
+0062     error(<span class="string">'-&gt; Not a valid transform string'</span>)
+0063 <span class="keyword">end</span>
+0064 
+0065 sZi3 = size(image,3);
+0066 sZt3 = size(template,3);
+0067 initImage = image;
+0068 initTemplate = template;
+0069 <span class="keyword">if</span> sZi3&gt;1
+0070     <span class="keyword">if</span> ((sZi3==2) || (sZi3&gt;3))
+0071         error(<span class="string">'Unknown color image format: check the number of channels'</span>);
+0072     <span class="keyword">else</span>
+0073         image=rgb2gray(uint8(image));
+0074     <span class="keyword">end</span>
+0075 <span class="keyword">end</span>
+0076 
+0077 <span class="keyword">if</span> sZt3&gt;1
+0078     <span class="keyword">if</span> ((sZt3==2) || (sZt3&gt;3))
+0079         error(<span class="string">'Unknown color image format: check the number of channels'</span>);
+0080     <span class="keyword">else</span>
+0081         template = rgb2gray(uint8(template));
+0082     <span class="keyword">end</span>
+0083 <span class="keyword">end</span>
+0084 
+0085 template = double(template);
+0086 image = double(image);
+0087 
+0088 <span class="comment">%% pyramid images</span>
+0089 <span class="comment">% The following for-loop creates pyramid images in cells IM and TEMP with varying names</span>
+0090 <span class="comment">% The variables IM{1} and TEMP{1} are the images with the highest resoltuion</span>
+0091 
+0092 <span class="comment">% Smoothing of original images</span>
+0093 f = fspecial(<span class="string">'gaussian'</span>,[7 7],.5);
+0094 TEMP{1} = imfilter(template,f);
+0095 IM{1} = imfilter(image,f);
+0096 TEMP{1} = template;
+0097 IM{1} = image;
+0098 
+0099 <span class="keyword">for</span> nol=2:levels
+0100     IM{nol} = imresize(IM{nol-1},.5);
+0101     TEMP{nol} = imresize(TEMP{nol-1},.5);
+0102 <span class="keyword">end</span>
+0103 
+0104 
+0105 <span class="comment">%% transform initialization</span>
+0106 
+0107 <span class="comment">% In case of translation transform the initialiation matrix is of size 2x1:</span>
+0108 <span class="comment">%  delta_p_init = [p1;</span>
+0109 <span class="comment">%                  p2]</span>
+0110 <span class="comment">% In case of affine transform the initialiation matrix is of size 2x3:</span>
+0111 <span class="comment">%</span>
+0112 <span class="comment">%  delta_p_init = [p1, p3, p5;</span>
+0113 <span class="comment">%                  p2, p4, p6]</span>
+0114 <span class="comment">%</span>
+0115 <span class="comment">% In case of euclidean transform the initialiation matrix is of size 2x3:</span>
+0116 <span class="comment">%</span>
+0117 <span class="comment">%  delta_p_init = [p1, p3, p5;</span>
+0118 <span class="comment">%                  p2, p4, p6]</span>
+0119 <span class="comment">%</span>
+0120 <span class="comment">% where p1=cos(theta), p2 = sin(theta), p3 = -p2, p4 =p1</span>
+0121 <span class="comment">%</span>
+0122 <span class="comment">% In case of homography transform the initialiation matrix is of size 3x3:</span>
+0123 <span class="comment">%  delta_p_init = [p1, p4, p7;</span>
+0124 <span class="comment">%                 p2, p5, p8;</span>
+0125 <span class="comment">%                 p3, p6,  1]</span>
+0126 <span class="keyword">if</span> strcmp(transform,<span class="string">'translation'</span>)
+0127     nop=2; <span class="comment">%number of parameteres</span>
+0128     <span class="keyword">if</span> nargin==5;
+0129         warp=zeros(2,1);
+0130     <span class="keyword">else</span>
+0131         <span class="keyword">if</span> (size(delta_p_init,1)~=2)|(size(delta_p_init,2)~=1)
+0132             error(<span class="string">'-&gt; In translation case the size of initialization matrix must be 2x1 ([deltaX;deltaY])'</span>);
+0133         <span class="keyword">else</span>
+0134             warp=delta_p_init;
+0135         <span class="keyword">end</span>
+0136     <span class="keyword">end</span>
+0137 <span class="keyword">end</span>
+0138 <span class="keyword">if</span> strcmp(transform,<span class="string">'euclidean'</span>)
+0139     nop=3; <span class="comment">%number of parameteres</span>
+0140     <span class="keyword">if</span> nargin==5;
+0141         warp=[1 0 0; 0 1 0; 0 0 0];
+0142     <span class="keyword">else</span>
+0143         <span class="keyword">if</span> (size(delta_p_init,1)~=2)||(size(delta_p_init,2)~=3)
+0144             error(<span class="string">'-&gt; In euclidean case the size of initialization matrix must be 2x3'</span>);
+0145         <span class="keyword">else</span>
+0146             warp=[delta_p_init;zeros(1,3)];
+0147         <span class="keyword">end</span>
+0148     <span class="keyword">end</span>
+0149 <span class="keyword">end</span>
+0150 <span class="keyword">if</span> strcmp(transform,<span class="string">'affine'</span>)
+0151     nop=6; <span class="comment">%number of parameters</span>
+0152     <span class="keyword">if</span> nargin==5;
+0153         warp=[1 0 0; 0 1 0; 0 0 0];
+0154     <span class="keyword">else</span>
+0155         <span class="keyword">if</span> (size(delta_p_init,1)~=2)|(size(delta_p_init,2)~=3)
+0156             error(<span class="string">'-&gt; In affine case the size of initialization matrix must be 2x3'</span>);
+0157         <span class="keyword">else</span>
+0158             warp=[delta_p_init;zeros(1,3)];
+0159         <span class="keyword">end</span>
+0160     <span class="keyword">end</span>
+0161 <span class="keyword">end</span>
+0162 
+0163 <span class="keyword">if</span> strcmp(transform,<span class="string">'homography'</span>)
+0164     nop=8; <span class="comment">%number of parameteres</span>
+0165     <span class="keyword">if</span> nargin==5;
+0166         warp=eye(3);
+0167     <span class="keyword">else</span>
+0168         <span class="keyword">if</span> (size(delta_p_init,1)~=3)|(size(delta_p_init,2)~=3)
+0169             error(<span class="string">'-&gt; In homography case the size of initialization matrix must be 3x3'</span>);
+0170         <span class="keyword">else</span>
+0171             warp=delta_p_init;
+0172             <span class="keyword">if</span> warp(3,3)~=1
+0173                 error(<span class="string">'The ninth element of homography must be equal to 1'</span>);
+0174             <span class="keyword">end</span>
+0175         <span class="keyword">end</span>
+0176     <span class="keyword">end</span>
+0177 <span class="keyword">end</span>
+0178 
+0179 <span class="comment">% in case of pyramid implementation, the initial transformation must be</span>
+0180 <span class="comment">% appropriately modified</span>
+0181 <span class="keyword">for</span> ii=1:levels-1
+0182     warp=<a href="next_level.html" class="code" title="function warp=next_level(warp_in, transform, high_flag)">next_level</a>(warp, transform, 0);
+0183 <span class="keyword">end</span>
+0184 
+0185 <span class="comment">%% Run ECC algorithm for each level of pyramid</span>
+0186 <span class="keyword">for</span> nol=levels:-1:1
+0187     
+0188     im = IM{nol};
+0189     [vx,vy]=gradient(im);
+0190     
+0191     temp = TEMP{nol};
+0192     
+0193     [A,B]=size(temp);
+0194     <span class="comment">% Warning for tiny images</span>
+0195     <span class="keyword">if</span> prod([A,B])&lt;400
+0196         disp(<span class="string">' -&gt; ECC Warning: The size of images in high pyramid levels is quite small and it may cause errors.'</span>);
+0197         disp(<span class="string">' -&gt; To avoid such errors you could try fewer levels or larger images.'</span>);
+0198         disp(<span class="string">' -&gt; Press any key to continue.'</span>)
+0199         pause
+0200     <span class="keyword">end</span>
+0201         
+0202     <span class="comment">% Define the rectangular Region of Interest (ROI) by nx and ny (you can modify</span>
+0203     <span class="comment">% the ROI). Here we just ignore some image margins. Margin is equal to</span>
+0204     <span class="comment">% 5 percent of the mean of [height,width].</span>
+0205     m0=mean([A,B]);
+0206     margin=floor(m0*.05/(2^(nol-1)));
+0207     margin =0;<span class="comment">%no-margin - modify these two lines if you want to exclude a margin</span>
+0208     nx=margin+1:B-margin;
+0209     ny=margin+1:A-margin;
+0210     temp=double(temp(ny,nx,:));
+0211     
+0212     <span class="comment">%%%%   temp=temp-mean(temp(:)); % zero-mean image; is useful for brightness change compensation, otherwise you can comment this line</span>
+0213     <span class="comment">% MODIFIED 12/1/2013 (we subtract the zero-mean inside the loop by taking</span>
+0214     <span class="comment">% into account only the overlapping area</span>
+0215     
+0216     
+0217     <span class="comment">%% ECC, Forwards Additive Algorithm -------------------------------</span>
+0218     <span class="keyword">for</span> i=1:noi
+0219         
+0220         disp([<span class="string">'Level: '</span> num2str(nol) <span class="string">', Iteration: '</span> num2str(i)])
+0221         <span class="comment">%Image interpolation method</span>
+0222         str=<span class="string">'linear'</span>; <span class="comment">% bilinear interpolation (you may also choose cubic)</span>
+0223         
+0224         
+0225         wim = <a href="spatial_interp.html" class="code" title="function out = spatial_interp(in, warp, str, transform, nx, ny)">spatial_interp</a>(im, warp, str, transform, nx, ny); <span class="comment">%inverse (backward) warping</span>
+0226         
+0227         <span class="comment">%ADDED 7/8/2012; MODIFIED 12/2/2013</span>
+0228         <span class="comment">% define a mask to deal with warping outside the image borders</span>
+0229         <span class="comment">% (they may have negative values due to the subtraction of the mean value)</span>
+0230         ones_map = <a href="spatial_interp.html" class="code" title="function out = spatial_interp(in, warp, str, transform, nx, ny)">spatial_interp</a>(ones(size(im)), warp, <span class="string">'nearest'</span>, transform, nx, ny); <span class="comment">%inverse (backward) warping</span>
+0231         numOfElem = sum(sum(ones_map~=0));
+0232                
+0233         meanOfWim = sum(sum(wim.*(ones_map~=0)))/numOfElem;
+0234         meanOfTemp = sum(sum(temp.*(ones_map~=0)))/numOfElem;
+0235         
+0236         
+0237         wim = wim-meanOfWim;<span class="comment">% zero-mean image; is useful for brightness change compensation, otherwise you can comment this line</span>
+0238         tempzm = temp-meanOfTemp; <span class="comment">% zero-mean template</span>
+0239         
+0240         wim(ones_map==0) = 0; <span class="comment">% for pixels outside the overlapping area</span>
+0241         tempzm(ones_map==0)=0;
+0242         
+0243         
+0244         <span class="comment">%Save current transform</span>
+0245         <span class="keyword">if</span> (strcmp(transform,<span class="string">'affine'</span>)||strcmp(transform,<span class="string">'euclidean'</span>))
+0246             results(nol,i).warp = warp(1:2,:);
+0247         <span class="keyword">else</span>
+0248             results(nol,i).warp = warp;
+0249         <span class="keyword">end</span>
+0250         
+0251         results(nol,i).rho = dot(temp(:),wim(:)) / norm(tempzm(:)) / norm(wim(:));
+0252           
+0253         <span class="keyword">if</span> (i == noi) <span class="comment">% the algorithm is executed (noi-1) times</span>
+0254             <span class="keyword">break</span>;
+0255         <span class="keyword">end</span>
+0256         
+0257         <span class="comment">% Gradient Image interpolation (warped gradients)</span>
+0258         wvx = <a href="spatial_interp.html" class="code" title="function out = spatial_interp(in, warp, str, transform, nx, ny)">spatial_interp</a>(vx, warp, str, transform, nx, ny);
+0259         wvy = <a href="spatial_interp.html" class="code" title="function out = spatial_interp(in, warp, str, transform, nx, ny)">spatial_interp</a>(vy, warp, str, transform, nx, ny);
+0260         
+0261         <span class="comment">% Compute the jacobian of warp transform</span>
+0262         J = <a href="warp_jacobian.html" class="code" title="function J = warp_jacobian(nx, ny, warp, transform)">warp_jacobian</a>(nx, ny, warp, transform);
+0263         
+0264         <span class="comment">% Compute the jacobian of warped image wrt parameters (matrix G in the paper)</span>
+0265         G = <a href="image_jacobian.html" class="code" title="function G = image_jacobian(gx, gy, jac, nop)">image_jacobian</a>(wvx, wvy, J, nop);
+0266         
+0267         <span class="comment">% Compute Hessian and its inverse</span>
+0268         C= G' * G;<span class="comment">% C: Hessian matrix</span>
+0269         con=cond(C);
+0270         <span class="keyword">if</span> con&gt;1.0e+15
+0271             disp(<span class="string">'-&gt;ECC Warning: Badly conditioned Hessian matrix. Check the initialization or the overlap of images.'</span>)
+0272         <span class="keyword">end</span>
+0273         i_C = inv(C);
+0274        
+0275         <span class="comment">% Compute projections of images into G</span>
+0276         Gt = G' * tempzm(:);
+0277         Gw = G' * wim(:);
+0278         
+0279         
+0280         <span class="comment">%% ECC closed form solution</span>
+0281         
+0282         <span class="comment">% Compute lambda parameter</span>
+0283         num = (norm(wim(:))^2 - Gw' * i_C * Gw);
+0284         den = (dot(tempzm(:),wim(:)) - Gt' * i_C * Gw);
+0285         lambda = num / den;
+0286         
+0287         <span class="comment">% Compute error vector</span>
+0288         imerror = lambda * tempzm - wim;
+0289         
+0290         <span class="comment">% Compute the projection of error vector into Jacobian G</span>
+0291         Ge = G' * imerror(:);
+0292         
+0293         <span class="comment">% Compute the optimum parameter correction vector</span>
+0294         delta_p = i_C * Ge;
+0295         
+0296         <span class="keyword">if</span> (sum(isnan(delta_p)))&gt;0 <span class="comment">%Hessian is close to singular</span>
+0297             disp([<span class="string">' -&gt; Algorithms stopped at '</span> num2str(i) <span class="string">'-th iteration of '</span> num2str(nol) <span class="string">'-th level due to bad condition of Hessian matrix.'</span>]);
+0298             disp([<span class="string">' -&gt; Current results have been saved at results('</span> num2str(nol) <span class="string">','</span> num2str(i) <span class="string">').warp and results('</span> num2str(nol) <span class="string">','</span> num2str(i) <span class="string">').rho.'</span>]);
+0299             disp([<span class="string">' -&gt; If you enabled a multilevel running, the output variables (warp, warpedImage) have been computed after mapping the current warp into the high-resolution level'</span>]);
+0300             
+0301             break_flag=1;
+0302             <span class="keyword">break</span>;
+0303         <span class="keyword">end</span>
+0304         
+0305         <span class="comment">% Update parmaters</span>
+0306         warp = <a href="param_update.html" class="code" title="function warp_out=param_update(warp_in,delta_p,transform)">param_update</a>(warp, delta_p, transform);
+0307         
+0308         
+0309     <span class="keyword">end</span>
+0310     
+0311     <span class="keyword">if</span> break_flag==1
+0312         <span class="keyword">break</span>;
+0313     <span class="keyword">end</span>
+0314     
+0315     <span class="comment">% modify the parameteres appropriately for next pyramid level</span>
+0316     <span class="keyword">if</span> (nol&gt;1)&amp;(break_flag==0)
+0317         warp = <a href="next_level.html" class="code" title="function warp=next_level(warp_in, transform, high_flag)">next_level</a>(warp, transform,1);
+0318     <span class="keyword">end</span>
+0319     
+0320 <span class="keyword">end</span>
+0321 
+0322 toc
+0323 
+0324 <span class="keyword">if</span> break_flag==1 <span class="comment">% this conditional part is only executed when algorithm stops due to Hessian singularity</span>
+0325     <span class="keyword">for</span> jj=1:nol-1
+0326         warp = <a href="next_level.html" class="code" title="function warp=next_level(warp_in, transform, high_flag)">next_level</a>(warp, transform,1);
+0327         <span class="comment">%m0=2*m0;</span>
+0328     <span class="keyword">end</span>
+0329     <span class="comment">%margin=floor(m0*.05);</span>
+0330     <span class="comment">%nx=margin+1:size(template,2)-margin;</span>
+0331     <span class="comment">%ny=margin+1:size(template,1)-margin;</span>
+0332 <span class="keyword">end</span>
+0333    
+0334 <span class="keyword">if</span> break_flag == 1
+0335     final_warp = warp;
+0336 <span class="keyword">else</span>
+0337     final_warp = results(1,end).warp;
+0338 <span class="keyword">end</span>
+0339 
+0340 <span class="comment">% return the final warped image using the whole support area (include</span>
+0341 <span class="comment">% margins)</span>
+0342 
+0343 nx2 = 1:B;
+0344 ny2 = 1:A;
+0345 
+0346 <span class="keyword">for</span> ii = 1:sZi3
+0347     warpedImage(:,:,ii) = <a href="spatial_interp.html" class="code" title="function out = spatial_interp(in, warp, str, transform, nx, ny)">spatial_interp</a>(double(initImage(:,:,ii)), final_warp, str, transform, nx2, ny2);
+0348 <span class="keyword">end</span>
+0349 
+0350 warpedImage = uint8(warpedImage);
+0351 warp = final_warp;
+0352 <span class="comment">%%%</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

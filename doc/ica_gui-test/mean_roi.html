@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mean_roi</title>
+  <meta name="keywords" content="mean_roi">
+  <meta name="description" content="This function uses the roi_data and takes the mean value for the pixels">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; mean_roi.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>mean_roi
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This function uses the roi_data and takes the mean value for the pixels</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function data = mean_roi(ccd_movie, roi_data, im_x, im_y) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> This function uses the roi_data and takes the mean value for the pixels
+ within each roi for each frame.
+
+ @param: ccd_movie a NxMxT movie, where T is the number of frames
+ @param: roi_data a NxM image, where each integer represents a roi
+                 or a Nx4 matrix where each row is an roi [cx, cy, vx, vy]
+ @param: im_x the x-values of the image pixels, must have length M
+ @param: im_y the y-values of the image pixels, must have length N
+ @return: data the time series inside each roi. Frames x ROIs
+
+ @file: mean_roi.m
+ Contains the mean_roi function
+ @author: Paxon Frady
+ @created: 3/4/2010</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="oval_image.html" class="code" title="function [oval_pixels, box] = oval_image(oval, im_x, im_y)">oval_image</a>	Finds the pixels that fall within the borders of the oval and returns</li><li><a href="xyrra_image.html" class="code" title="function [xyrra_pixels, box] = xyrra_image(xyrra, im_x, im_y)">xyrra_image</a>	Finds the pixels that fall within the borders of the oval and returns</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ImageComponentParser.html" class="code" title="classdef ImageComponentParser < hgsetget">ImageComponentParser</a>	class ImageComponentParser: gui to analyze the component ...</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function data = mean_roi_map(ccd_movie, roi_data)</a></li><li><a href="#_sub2" class="code">function data = mean_roi_xyrr(ccd_movie, roi_data, im_x, im_y)</a></li><li><a href="#_sub3" class="code">function data = mean_roi_xyrr_each(ccd_movie, roi_data, im_x, im_y)</a></li><li><a href="#_sub4" class="code">function data = mean_roi_xyrr_all(ccd_movie, roi_data, im_x, im_y)</a></li><li><a href="#_sub5" class="code">function data = mean_roi_xyrra(ccd_movie, roi_data, im_x, im_y)</a></li><li><a href="#_sub6" class="code">function data = mean_roi_xyrra_each(ccd_movie, roi_data, im_x, im_y)</a></li><li><a href="#_sub7" class="code">function data = mean_roi_xyrra_all(ccd_movie, roi_data, im_x, im_y)</a></li></ul>
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="mean_roi.m">mean_roi.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function data = mean_roi(ccd_movie, roi_data, im_x, im_y)</a>
+0002 <span class="comment">% This function uses the roi_data and takes the mean value for the pixels</span>
+0003 <span class="comment">% within each roi for each frame.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% @param: ccd_movie a NxMxT movie, where T is the number of frames</span>
+0006 <span class="comment">% @param: roi_data a NxM image, where each integer represents a roi</span>
+0007 <span class="comment">%                 or a Nx4 matrix where each row is an roi [cx, cy, vx, vy]</span>
+0008 <span class="comment">% @param: im_x the x-values of the image pixels, must have length M</span>
+0009 <span class="comment">% @param: im_y the y-values of the image pixels, must have length N</span>
+0010 <span class="comment">% @return: data the time series inside each roi. Frames x ROIs</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% @file: mean_roi.m</span>
+0013 <span class="comment">% Contains the mean_roi function</span>
+0014 <span class="comment">% @author: Paxon Frady</span>
+0015 <span class="comment">% @created: 3/4/2010</span>
+0016 
+0017 data = [];
+0018 <span class="keyword">if</span> isempty(roi_data)
+0019     <span class="comment">% Then do nothing</span>
+0020     <span class="keyword">return</span>;
+0021 <span class="keyword">end</span>
+0022 
+0023 <span class="keyword">if</span> isempty(ccd_movie)
+0024     <span class="comment">% Also do nothing</span>
+0025     <span class="keyword">return</span>;
+0026 <span class="keyword">end</span>
+0027 
+0028 <span class="keyword">if</span> nargin &lt; 3 || isempty(im_x)
+0029     <span class="comment">% Default for im_x is just the pixel length</span>
+0030     im_x = 1:size(ccd_movie, 2);
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="keyword">if</span> nargin &lt; 4 || isempty(im_y)
+0034     im_y = 1:size(ccd_movie, 1);
+0035 <span class="keyword">end</span>
+0036 
+0037 <span class="keyword">if</span> (size(roi_data, 2) == 4)
+0038     <span class="comment">% Then we have a xyrr form roi_data</span>
+0039     data = <a href="#_sub2" class="code" title="subfunction data = mean_roi_xyrr(ccd_movie, roi_data, im_x, im_y)">mean_roi_xyrr</a>(ccd_movie, roi_data, im_x, im_y);
+0040 <span class="keyword">elseif</span> (size(roi_data, 2) == 5)
+0041     data = <a href="#_sub5" class="code" title="subfunction data = mean_roi_xyrra(ccd_movie, roi_data, im_x, im_y)">mean_roi_xyrra</a>(ccd_movie, roi_data, im_x, im_y);
+0042 <span class="keyword">else</span>
+0043     <span class="comment">% Then assume that we have roi_data of image form</span>
+0044     data = <a href="#_sub1" class="code" title="subfunction data = mean_roi_map(ccd_movie, roi_data)">mean_roi_map</a>(ccd_movie, roi_data);
+0045 <span class="keyword">end</span>
+0046 <span class="keyword">end</span>
+0047 
+0048 <a name="_sub1" href="#_subfunctions" class="code">function data = mean_roi_map(ccd_movie, roi_data)</a>
+0049 <span class="comment">% Helper function, returns the roi data given that the form of roi_data is</span>
+0050 <span class="comment">% of an image map.</span>
+0051 
+0052 max_roi = max(roi_data(:));
+0053 nframes = size(ccd_movie, 3);
+0054 data = zeros(nframes, max_roi);
+0055 <span class="comment">% @todo: get rid of these for loops like in xyrr for more efficiency.</span>
+0056 <span class="keyword">for</span> i = 1:nframes
+0057     ccd_frame = imresize(ccd_movie(:, :, i), size(roi_data));
+0058     <span class="keyword">for</span> j = 1:max_roi
+0059         data(i, j) = nanmean(ccd_frame(roi_data == j));
+0060     <span class="keyword">end</span>
+0061 <span class="keyword">end</span>
+0062 
+0063 <span class="keyword">end</span>
+0064 
+0065 <a name="_sub2" href="#_subfunctions" class="code">function data = mean_roi_xyrr(ccd_movie, roi_data, im_x, im_y)</a>
+0066 <span class="comment">% Helper function to distinguish between roi_data that has an roi for each</span>
+0067 <span class="comment">% frame or if rois are for all frames.</span>
+0068 <span class="comment">%disp(ndims(roi_data));</span>
+0069 <span class="keyword">if</span> ndims(roi_data) == 2
+0070     <span class="comment">% we have a single roi for all frames, call the all function</span>
+0071     data = <a href="#_sub4" class="code" title="subfunction data = mean_roi_xyrr_all(ccd_movie, roi_data, im_x, im_y)">mean_roi_xyrr_all</a>(ccd_movie, roi_data, im_x, im_y);
+0072 <span class="keyword">else</span>
+0073     <span class="comment">% we have an roi for each frame, call the each function</span>
+0074     
+0075     <span class="comment">% assert that the number of frames is equal in the movie and rois.</span>
+0076     <span class="comment">% There may be a way to do this without needing this to be true,</span>
+0077     <span class="comment">% like interpolating or something, but for now...</span>
+0078     assert(size(ccd_movie, 3) == size(roi_data, 3));
+0079     data = <a href="#_sub3" class="code" title="subfunction data = mean_roi_xyrr_each(ccd_movie, roi_data, im_x, im_y)">mean_roi_xyrr_each</a>(ccd_movie, roi_data, im_x, im_y);
+0080 <span class="keyword">end</span>
+0081 <span class="keyword">end</span>
+0082 
+0083 <a name="_sub3" href="#_subfunctions" class="code">function data = mean_roi_xyrr_each(ccd_movie, roi_data, im_x, im_y)</a>
+0084 <span class="comment">% Helper function, returns the roi data given that the form is xyrr and</span>
+0085 <span class="comment">% there is an roi for each frame of the video.</span>
+0086 nframes = size(ccd_movie, 3);
+0087 data = zeros(nframes, size(roi_data, 1));
+0088 
+0089 <span class="keyword">for</span> j = 1:size(roi_data, 1)
+0090     ovals = reshape(roi_data(j,:,:), 4, [])';
+0091     [d, box] = <a href="oval_image.html" class="code" title="function [oval_pixels, box] = oval_image(oval, im_x, im_y)">oval_image</a>(ovals, im_x, im_y);
+0092     
+0093     xvals = im_x &gt;= box(1) &amp; im_x &lt;= box(2);
+0094     yvals = im_y &gt;= box(3) &amp; im_y &lt;= box(4);
+0095     
+0096     square_movie = ccd_movie(yvals, xvals, :);
+0097 
+0098     data(:, j) = nanmean(reshape(square_movie(d), [], size(ccd_movie,3)));
+0099 <span class="keyword">end</span>
+0100 
+0101 <span class="keyword">end</span>
+0102 
+0103 <a name="_sub4" href="#_subfunctions" class="code">function data = mean_roi_xyrr_all(ccd_movie, roi_data, im_x, im_y)</a>
+0104 <span class="comment">% Helper function, returns the roi data given that the form of roi_data is</span>
+0105 <span class="comment">% of [cx, cy, vx, vy] for each row.</span>
+0106 
+0107 nframes = size(ccd_movie, 3);
+0108 data = zeros(nframes, size(roi_data, 1));
+0109 range = [1, max(im_x), 1, max(im_y)];
+0110 
+0111 <span class="keyword">for</span> j = 1:size(roi_data, 1)
+0112     [d, box] = <a href="oval_image.html" class="code" title="function [oval_pixels, box] = oval_image(oval, im_x, im_y)">oval_image</a>(roi_data(j,:), im_x, im_y);
+0113 
+0114     <span class="comment">% alright now we make the logic array the depth of the movie.</span>
+0115     d_logic = repmat(d, [1, 1, nframes]);
+0116         
+0117     <span class="comment">% We just want the rectangle of the movie in which our roi falls into.</span>
+0118     <span class="comment">% Then we'll use the logic array to selecte out the correct pixels.</span>
+0119     xvals = im_x &gt;= box(1) &amp; im_x &lt;= box(2);
+0120     yvals = im_y &gt;= box(3) &amp; im_y &lt;= box(4);
+0121     
+0122     square_movie = ccd_movie(yvals, xvals, :);
+0123     
+0124 
+0125     <span class="comment">% Yep, like this... Breakdown:</span>
+0126     <span class="comment">% - get all of the desired pixels (square_movie(d_logic), this every</span>
+0127     <span class="comment">%   pixel we want to consider, but now their frame info is sorta lost.</span>
+0128     <span class="comment">% - reshape to fit in NxnFrames, this reformat this so that the pixels</span>
+0129     <span class="comment">%   for each frame are sorted by cols. N == sum(d &gt;= 1).</span>
+0130     <span class="comment">% - Then take the mean across the pixels.</span>
+0131     data(:, j) = nanmean(reshape(square_movie(d_logic), [], nframes));
+0132 <span class="keyword">end</span>
+0133 <span class="keyword">end</span>
+0134 
+0135 <a name="_sub5" href="#_subfunctions" class="code">function data = mean_roi_xyrra(ccd_movie, roi_data, im_x, im_y)</a>
+0136 <span class="comment">% Helper function to distinguish between roi_data that has an roi for each</span>
+0137 <span class="comment">% frame or if an roi is for all frames.</span>
+0138 
+0139 <span class="keyword">if</span> ndims(roi_data) == 2
+0140     <span class="comment">% We have a single roi for all frames, call the all function.</span>
+0141     data = <a href="#_sub7" class="code" title="subfunction data = mean_roi_xyrra_all(ccd_movie, roi_data, im_x, im_y)">mean_roi_xyrra_all</a>(ccd_movie, roi_data, im_x, im_y);
+0142 <span class="keyword">else</span>
+0143     <span class="comment">% There is an roi for each frame, call the each function.</span>
+0144     
+0145     <span class="comment">% assert that the number of frames is equal in the movie and rois.</span>
+0146     assert(size(ccd_movie, 3) == size(roi_data, 3));
+0147     data = <a href="#_sub6" class="code" title="subfunction data = mean_roi_xyrra_each(ccd_movie, roi_data, im_x, im_y)">mean_roi_xyrra_each</a>(ccd_movie, roi_data, im_x, im_y); 
+0148 <span class="keyword">end</span>
+0149 <span class="keyword">end</span>
+0150 
+0151 <a name="_sub6" href="#_subfunctions" class="code">function data = mean_roi_xyrra_each(ccd_movie, roi_data, im_x, im_y)</a>
+0152     <span class="comment">% Returns the roi data given the form is xyrra and there is an roi for</span>
+0153     <span class="comment">% each video frame.</span>
+0154     nframes = size(ccd_movie, 3);
+0155     data = zeros(nframes, size(roi_data, 1));
+0156 
+0157     <span class="keyword">for</span> j = 1:size(roi_data, 1)
+0158         ovals = reshape(roi_data(j, :, :), 5, [])';
+0159         [d, box] = <a href="xyrra_image.html" class="code" title="function [xyrra_pixels, box] = xyrra_image(xyrra, im_x, im_y)">xyrra_image</a>(ovals, im_x, im_y);
+0160         
+0161         xvals = im_x &gt;= box(1) &amp; im_x &lt;= box(2);
+0162         yvals = im_y &gt;= box(3) &amp; im_y &lt;= box(4);
+0163         
+0164         square_movie = ccd_movie(yvals, xvals, :);
+0165         
+0166         square_movie(~d) = nan;
+0167         data(:, j) = nanmean(nanmean(square_movie, 1), 2);
+0168     <span class="keyword">end</span>
+0169 <span class="keyword">end</span>
+0170 
+0171 <a name="_sub7" href="#_subfunctions" class="code">function data = mean_roi_xyrra_all(ccd_movie, roi_data, im_x, im_y)</a>
+0172     <span class="comment">% Returns the roi data given the form is xyrra and there is an roi for</span>
+0173     <span class="comment">% all frames.</span>
+0174     nframes = size(ccd_movie, 3);
+0175     data = zeros(nframes, size(roi_data, 1));
+0176     
+0177     <span class="keyword">for</span> j = 1:size(roi_data, 1)
+0178         [d, box] = <a href="xyrra_image.html" class="code" title="function [xyrra_pixels, box] = xyrra_image(xyrra, im_x, im_y)">xyrra_image</a>(roi_data(j, :), im_x, im_y);
+0179         
+0180         d_all = repmat(d, [1, 1, nframes]);
+0181         
+0182         xvals = im_x &gt;= box(1) &amp; im_x &lt;= box(2);
+0183         yvals = im_y &gt;= box(3) &amp; im_y &lt;= box(4);
+0184         
+0185         square_movie = ccd_movie(yvals, xvals, :);
+0186                 
+0187         data(:, j) = nanmean(reshape(square_movie(d_all), [], nframes));
+0188     <span class="keyword">end</span>
+0189 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of tifread</title>
+  <meta name="keywords" content="tifread">
+  <meta name="description" content="image = tifread(filename): reads a tif image stack from a file.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; tifread.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>tifread
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>image = tifread(filename): reads a tif image stack from a file.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function image = tifread(filename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> image = tifread(filename): reads a tif image stack from a file.
+
+ @param: filename string of the filename
+
+ @file: tifread.m
+ @author: Paxon Frady
+ @created: 1/31/2014</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ImageComponentParser.html" class="code" title="classdef ImageComponentParser < hgsetget">ImageComponentParser</a>	class ImageComponentParser: gui to analyze the component ...</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="tifread.m">tifread.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function image = tifread(filename)</a>
+0002 <span class="comment">% image = tifread(filename): reads a tif image stack from a file.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% @param: filename string of the filename</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% @file: tifread.m</span>
+0007 <span class="comment">% @author: Paxon Frady</span>
+0008 <span class="comment">% @created: 1/31/2014</span>
+0009 
+0010 info = imfinfo(filename);
+0011 image = zeros(info(1).Height, info(1).Width, length(info));
+0012 <span class="keyword">for</span> i = 1:length(info)
+0013     image(:,:,i) = imread(filename,<span class="string">'index'</span>,i, <span class="string">'Info'</span>, info);
+0014 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

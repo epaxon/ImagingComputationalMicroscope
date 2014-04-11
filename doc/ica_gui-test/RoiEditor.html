@@ -1,0 +1,1739 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RoiEditor</title>
+  <meta name="keywords" content="RoiEditor">
+  <meta name="description" content="class RoiEditor: interactive gui to edit rois for image processing">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; RoiEditor.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>RoiEditor
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>class RoiEditor: interactive gui to edit rois for image processing</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>classdef RoiEditor < hgsetget </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> class RoiEditor: interactive gui to edit rois for image processing
+ data.
+
+ @file: RoiEditor.m
+ @brief: interactive gui to edit rois for image processing
+ @author: Paxon Frady
+ @created: 9/27/2011</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="AxesEventNotifier.html" class="code" title="classdef AxesEventNotifier < handle">AxesEventNotifier</a>	class AxesEventNotifier: sends out notifications during axes events.</li><li><a href="DataEvent.html" class="code" title="classdef DataEvent < event.EventData">DataEvent</a>	DataEvent: standard class for even data that has a struct called</li><li><a href="FigureEventNotifier.html" class="code" title="classdef FigureEventNotifier < handle">FigureEventNotifier</a>	class FigureEventNotifier: sends out event notifications during</li><li><a href="VDoubleScroll.html" class="code" title="classdef VDoubleScroll < hgsetget">VDoubleScroll</a>	class VDoubleScroll: gui object that makes a vertical double scroll bar.</li><li><a href="oval2xy.html" class="code" title="function [x, y] = oval2xy(dims, detail, inscribed)">oval2xy</a>	Takes dims a Nx4 (Nx5) param array of [cx, cy, vx, vy]</li><li><a href="plot_oval.html" class="code" title="function h = plot_oval(dims, varargin)">plot_oval</a>	plot_oval: plots ovals from center and variance.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ImageComponentParser.html" class="code" title="classdef ImageComponentParser < hgsetget">ImageComponentParser</a>	class ImageComponentParser: gui to analyze the component ...</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function self = RoiEditor(parent, im_data)</a></li><li><a href="#_sub2" class="code">function self = init_state(self)</a></li><li><a href="#_sub3" class="code">function self = init_gui(self, parent)</a></li><li><a href="#_sub4" class="code">function self = uiextras_layout(self)</a></li><li><a href="#_sub5" class="code">function window_key_press_cb(self, source_h, eventdata)</a></li><li><a href="#_sub6" class="code">function image_button_down_cb(self, source_h, eventdata)</a></li><li><a href="#_sub7" class="code">function frame_slider_cb(self, source_h, eventdata)</a></li><li><a href="#_sub8" class="code">function level_scroll_cb(self, source_h, eventdata)</a></li><li><a href="#_sub9" class="code">function frame_edit_cb(self, source_h, eventdata)</a></li><li><a href="#_sub10" class="code">function blob_mode_checkbox_cb(self, source_h, eventdata)</a></li><li><a href="#_sub11" class="code">function move_mode_push_cb(self, source_h, eventdata)</a></li><li><a href="#_sub12" class="code">function rotation_marker_cb(self, source_h, eventdata)</a></li><li><a href="#_sub13" class="code">function xresize_marker_cb(self, source_h, eventdata)</a></li><li><a href="#_sub14" class="code">function yresize_marker_cb(self, source_h, eventdata)</a></li><li><a href="#_sub15" class="code">function link_new_rois_cb(self, source_h, eventdata)</a></li><li><a href="#_sub16" class="code">function link_selection_changed_cb(self, source_h, eventdata)</a></li><li><a href="#_sub17" class="code">function link_frame_changed_cb(self, source_h, eventdata)</a></li><li><a href="#_sub18" class="code">function link_deleted_rois_cb(self, source_h, eventdata)</a></li><li><a href="#_sub19" class="code">function play_toggle_cb(self, source_h, eventdata)</a></li><li><a href="#_sub20" class="code">function play_timer_cb(self, source_h, eventdata)</a></li><li><a href="#_sub21" class="code">function update(self)</a></li><li><a href="#_sub22" class="code">function set_selected_rois(self, val)</a></li><li><a href="#_sub23" class="code">function val = set_current_frame(self, val, trigEvent)</a></li><li><a href="#_sub24" class="code">function roi_idxs = rois_at_pos(self, xy)</a></li><li><a href="#_sub25" class="code">function toggle_selected_rois(self, roi_idxs)</a></li><li><a href="#_sub26" class="code">function add_rois(self, rois, trigEvent)</a></li><li><a href="#_sub27" class="code">function set_rois(self, rois, trigEvent)</a></li><li><a href="#_sub28" class="code">function shift_rois(self, roi_idxs, delta, frames, trigEvent)</a></li><li><a href="#_sub29" class="code">function move_rois(self, roi_idxs, locs, frames, trigEvent)</a></li><li><a href="#_sub30" class="code">function delete_rois(self, roi_idxs, trigEvent)</a></li><li><a href="#_sub31" class="code">function resize_rois(self, roi_idxs, new_rr, trigEvent)</a></li><li><a href="#_sub32" class="code">function rotate_rois(self, roi_idxs, angle)</a></li><li><a href="#_sub33" class="code">function cycle_move_mode(self)</a></li><li><a href="#_sub34" class="code">function toggle_show_inactive_rois(self)</a></li><li><a href="#_sub35" class="code">function cycle_rois(self)</a></li><li><a href="#_sub36" class="code">function link_roi_editors(self, roi_editor)</a></li><li><a href="#_sub37" class="code">function disable_roi_editing(self)</a></li><li><a href="#_sub38" class="code">function enable_roi_editing(self)</a></li><li><a href="#_sub39" class="code">function set_im_data(self, im, trigEvent, imx, imy)</a></li><li><a href="#_sub40" class="code">function set.Parent(self, val)</a></li><li><a href="#_sub41" class="code">function set_levels(self, levels, range, trigEvent)</a></li><li><a href="#_sub42" class="code">function levels = get_levels(self)</a></li><li><a href="#_sub43" class="code">function play_settings(self, play_rate, frame_step)</a></li><li><a href="#_sub44" class="code">function frame = get_frame(self, frame_num)</a></li><li><a href="#_sub45" class="code">function nframe = get_nframe(self, frame_num)</a></li><li><a href="#_sub46" class="code">function nframes = get_num_frames(self)</a></li><li><a href="#_sub47" class="code">function nrois = get_num_rois(self)</a></li><li><a href="#_sub48" class="code">function update_frame_slider(self)</a></li><li><a href="#_sub49" class="code">function update_move_mode_push(self)</a></li><li><a href="#_sub50" class="code">function animate_roi_move(self, xy, roi_idxs)</a></li><li><a href="#_sub51" class="code">function handle_click_in_roi(self, roi_idxs)</a></li><li><a href="#_sub52" class="code">function make_roi_move(self, delta)</a></li><li><a href="#_sub53" class="code">function animate_roi_creation(self, xy)</a></li><li><a href="#_sub54" class="code">function animate_roi_rotation(self, xy)</a></li><li><a href="#_sub55" class="code">function animate_roi_xresize(self, xy)</a></li><li><a href="#_sub56" class="code">function animate_roi_yresize(self, xy)</a></li><li><a href="#_sub57" class="code">function set_edit_marker_positions(self, roi)</a></li></ul>
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="RoiEditor.m">RoiEditor.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 classdef <a href="#_sub1" class="code" title="subfunction self = RoiEditor(parent, im_data)">RoiEditor</a> &lt; hgsetget
+0002     <span class="comment">% class RoiEditor: interactive gui to edit rois for image processing</span>
+0003     <span class="comment">% data.</span>
+0004     <span class="comment">%</span>
+0005     <span class="comment">% @file: RoiEditor.m</span>
+0006     <span class="comment">% @brief: interactive gui to edit rois for image processing</span>
+0007     <span class="comment">% @author: Paxon Frady</span>
+0008     <span class="comment">% @created: 9/27/2011</span>
+0009     
+0010     properties
+0011         <span class="comment">% gui properties</span>
+0012         h; <span class="comment">% graphic object handles.</span>
+0013         gui; <span class="comment">% settings for the gui.</span>
+0014         
+0015         <span class="comment">% hgsetget properties</span>
+0016         Position; <span class="comment">% The size and position of the object</span>
+0017         Parent; <span class="comment">% The parent of the object</span>
+0018         
+0019         <span class="comment">% object properties</span>
+0020         im_data; <span class="comment">% The image data.</span>
+0021         im_x; <span class="comment">% The x image values.</span>
+0022         im_y; <span class="comment">% The y image values.</span>
+0023         rois; <span class="comment">% The roi data.</span>
+0024         selected_rois; <span class="comment">% The currently selected rois.</span>
+0025         current_frame; <span class="comment">% The currently selected frame.</span>
+0026         is_editing_enabled; <span class="comment">% Flag for enabling/disabling roi editing.</span>
+0027         color_rois; <span class="comment">% Flag for enabling/disabling roi coloring. Disable if you want an outside function to set the colors.</span>
+0028         
+0029         roi_mode; <span class="comment">% xyrra rois or blob rois.</span>
+0030         move_mode; <span class="comment">% move all frames, all frames after current, or current frame only.</span>
+0031         show_inactive_rois; <span class="comment">% whether or not to show the inactive rois.</span>
+0032     <span class="keyword">end</span> <span class="comment">%properties</span>
+0033        
+0034     properties (Constant)
+0035         ShiftAfter = 1;
+0036         ShiftAll = 2;        
+0037         Each = 3;
+0038         MoveAfter = 4;
+0039         MoveAll = 5;
+0040     <span class="keyword">end</span>
+0041     
+0042     events
+0043         NewRois; <span class="comment">% Triggered when new rois are created.</span>
+0044         DeletedRois; <span class="comment">% Triggered when rois are deleted.</span>
+0045         AlteredRois; <span class="comment">% Triggered when rois are altered.</span>
+0046         SelectionChanged; <span class="comment">% Triggered when selected rois change.</span>
+0047         FrameChanged; <span class="comment">% Triggered when the current frame is changed.</span>
+0048         LevelsChanged;
+0049     <span class="keyword">end</span> <span class="comment">%events</span>
+0050     
+0051     methods
+0052         <span class="comment">%%%%%%%%%% Initialization %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0053         <a name="_sub0" href="#_subfunctions" class="code">function self = RoiEditor(parent, im_data)</a>
+0054             <span class="comment">% constructor: creates a new RoiEditor object.</span>
+0055             <span class="comment">%</span>
+0056             <span class="comment">% @param: parent the parent handle of this object. If no parent</span>
+0057             <span class="comment">% is given, a new figure will be created and used as the</span>
+0058             <span class="comment">% parent.</span>
+0059             <span class="comment">% @param: im_data an MxNxt or MxNx3xt matrix of image data.</span>
+0060             <span class="comment">% @return: self handle to the RoiEditor object.</span>
+0061             
+0062             <span class="keyword">if</span> nargin &lt; 1
+0063                 parent = [];
+0064             <span class="keyword">end</span>
+0065             <span class="keyword">if</span> nargin &lt; 2
+0066                 im_data = rand(128, 128, 10);
+0067             <span class="keyword">end</span>
+0068             
+0069             self.im_data = im_data;
+0070             
+0071             self = self.init_state();
+0072             self = self.init_gui(parent);
+0073         <span class="keyword">end</span>
+0074         
+0075         <a name="_sub1" href="#_subfunctions" class="code">function self = init_state(self)</a>
+0076             <span class="comment">% init_state: initializes the state variables of the gui.</span>
+0077             
+0078             self.gui.inited = 0;
+0079             
+0080             self.selected_rois = [];
+0081             self.current_frame = 1;
+0082             self.is_editing_enabled = true;
+0083             self.color_rois = true;
+0084             
+0085             self.rois.xyrra = [];
+0086             self.rois.blob = [];
+0087             
+0088             self.Position = [0 0 512 547];
+0089             self.gui.SLIDER_H = 30;
+0090             self.gui.MARGIN = 5;
+0091             self.gui.BUTTON_W = 60;
+0092             self.gui.BUTTON_H = 40;
+0093             self.gui.SCROLL_W = 20;
+0094             
+0095             self.gui.play_button_im = imread(<span class="string">'Resources/play_button.png'</span>);
+0096             self.gui.pause_button_im = imread(<span class="string">'Resources/pause_button.png'</span>);
+0097             
+0098             self.gui.play_rate = 0.01;
+0099             self.gui.frame_step = 1;
+0100             self.gui.play_timer = timer(<span class="string">'TimerFcn'</span>, @self.play_timer_cb, <span class="keyword">...</span>
+0101                 <span class="string">'ExecutionMode'</span>, <span class="string">'fixedRate'</span>, <span class="string">'Period'</span>, self.gui.play_rate);
+0102             
+0103             self.im_x = 1:size(self.im_data, 2);
+0104             self.im_y = 1:size(self.im_data, 1);
+0105             
+0106             self.move_mode = RoiEditor.MoveAll; <span class="comment">% all, after, current</span>
+0107             self.show_inactive_rois = 1;
+0108         <span class="keyword">end</span>
+0109         
+0110         <a name="_sub2" href="#_subfunctions" class="code">function self = init_gui(self, parent)</a>
+0111             <span class="comment">% init_gui: initializes the gui objects.</span>
+0112             <span class="comment">%</span>
+0113             <span class="comment">% @param: parent the parent handle of this object. Default is</span>
+0114             <span class="comment">% to create a new figure. Use [] for default.</span>
+0115             
+0116             <span class="keyword">if</span> nargin &lt; 2 || isempty(parent)
+0117                 <span class="comment">% No parent given, then make a new figure as the parent.</span>
+0118                 parent = gcf;
+0119                 set(parent, <span class="string">'Position'</span>, [100, 100, self.Position(3), self.Position(4)]);
+0120             <span class="keyword">end</span>
+0121             
+0122             self.h.Parent = parent;
+0123             
+0124             <span class="comment">% We must use a figure event notifier, which is attached to the</span>
+0125             <span class="comment">% top-most figure. Go up until we get the figure.</span>
+0126             self.h.fh = self.h.Parent;
+0127             <span class="keyword">while</span> ~strcmp(get(self.h.fh, <span class="string">'Type'</span>), <span class="string">'figure'</span>)
+0128                 <span class="comment">% Then the fh object is not a figure, so go up.</span>
+0129                 self.h.fh = get(self.h.fh, <span class="string">'Parent'</span>);
+0130             <span class="keyword">end</span>
+0131             
+0132             <span class="comment">% Now fh is the parent figure. Set its event notifier.</span>
+0133             self.gui.fen = <a href="FigureEventNotifier.html" class="code" title="classdef FigureEventNotifier < handle">FigureEventNotifier</a>(self.h.fh);
+0134             addlistener(self.gui.fen, <span class="string">'WindowKeyPress'</span>, @self.window_key_press_cb);
+0135             
+0136             <span class="comment">% Create the main panel.</span>
+0137             <span class="comment">%self.h.panel = uipanel('Parent', self.h.Parent, 'Units', 'pixels');</span>
+0138             <span class="comment">%set(self.h.panel, 'BorderType', 'none');</span>
+0139             self.h.panel = uiextras.BoxPanel(<span class="string">'Parent'</span>, self.h.Parent, <span class="string">'Title'</span>, <span class="string">'ROI Editor'</span>);
+0140             
+0141             <span class="comment">% Image</span>
+0142             self.h.im_axes = axes(<span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="string">'Position'</span>, [0 0 1 1]);
+0143             set(self.h.im_axes, <span class="string">'XTick'</span>, [], <span class="string">'YTick'</span>, [], <span class="string">'NextPlot'</span>, <span class="string">'add'</span>, <span class="string">'Box'</span>, <span class="string">'off'</span>);       
+0144             self.gui.im_ax_aen = <a href="AxesEventNotifier.html" class="code" title="classdef AxesEventNotifier < handle">AxesEventNotifier</a>(self.h.im_axes);
+0145             addlistener(self.gui.im_ax_aen, <span class="string">'ButtonDown'</span>, @self.image_button_down_cb);
+0146             <span class="comment">%set(self.h.im_axes, 'ButtonDownFcn', @self.image_button_down_cb);</span>
+0147             self.h.im = imagesc(self.get_frame(1), <span class="string">'Parent'</span>, self.h.im_axes);
+0148             set(self.h.im, <span class="string">'HitTest'</span>, <span class="string">'off'</span>); <span class="comment">% Turns off mouse interaction with the image.</span>
+0149             colormap(self.h.im_axes, <span class="string">'gray'</span>);
+0150             axis(self.h.im_axes, <span class="string">'tight'</span>);
+0151             
+0152             <span class="comment">% handle for roi lines.</span>
+0153             self.h.rois = [];
+0154             
+0155             <span class="comment">% Frame slider.</span>
+0156             self.h.frame_slider = uicontrol(<span class="string">'Style'</span>, <span class="string">'slider'</span>);
+0157             set(self.h.frame_slider, <span class="string">'Callback'</span>, @self.frame_slider_cb);
+0158             set(self.h.frame_slider, <span class="string">'Value'</span>, 1);
+0159             self.update_frame_slider();
+0160             
+0161             self.h.level_scroll = <a href="VDoubleScroll.html" class="code" title="classdef VDoubleScroll < hgsetget">VDoubleScroll</a>();
+0162             self.h.level_scroll2 = <a href="VDoubleScroll.html" class="code" title="classdef VDoubleScroll < hgsetget">VDoubleScroll</a>();
+0163             self.h.level_scroll3 = <a href="VDoubleScroll.html" class="code" title="classdef VDoubleScroll < hgsetget">VDoubleScroll</a>();
+0164             set(self.h.level_scroll, <span class="string">'Color'</span>, <span class="string">'r'</span>);
+0165             set(self.h.level_scroll2, <span class="string">'Color'</span>, <span class="string">'g'</span>);
+0166             set(self.h.level_scroll3, <span class="string">'Color'</span>, <span class="string">'b'</span>);
+0167             addlistener(self.h.level_scroll, <span class="string">'SelectionChanged'</span>, @self.level_scroll_cb);
+0168             addlistener(self.h.level_scroll2, <span class="string">'SelectionChanged'</span>, @self.level_scroll_cb);
+0169             addlistener(self.h.level_scroll3, <span class="string">'SelectionChanged'</span>, @self.level_scroll_cb);
+0170             
+0171             <span class="comment">% Play/pause button</span>
+0172             self.h.play_toggle = uicontrol(<span class="string">'Style'</span>, <span class="string">'togglebutton'</span>, <span class="string">'Callback'</span>, @self.play_toggle_cb, <span class="keyword">...</span>
+0173                 <span class="string">'CData'</span>, self.gui.play_button_im, <span class="string">'BackgroundColor'</span>, <span class="string">'w'</span>);
+0174             
+0175             <span class="comment">% Frame display</span>
+0176             self.h.frame_edit = uicontrol(<span class="string">'Style'</span>, <span class="string">'edit'</span>, <span class="string">'Callback'</span>, @self.frame_edit_cb);
+0177             set(self.h.frame_edit, <span class="string">'String'</span>, <span class="string">'none'</span>);
+0178             
+0179             <span class="comment">% Blob mode check box</span>
+0180             <span class="comment">%self.h.blob_mode_checkbox = uicontrol('Style', 'checkbox');</span>
+0181             <span class="comment">%set(self.h.blob_mode_checkbox, 'Callback', @self.blob_mode_checkbox_cb);</span>
+0182             <span class="comment">%set(self.h.blob_mode_checkbox, 'String', 'Blob Roi Mode');</span>
+0183             <span class="comment">%set(self.h.blob_mode_checkbox, 'Value', 0);</span>
+0184             
+0185             <span class="comment">% Move mode Push button</span>
+0186             self.h.move_mode_push = uicontrol(<span class="string">'Style'</span>, <span class="string">'pushbutton'</span>);
+0187             set(self.h.move_mode_push, <span class="string">'Callback'</span>, @self.move_mode_push_cb);
+0188             set(self.h.move_mode_push, <span class="string">'String'</span>, <span class="string">'ShiftAfter'</span>);
+0189             
+0190             <span class="comment">% Markers for rotation and resize.</span>
+0191             self.h.rotation_marker = plot(self.h.im_axes, 0, 0, <span class="string">'s'</span>, <span class="string">'Visible'</span>, <span class="string">'off'</span>, <span class="keyword">...</span>
+0192                 <span class="string">'MarkerFaceColor'</span>, <span class="string">'k'</span>, <span class="string">'MarkerEdgeColor'</span>, <span class="string">'k'</span>, <span class="string">'MarkerSize'</span>, 10, <span class="keyword">...</span>
+0193                 <span class="string">'ButtonDownFcn'</span>, @self.rotation_marker_cb); 
+0194             self.h.xresize_marker = plot(self.h.im_axes, 0, 0, <span class="string">'s'</span>, <span class="string">'Visible'</span>, <span class="string">'off'</span>, <span class="keyword">...</span>
+0195                 <span class="string">'MarkerFaceColor'</span>, <span class="string">'k'</span>, <span class="string">'MarkerEdgeColor'</span>, <span class="string">'k'</span>, <span class="string">'MarkerSize'</span>, 10, <span class="keyword">...</span>
+0196                 <span class="string">'ButtonDownFcn'</span>, @self.xresize_marker_cb);
+0197             self.h.yresize_marker = plot(self.h.im_axes, 0, 0, <span class="string">'s'</span>, <span class="string">'Visible'</span>, <span class="string">'off'</span>, <span class="keyword">...</span>
+0198                 <span class="string">'MarkerFaceColor'</span>, <span class="string">'k'</span>, <span class="string">'MarkerEdgeColor'</span>, <span class="string">'k'</span>, <span class="string">'MarkerSize'</span>, 10, <span class="keyword">...</span>
+0199                 <span class="string">'ButtonDownFcn'</span>, @self.yresize_marker_cb);
+0200             
+0201             self = self.uiextras_layout();
+0202             
+0203             self.gui.inited = 1;
+0204             
+0205             self.update();
+0206         <span class="keyword">end</span>
+0207         
+0208         <a name="_sub3" href="#_subfunctions" class="code">function self = uiextras_layout(self)</a>
+0209             <span class="comment">% self = uiextras_layout(self): Sets the layout of the gui components</span>
+0210             
+0211             self.h.main_vbox = uiextras.VBoxFlex();
+0212             
+0213             self.h.control_hbox = uiextras.HBox();
+0214             self.h.axes_level_hbox = uiextras.HBoxFlex();
+0215             
+0216             <span class="comment">% Top-level hierarchy</span>
+0217             set(self.h.main_vbox, <span class="string">'Parent'</span>, self.h.panel);
+0218             set(self.h.axes_level_hbox, <span class="string">'Parent'</span>, self.h.main_vbox);
+0219             set(self.h.control_hbox, <span class="string">'Parent'</span>, self.h.main_vbox);
+0220             
+0221             <span class="comment">% axes level</span>
+0222             set(self.h.im_axes, <span class="string">'Parent'</span>, self.h.axes_level_hbox.double());
+0223             set(self.h.level_scroll, <span class="string">'Parent'</span>, self.h.axes_level_hbox.double());
+0224             set(self.h.level_scroll2, <span class="string">'Parent'</span>, self.h.axes_level_hbox.double());
+0225             set(self.h.level_scroll3, <span class="string">'Parent'</span>, self.h.axes_level_hbox.double());
+0226             
+0227             <span class="comment">% Control</span>
+0228             set(self.h.play_toggle, <span class="string">'Parent'</span>, self.h.control_hbox.double());
+0229             set(self.h.frame_slider, <span class="string">'Parent'</span>, self.h.control_hbox.double());
+0230             set(self.h.frame_edit, <span class="string">'Parent'</span>, self.h.control_hbox.double());
+0231             set(self.h.move_mode_push, <span class="string">'Parent'</span>, self.h.control_hbox.double());
+0232             
+0233             set(self.h.control_hbox, <span class="string">'Sizes'</span>, [self.gui.BUTTON_W, -1, self.gui.BUTTON_W, self.gui.BUTTON_W]);
+0234             set(self.h.axes_level_hbox, <span class="string">'Sizes'</span>, [-1, self.gui.SCROLL_W, self.gui.SCROLL_W, self.gui.SCROLL_W]);
+0235             set(self.h.main_vbox, <span class="string">'Sizes'</span>, [-1, self.gui.BUTTON_H]);
+0236         <span class="keyword">end</span>
+0237         
+0238         <span class="comment">%%%%%%%%%% Callbacks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0239         <a name="_sub4" href="#_subfunctions" class="code">function window_key_press_cb(self, source_h, eventdata)</a>
+0240             <span class="comment">% Callback for when a keyboard key is pressed.</span>
+0241             
+0242             eventdata = self.gui.fen.last_eventdata;
+0243             
+0244             <span class="keyword">if</span> self.is_editing_enabled
+0245                 <span class="comment">% Only allow these keys to work if editing is enabled.</span>
+0246                 
+0247                 <span class="comment">% Control+[ijkl] moves the rois</span>
+0248                 <span class="keyword">if</span> ~isempty(self.selected_rois) &amp;&amp; self.gui.fen.is_key_down(<span class="string">'control'</span>)
+0249                     <span class="keyword">if</span> strcmp(eventdata.Key, <span class="string">'j'</span>)
+0250                         self.make_roi_move([-1 0]);
+0251                     <span class="keyword">elseif</span> strcmp(eventdata.Key, <span class="string">'l'</span>)
+0252                         self.make_roi_move([1 0]);
+0253                     <span class="keyword">elseif</span> strcmp(eventdata.Key, <span class="string">'i'</span>)
+0254                         self.make_roi_move([0 1]);
+0255                     <span class="keyword">elseif</span> strcmp(eventdata.Key, <span class="string">'k'</span>)
+0256                         self.make_roi_move([0 -1]);
+0257                     <span class="keyword">end</span>
+0258                 <span class="keyword">end</span>
+0259                 
+0260                 <span class="comment">% Control+[delete backspace] deletes the currently selected</span>
+0261                 <span class="comment">% rois.</span>
+0262                 <span class="keyword">if</span> self.gui.fen.is_key_down(<span class="string">'control'</span>) <span class="keyword">...</span>
+0263                         &amp;&amp; (strcmp(eventdata.Key, <span class="string">'delete'</span>) || strcmp(eventdata.Key, <span class="string">'backspace'</span>))
+0264                     self.delete_rois(self.selected_rois);
+0265                 <span class="keyword">end</span>
+0266             <span class="keyword">end</span>
+0267             
+0268             <span class="comment">% Control+a selects all rois.</span>
+0269             <span class="keyword">if</span> self.gui.fen.is_key_down(<span class="string">'control'</span>) &amp;&amp; strcmp(eventdata.Key, <span class="string">'a'</span>)
+0270                 self.set_selected_rois(1:self.get_num_rois());
+0271             <span class="keyword">end</span>
+0272             
+0273             <span class="comment">% h toggles show_inactive_rois</span>
+0274             <span class="keyword">if</span> strcmp(eventdata.Key, <span class="string">'h'</span>)
+0275                 self.toggle_show_inactive_rois();
+0276             <span class="keyword">end</span>
+0277             
+0278             <span class="comment">% space moves to the next roi</span>
+0279             <span class="keyword">if</span> strcmp(eventdata.Key, <span class="string">'space'</span>)
+0280                 self.cycle_rois();
+0281             <span class="keyword">end</span>
+0282             
+0283             <span class="comment">% Enable/disable editing</span>
+0284             <span class="keyword">if</span> self.gui.fen.is_key_down(<span class="string">'control'</span>) &amp;&amp; strcmp(eventdata.Key, <span class="string">'e'</span>)
+0285                 <span class="keyword">if</span> self.is_editing_enabled
+0286                     self.disable_roi_editing();
+0287                 <span class="keyword">else</span>
+0288                     self.enable_roi_editing();
+0289                 <span class="keyword">end</span>
+0290             <span class="keyword">end</span>
+0291         <span class="keyword">end</span>
+0292         
+0293         <a name="_sub5" href="#_subfunctions" class="code">function image_button_down_cb(self, source_h, eventdata)</a>
+0294             
+0295             <span class="comment">% First get the mouse position</span>
+0296             point1 = get(self.h.im_axes, <span class="string">'CurrentPoint'</span>);
+0297             fig_point = get(self.h.fh, <span class="string">'CurrentPoint'</span>);
+0298             
+0299             px1 = point1(1);
+0300             py1 = point1(3);
+0301             
+0302             s = []; <span class="comment">% the selected rois.</span>
+0303             
+0304             s = self.rois_at_pos([px1 py1]);            
+0305             
+0306             <span class="keyword">if</span> self.gui.fen.is_key_down(<span class="string">'shift'</span>)
+0307                 <span class="comment">% If the shift key is down, then we are adding/removing an</span>
+0308                 <span class="comment">% roi to/from the selection list. If click was not in an</span>
+0309                 <span class="comment">% roi and the shift key was down, nothing will happen.</span>
+0310                 self.toggle_selected_rois(s); 
+0311             <span class="keyword">elseif</span> ~isempty(s)
+0312                 <span class="comment">% The mouse is inside an roi, the shift key is not down.</span>
+0313                 <span class="comment">% This means we are moving an roi, or clicking for</span>
+0314                 <span class="comment">% selection.</span>
+0315                 self.animate_roi_move([px1, py1], s);                
+0316             <span class="keyword">else</span>
+0317                 <span class="comment">% The mouse is not inside an roi, so we are dragging to</span>
+0318                 <span class="comment">% create one.</span>
+0319                 self.animate_roi_creation([px1, py1]);
+0320             <span class="keyword">end</span>
+0321             
+0322         <span class="keyword">end</span>
+0323         
+0324         <a name="_sub6" href="#_subfunctions" class="code">function frame_slider_cb(self, source_h, eventdata)</a>
+0325             <span class="comment">% frame_slider_cb: callback of the slider. Gets the slider</span>
+0326             <span class="comment">% value and updates the gui.</span>
+0327 
+0328             cf = round(get(self.h.frame_slider, <span class="string">'Value'</span>));
+0329             
+0330             self.set_current_frame(cf);
+0331         <span class="keyword">end</span>
+0332         
+0333         <a name="_sub7" href="#_subfunctions" class="code">function level_scroll_cb(self, source_h, eventdata)</a>
+0334             <span class="comment">%disp('level_scroll_cb');</span>
+0335             self.update();
+0336             notify(self, <span class="string">'LevelsChanged'</span>);
+0337         <span class="keyword">end</span>
+0338         
+0339         <a name="_sub8" href="#_subfunctions" class="code">function frame_edit_cb(self, source_h, eventdata)</a>
+0340             cf = str2num(get(self.h.frame_edit, <span class="string">'String'</span>));
+0341             
+0342             self.set_current_frame(cf);
+0343         <span class="keyword">end</span>
+0344         
+0345         <a name="_sub9" href="#_subfunctions" class="code">function blob_mode_checkbox_cb(self, source_h, eventdata)</a>
+0346             
+0347         <span class="keyword">end</span>
+0348         
+0349         <a name="_sub10" href="#_subfunctions" class="code">function move_mode_push_cb(self, source_h, eventdata)</a>
+0350             <span class="comment">% move_mode_push_cb: Callback of move_mode_push push button.</span>
+0351             <span class="comment">% This will cycle through move_modes.</span>
+0352             
+0353             self.cycle_move_mode();
+0354         <span class="keyword">end</span>   
+0355         
+0356         <a name="_sub11" href="#_subfunctions" class="code">function rotation_marker_cb(self, source_h, eventdata)</a>
+0357             point1 = get(self.h.im_axes, <span class="string">'CurrentPoint'</span>);
+0358             
+0359             self.animate_roi_rotation([point1(1) point1(3)]);
+0360         <span class="keyword">end</span>
+0361         
+0362         <a name="_sub12" href="#_subfunctions" class="code">function xresize_marker_cb(self, source_h, eventdata)</a>
+0363             point1 = get(self.h.im_axes, <span class="string">'CurrentPoint'</span>);
+0364 
+0365             px1 = point1(1);
+0366             py1 = point1(3);
+0367 
+0368             self.animate_roi_xresize([px1, py1]);            
+0369         <span class="keyword">end</span>
+0370         
+0371         <a name="_sub13" href="#_subfunctions" class="code">function yresize_marker_cb(self, source_h, eventdata)</a>
+0372             point1 = get(self.h.im_axes, <span class="string">'CurrentPoint'</span>);
+0373 
+0374             px1 = point1(1);
+0375             py1 = point1(3);
+0376 
+0377             self.animate_roi_yresize([px1, py1]);     
+0378         <span class="keyword">end</span>
+0379         
+0380         <a name="_sub14" href="#_subfunctions" class="code">function link_new_rois_cb(self, source_h, eventdata)</a>
+0381             <span class="comment">% Add the rois, but don't trigger the event.</span>
+0382             self.add_rois(eventdata.data.rois, false);
+0383         <span class="keyword">end</span>
+0384         
+0385         <a name="_sub15" href="#_subfunctions" class="code">function link_selection_changed_cb(self, source_h, eventdata)</a>
+0386             self.set_selected_rois(source_h.selected_rois);
+0387         <span class="keyword">end</span>
+0388         
+0389         <a name="_sub16" href="#_subfunctions" class="code">function link_frame_changed_cb(self, source_h, eventdata)       </a>
+0390             <span class="comment">% What if the frames are different?</span>
+0391             self.current_frame = source_h.current_frame;
+0392             
+0393             <span class="keyword">if</span> self.current_frame &lt; 1 || self.current_frame &gt; self.get_num_frames()
+0394                 <span class="comment">% Something is wrong.</span>
+0395                 disp(<span class="string">'frame mismatch!'</span>);
+0396             <span class="keyword">end</span>
+0397         <span class="keyword">end</span>
+0398         
+0399         <a name="_sub17" href="#_subfunctions" class="code">function link_deleted_rois_cb(self, source_h, eventdata)</a>
+0400             <span class="comment">% Remove the rois, but don't trigger the event.</span>
+0401             self.delete_rois(eventdata.data.roi_idxs, false);
+0402         <span class="keyword">end</span>
+0403         
+0404         <a name="_sub18" href="#_subfunctions" class="code">function play_toggle_cb(self, source_h, eventdata)</a>
+0405             v = get(self.h.play_toggle, <span class="string">'Value'</span>);
+0406             
+0407             <span class="keyword">if</span> v
+0408                 set(self.h.play_toggle, <span class="string">'CData'</span>, self.gui.pause_button_im)
+0409                 start(self.gui.play_timer);
+0410             <span class="keyword">else</span>
+0411                 set(self.h.play_toggle, <span class="string">'CData'</span>, self.gui.play_button_im)
+0412                 stop(self.gui.play_timer);
+0413             <span class="keyword">end</span>
+0414         <span class="keyword">end</span>
+0415         
+0416         <a name="_sub19" href="#_subfunctions" class="code">function play_timer_cb(self, source_h, eventdata)</a>
+0417             self.set_current_frame(self.current_frame + self.gui.frame_step);
+0418 <span class="comment">%             self.current_frame = self.current_frame + self.gui.frame_step;</span>
+0419 <span class="comment">%             if self.current_frame &gt; size(self.im_data, 3)</span>
+0420 <span class="comment">%                 % Then start back at the beginning</span>
+0421 <span class="comment">%                 self.current_frame = 1;</span>
+0422 <span class="comment">%             end</span>
+0423 <span class="comment">%             self.update();</span>
+0424 <span class="comment">%             notify(self, 'FrameChanged');</span>
+0425         <span class="keyword">end</span>
+0426         
+0427         <span class="comment">%%%%%%%%%% Main Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0428         <a name="_sub20" href="#_subfunctions" class="code">function update(self)</a>
+0429             <span class="comment">% update: main update function. Matches gui with internal</span>
+0430             <span class="comment">% state.</span>
+0431             
+0432             <span class="comment">% @todo: checks on the state. Make sure there aren't errors.</span>
+0433                                     
+0434             <span class="comment">%set(self.h.im, 'CData', repmat(norm_range(double(self.get_frame(self.current_frame))), [1 1 3]));</span>
+0435             frame = self.get_nframe(self.current_frame);
+0436             
+0437             <span class="keyword">if</span> size(frame, 3) == 1
+0438                 frame = repmat(frame, [1 1 3]);
+0439             <span class="keyword">end</span>
+0440             
+0441             set(self.h.im, <span class="string">'CData'</span>, frame, <span class="string">'XData'</span>, [self.im_x(1), self.im_x(end)], <span class="string">'YData'</span>, [self.im_y(1), self.im_y(end)]);               
+0442             
+0443             set(self.h.frame_slider, <span class="string">'Value'</span>, self.current_frame);
+0444             set(self.h.frame_edit, <span class="string">'String'</span>, num2str(self.current_frame));
+0445             
+0446             <span class="keyword">if</span> ~isempty(self.rois.xyrra)
+0447                 [rx, ry] = <a href="oval2xy.html" class="code" title="function [x, y] = oval2xy(dims, detail, inscribed)">oval2xy</a>(self.rois.xyrra(:, :, self.current_frame), [], 0);
+0448                 set(self.h.rois, <span class="string">'Visible'</span>, <span class="string">'off'</span>);
+0449                 set(self.h.rois, <span class="string">'HitTest'</span>, <span class="string">'off'</span>);
+0450                 <span class="keyword">for</span> i = 1:self.get_num_rois()
+0451                     <span class="keyword">if</span> i &gt; length(self.h.rois)
+0452                         <span class="comment">% The handle does not exist so create it.</span>
+0453                         self.h.rois(i, 1) = plot(self.h.im_axes, rx(i,:), ry(i,:), <span class="string">'LineWidth'</span>, 2);
+0454                     <span class="keyword">else</span>
+0455                         set(self.h.rois(i), <span class="string">'XData'</span>, rx(i, :), <span class="string">'YData'</span>, ry(i, :), <span class="string">'LineWidth'</span>, 2);
+0456                     <span class="keyword">end</span>
+0457                 <span class="keyword">end</span>                
+0458                 set(self.h.rois(self.selected_rois), <span class="string">'Visible'</span>, <span class="string">'on'</span>, <span class="string">'LineWidth'</span>, 4);
+0459                 
+0460                 <span class="keyword">if</span> self.show_inactive_rois
+0461                     set(self.h.rois(1:self.get_num_rois()), <span class="string">'Visible'</span>, <span class="string">'on'</span>);
+0462                 <span class="keyword">end</span>
+0463                 
+0464                 <span class="keyword">if</span> self.color_rois
+0465                     set(self.h.rois, <span class="string">'Color'</span>, <span class="string">'b'</span>);
+0466                     set(self.h.rois(self.selected_rois), <span class="string">'Color'</span>, <span class="string">'w'</span>);
+0467                 <span class="keyword">end</span>
+0468             <span class="keyword">else</span>
+0469                 set(self.h.rois, <span class="string">'Visible'</span>, <span class="string">'off'</span>, <span class="string">'HitTest'</span>, <span class="string">'off'</span>);
+0470             <span class="keyword">end</span>
+0471             
+0472             <span class="keyword">if</span> length(self.selected_rois) == 1 &amp;&amp; self.is_editing_enabled
+0473                 <span class="comment">% Make sure the markers are on top of the other lines.</span>
+0474                 ax_children = get(self.h.im_axes, <span class="string">'Children'</span>);
+0475                 ax_markers = ismember(ax_children, [self.h.rotation_marker, self.h.xresize_marker, self.h.yresize_marker]);
+0476                 ax_sorted = [ax_children(ax_markers); ax_children(~ax_markers)];
+0477                 set(self.h.im_axes, <span class="string">'Children'</span>, ax_sorted);
+0478                 
+0479                 <span class="comment">% If there is only a single selected roi, then show the</span>
+0480                 <span class="comment">% rotation and resize markers.</span>
+0481                 set(self.h.rotation_marker, <span class="string">'Visible'</span>, <span class="string">'on'</span>);
+0482                 set(self.h.xresize_marker, <span class="string">'Visible'</span>, <span class="string">'on'</span>);
+0483                 set(self.h.yresize_marker, <span class="string">'Visible'</span>, <span class="string">'on'</span>);
+0484                 
+0485                 self.set_edit_marker_positions(self.rois.xyrra(self.selected_rois, :, self.current_frame));
+0486             <span class="keyword">else</span>
+0487                 set(self.h.rotation_marker, <span class="string">'Visible'</span>, <span class="string">'off'</span>);
+0488                 set(self.h.xresize_marker, <span class="string">'Visible'</span>, <span class="string">'off'</span>);
+0489                 set(self.h.yresize_marker, <span class="string">'Visible'</span>, <span class="string">'off'</span>);
+0490             <span class="keyword">end</span>
+0491             
+0492             self.update_move_mode_push();
+0493             drawnow;
+0494         <span class="keyword">end</span>
+0495         
+0496         <a name="_sub21" href="#_subfunctions" class="code">function set_selected_rois(self, val)</a>
+0497             <span class="keyword">if</span> ~isempty(self.selected_rois) &amp;&amp; isequal(self.selected_rois, val)
+0498                 <span class="comment">% The selected_rois haven't change, so don't do anything</span>
+0499                 disp(<span class="string">'selection is the same'</span>);
+0500                 <span class="keyword">return</span>;
+0501             <span class="keyword">end</span>
+0502             
+0503             self.selected_rois = val;
+0504             
+0505             self.update();
+0506             notify(self, <span class="string">'SelectionChanged'</span>);
+0507         <span class="keyword">end</span>
+0508         
+0509         <a name="_sub22" href="#_subfunctions" class="code">function val = set_current_frame(self, val, trigEvent)</a>
+0510             <span class="comment">% set_current_frame: sets the current frame. If the frame given</span>
+0511             <span class="comment">% is out of range, will set the frame to 1. Returns the frame.</span>
+0512             
+0513             <span class="comment">% Make sure val is an int</span>
+0514             val = round(val);
+0515             
+0516             <span class="keyword">if</span> val &lt; 1 || val &gt; self.get_num_frames()
+0517                 <span class="comment">% Then val is out of range.</span>
+0518                 <span class="comment">%disp('val is out of range setting to 1.');</span>
+0519                 val = 1;
+0520                 self.current_frame = val;
+0521                 <span class="comment">%val = self.current_frame;</span>
+0522                 <span class="keyword">return</span>;
+0523             <span class="keyword">end</span>
+0524             
+0525             <span class="keyword">if</span> ~isempty(self.current_frame) &amp;&amp; all(self.current_frame == val)
+0526                 <span class="comment">% The current frame hasn't changed, so don't do anything</span>
+0527                 <span class="keyword">return</span>;
+0528             <span class="keyword">end</span>
+0529             
+0530             <span class="keyword">if</span> nargin &lt; 3 || isempty(trigEvent)
+0531                 trigEvent = 1;
+0532             <span class="keyword">end</span>
+0533             
+0534             self.current_frame = val;
+0535             <span class="keyword">if</span> trigEvent
+0536                 notify(self, <span class="string">'FrameChanged'</span>);
+0537             <span class="keyword">end</span>
+0538             
+0539             self.update();
+0540         <span class="keyword">end</span>        
+0541         
+0542         <a name="_sub23" href="#_subfunctions" class="code">function roi_idxs = rois_at_pos(self, xy)</a>
+0543             <span class="comment">% rois_at_pos: takes an xy coordinate and detects if the point</span>
+0544             <span class="comment">% falls within any ROIs. Returns all ROIs that overlap the</span>
+0545             <span class="comment">% point.</span>
+0546             <span class="comment">%</span>
+0547             <span class="comment">% @param: xy [x y] the coordinates</span>
+0548             <span class="comment">% @return: roi_idxs the indices of the rois that overlap xy.</span>
+0549             
+0550             <span class="comment">% if self.mode == 'xyrra'</span>
+0551             <span class="keyword">if</span> isempty(self.rois.xyrra)
+0552                 roi_idxs = [];
+0553                 <span class="keyword">return</span>;
+0554             <span class="keyword">end</span>
+0555             
+0556             xc = self.rois.xyrra(:, 1, self.current_frame) - xy(1);
+0557             yc = self.rois.xyrra(:, 2, self.current_frame) - xy(2);
+0558             
+0559             xr = cos(-self.rois.xyrra(:, 5, self.current_frame)) .* xc - sin(-self.rois.xyrra(:, 5, self.current_frame)) .* yc;
+0560             yr = sin(-self.rois.xyrra(:, 5, self.current_frame)) .* xc + cos(-self.rois.xyrra(:, 5, self.current_frame)) .* yc;
+0561             
+0562             <span class="comment">% The 0.5 is to get the radii, rois are the circle that</span>
+0563             <span class="comment">% inscribes the rectangle defined.</span>
+0564             d = 0.5 * ((xr ./ self.rois.xyrra(:, 3, self.current_frame)) .^ 2 + (yr ./ self.rois.xyrra(:, 4, self.current_frame)) .^ 2);
+0565             
+0566             roi_idxs = find(d &lt;= 1);
+0567         <span class="keyword">end</span>
+0568         
+0569         <a name="_sub24" href="#_subfunctions" class="code">function toggle_selected_rois(self, roi_idxs)</a>
+0570             <span class="comment">% toggle_selected_rois: changes the selected state of the rois given.</span>
+0571             <span class="comment">%</span>
+0572             <span class="comment">% @param: roi_idxs the rois to toggle. Default is all rois.</span>
+0573             
+0574             <span class="keyword">if</span> nargin &lt; 2
+0575                 roi_idxs = 1:self.get_num_rois();
+0576             <span class="keyword">end</span>
+0577             
+0578             turn_off = ismember(roi_idxs, self.selected_rois);
+0579             members = ismember(self.selected_rois, roi_idxs);
+0580             
+0581             sr = self.selected_rois;
+0582             sr(members) = [];
+0583             self.set_selected_rois([sr, roi_idxs(~turn_off)]);
+0584             
+0585             self.update();
+0586         <span class="keyword">end</span>
+0587         
+0588         <a name="_sub25" href="#_subfunctions" class="code">function add_rois(self, rois, trigEvent)</a>
+0589             <span class="comment">% add_rois: adds an roi to the set of rois.</span>
+0590             <span class="comment">%</span>
+0591             <span class="comment">% @param: rois an xyrra (Mx5) or blob roi. The roi can have a</span>
+0592             <span class="comment">% single frame, in which case it will be added to all frames.</span>
+0593             <span class="comment">% @param: trigEvent flag indicating whether or not to trigger</span>
+0594             <span class="comment">% the NewRois event. Default is 1.</span>
+0595             disp(<span class="string">'add_rois'</span>);
+0596             <span class="keyword">if</span> ~self.is_editing_enabled
+0597                 <span class="comment">% Editing is disabled, so cannot add rois.</span>
+0598                 disp(<span class="string">'Editing is disabled. Enable before adding new rois.'</span>);
+0599                 <span class="keyword">return</span>;
+0600             <span class="keyword">end</span>
+0601             
+0602             <span class="keyword">if</span> nargin &lt; 3
+0603                 trigEvent = true;
+0604             <span class="keyword">end</span>
+0605             
+0606             <span class="keyword">if</span> size(rois, 1) == size(self.im_data, 1) &amp;&amp; size(rois, 2) == size(self.im_data, 2)
+0607                 <span class="comment">% Then the rois is a blob.</span>
+0608                 <span class="comment">% @todo</span>
+0609             <span class="keyword">else</span>
+0610                 <span class="keyword">if</span> isempty(self.rois.xyrra)
+0611                     <span class="comment">% This is giving me problems. This should fix most</span>
+0612                     <span class="comment">% empty issues.</span>
+0613                     self.rois.xyrra = nan(1,5,self.get_num_frames());
+0614                 <span class="keyword">end</span>
+0615                 
+0616                 <span class="comment">% Then the rois is xyrra</span>
+0617                 nidx = self.get_num_rois() + 1;
+0618                 nidx = nidx:(nidx+size(rois, 1) - 1);
+0619                 
+0620                 <span class="keyword">if</span> ndims(rois) == 3
+0621                     <span class="comment">% Then we have an rois for each frames.</span>
+0622                     self.rois.xyrra(nidx, :, :) = rois;
+0623                 <span class="keyword">else</span>
+0624                     <span class="comment">% Then copy the rois to all frames.</span>
+0625                     self.rois.xyrra(nidx, :, :) = repmat(rois, [1 1 size(self.rois.xyrra, 3)]);
+0626                 <span class="keyword">end</span>
+0627             <span class="keyword">end</span>
+0628             
+0629             <span class="keyword">if</span> trigEvent
+0630                 d = struct(<span class="string">'rois'</span>, rois);
+0631                 notify(self, <span class="string">'NewRois'</span>, <a href="DataEvent.html" class="code" title="classdef DataEvent < event.EventData">DataEvent</a>(d));
+0632             <span class="keyword">end</span>
+0633             <span class="comment">% We must notify the add before changing the selection, in case</span>
+0634             <span class="comment">% there is a linked RoiEditor.</span>
+0635             self.set_selected_rois(nidx);
+0636             
+0637             self.update();
+0638             disp(<span class="string">'end add'</span>);
+0639         <span class="keyword">end</span>
+0640         
+0641         <a name="_sub26" href="#_subfunctions" class="code">function set_rois(self, rois, trigEvent)</a>
+0642             <span class="comment">% set_rois(self, rois, trigEvent): sets all of the rois.</span>
+0643             disp(<span class="string">'RoiEditor.set_rois'</span>);
+0644             <span class="keyword">if</span> nargin &lt; 3
+0645                 trigEvent = true;
+0646             <span class="keyword">end</span>
+0647             
+0648             <span class="keyword">if</span> size(rois, 1) == size(self.im_data, 1) &amp;&amp; size(rois, 2) == size(self.im_data, 2)
+0649                 <span class="comment">% Then the rois is a blob.</span>
+0650                 <span class="comment">% @todo</span>
+0651             <span class="keyword">else</span>     
+0652                 <span class="comment">% Then the rois is xyrra</span>
+0653                 <span class="keyword">if</span> size(rois, 3) == 1
+0654                     <span class="comment">% Then we will copy the rois to all frames.</span>
+0655                     self.rois.xyrra = repmat(rois, [1 1 self.get_num_frames()]);
+0656                 <span class="keyword">elseif</span> size(rois, 3) == self.get_num_frames()
+0657                     <span class="comment">% Then there is an roi for all frames.</span>
+0658                     self.rois.xyrra = rois;
+0659                 <span class="keyword">else</span>
+0660                     error(<span class="string">'rois dimensions mismatch image dimensions'</span>);
+0661                 <span class="keyword">end</span>
+0662             <span class="keyword">end</span>
+0663             
+0664             self.selected_rois = [];
+0665             
+0666             <span class="keyword">if</span> trigEvent
+0667                 d = struct(<span class="string">'roi_idxs'</span>, 1:self.get_num_rois());
+0668                 notify(self, <span class="string">'AlteredRois'</span>, <a href="DataEvent.html" class="code" title="classdef DataEvent < event.EventData">DataEvent</a>(d));
+0669             <span class="keyword">end</span>
+0670 
+0671             self.update();
+0672             disp(<span class="string">'end RoiEditor.set_rois'</span>);
+0673         <span class="keyword">end</span>
+0674         
+0675         <a name="_sub27" href="#_subfunctions" class="code">function shift_rois(self, roi_idxs, delta, frames, trigEvent)</a>
+0676             <span class="comment">% shift_rois: moves the rois specified in roi_idxs the amount</span>
+0677             <span class="comment">% specified in delta. This is a relative amount.</span>
+0678             <span class="comment">%</span>
+0679             <span class="comment">% @param: roi_idxs the index positions of the rois to move.</span>
+0680             <span class="comment">% @param: delta [x y] amount to move the rois.</span>
+0681             <span class="comment">% @param: frames the frames which to move the rois. Default is</span>
+0682             <span class="comment">% all frames.</span>
+0683             <span class="comment">% @param: trigEvent flag indicating whether or not to trigger</span>
+0684             <span class="comment">% AlteredRois event. Default true.</span>
+0685             
+0686             <span class="keyword">if</span> ~self.is_editing_enabled
+0687                 <span class="comment">% Editing is disabled, so cannot shift rois.</span>
+0688                 disp(<span class="string">'Editing is disabled. Enable before moving rois.'</span>);
+0689                 <span class="keyword">return</span>;
+0690             <span class="keyword">end</span>
+0691             
+0692             <span class="keyword">if</span> nargin &lt; 4
+0693                 frames = 1:self.get_num_frames();
+0694             <span class="keyword">end</span>
+0695             
+0696             <span class="keyword">if</span> nargin &lt; 5
+0697                 trigEvent = true;
+0698             <span class="keyword">end</span>
+0699             
+0700             <span class="comment">% if xyrra</span>
+0701             self.rois.xyrra(roi_idxs, 1, frames) = self.rois.xyrra(roi_idxs, 1, frames) + delta(1);
+0702             self.rois.xyrra(roi_idxs, 2, frames) = self.rois.xyrra(roi_idxs, 2, frames) + delta(2);
+0703             
+0704             <span class="keyword">if</span> trigEvent
+0705                 a.roi_idxs = roi_idxs;
+0706                 notify(self, <span class="string">'AlteredRois'</span>, <a href="DataEvent.html" class="code" title="classdef DataEvent < event.EventData">DataEvent</a>(a));
+0707             <span class="keyword">end</span>
+0708             
+0709             self.update();
+0710         <span class="keyword">end</span>
+0711         
+0712         <a name="_sub28" href="#_subfunctions" class="code">function move_rois(self, roi_idxs, locs, frames, trigEvent)</a>
+0713             <span class="comment">% move_rois: moves the rois specified in roi_idxs to the</span>
+0714             <span class="comment">% locations given.</span>
+0715             <span class="comment">%</span>
+0716             <span class="comment">% @param: roi_idxs the index positions of the rois to move.</span>
+0717             <span class="comment">% @param: locs [x y] the locations to put the new rois. This</span>
+0718             <span class="comment">% can be several forms:</span>
+0719             <span class="comment">%   [x y]: all rois are moved to the location given</span>
+0720             <span class="comment">%   N x 2: where N is the length of roi_idxs - each roi will</span>
+0721             <span class="comment">%   be moved to the location specified by row. This will effect</span>
+0722             <span class="comment">%   all frames given by frames.</span>
+0723             <span class="comment">%   N x 2 x M: where M is the length of frames - the rois for</span>
+0724             <span class="comment">%   each roi and each frame will be moved to the corresponding</span>
+0725             <span class="comment">%   location.</span>
+0726             <span class="comment">% @param: frames the frames which to move the rois. Default is</span>
+0727             <span class="comment">% all frames.</span>
+0728             <span class="comment">% @param: trigEvent flag indicating whether or not to trigger</span>
+0729             <span class="comment">% AlteredRois event. Default true.</span>
+0730             
+0731             <span class="keyword">if</span> ~self.is_editing_enabled
+0732                 <span class="comment">% Editing is disabled, so cannot move rois.</span>
+0733                 disp(<span class="string">'Editing is disabled. Enable before moving rois.'</span>);
+0734                 <span class="keyword">return</span>;
+0735             <span class="keyword">end</span>
+0736             
+0737             <span class="keyword">if</span> nargin &lt; 4
+0738                 <span class="comment">% Default for frames is all frames</span>
+0739                 frames = 1:self.get_num_frames();
+0740             <span class="keyword">end</span>
+0741             <span class="keyword">if</span> nargin &lt; 5
+0742                 <span class="comment">% Default for trigEvent is true.</span>
+0743                 trigEvent = true;
+0744             <span class="keyword">end</span>
+0745             
+0746             <span class="comment">% if xyrra</span>
+0747             <span class="keyword">if</span> numel(locs) == 2
+0748                 <span class="comment">% Then we have just x, y coordinates.</span>
+0749                 self.rois.xyrra(roi_idxs, 1, frames) = locs(1);
+0750                 self.rois.xyrra(roi_idxs, 2, frames) = locs(2);
+0751             <span class="keyword">elseif</span> size(locs, 1) == length(roi_idxs)
+0752                 <span class="keyword">if</span> size(locs, 3) == length(frames)
+0753                     <span class="comment">% Then we have locations for every roi for every frame</span>
+0754                     self.rois.xyrra(roi_idxs, 1, frames) = locs(:, 1, :);
+0755                     self.rois.xyrra(roi_idxs, 2, frames) = locs(:, 2, :);
+0756                 <span class="keyword">elseif</span> size(locs, 3) == 1
+0757                     <span class="comment">% Then we have locs for every roi, so change over all</span>
+0758                     <span class="comment">% frames.</span>
+0759                     self.rois.xyrra(roi_idxs, 1, frames) = repmat(locs(:, 1), [1 1 length(frames)]);
+0760                     self.rois.xyrra(roi_idxs, 2, frames) = repmat(locs(:, 2), [1 1 length(frames)]);
+0761                 <span class="keyword">else</span>
+0762                     error(<span class="string">'locs is not shaped correctly'</span>);
+0763                 <span class="keyword">end</span>
+0764             <span class="keyword">else</span>
+0765                 error(<span class="string">'locs is not shaped correctly.'</span>);
+0766             <span class="keyword">end</span>
+0767             
+0768             <span class="keyword">if</span> trigEvent
+0769                 a.roi_idxs = roi_idxs;
+0770                 notify(self, <span class="string">'AlteredRois'</span>, <a href="DataEvent.html" class="code" title="classdef DataEvent < event.EventData">DataEvent</a>(a));
+0771             <span class="keyword">end</span>
+0772             
+0773             self.update();
+0774         <span class="keyword">end</span>
+0775         
+0776         <a name="_sub29" href="#_subfunctions" class="code">function delete_rois(self, roi_idxs, trigEvent)</a>
+0777             <span class="comment">% delte_rois: deletes the rois given.</span>
+0778             <span class="comment">%</span>
+0779             <span class="comment">% @param: roi_idxs the indices of the rois to delete.</span>
+0780             <span class="comment">% @param: trigEvent flag indicating whether or not to trigger</span>
+0781             <span class="comment">% AlteredRois event. Default true.</span>
+0782             disp(<span class="string">'RoiEditor.delete_rois'</span>);
+0783             <span class="keyword">if</span> ~self.is_editing_enabled
+0784                 <span class="comment">% Editing is disabled, so cannot dekete rois.</span>
+0785                 disp(<span class="string">'Editing is disabled. Enable before deleting rois.'</span>);
+0786                 <span class="keyword">return</span>;
+0787             <span class="keyword">end</span>
+0788             
+0789             <span class="keyword">if</span> isempty(roi_idxs)
+0790                 <span class="comment">% Nothing to delete</span>
+0791                 <span class="keyword">return</span>;
+0792             <span class="keyword">end</span>
+0793             
+0794             <span class="keyword">if</span> nargin &lt; 3
+0795                 <span class="comment">% Default for trigEvent is true.</span>
+0796                 trigEvent = true;
+0797             <span class="keyword">end</span>
+0798             
+0799             <span class="comment">% Keep the selected rois selected</span>
+0800             is_selected = false(self.get_num_rois(), 1);
+0801             is_selected(self.selected_rois) = 1;
+0802             is_selected(roi_idxs) = [];
+0803             
+0804             disp(<span class="string">'before delete'</span>);
+0805             <span class="comment">% Delete the rois</span>
+0806             self.rois.xyrra(roi_idxs, :, :) = [];
+0807             <span class="comment">% Delete the roi handles</span>
+0808             delete(self.h.rois(roi_idxs));
+0809             disp(<span class="string">'after delete'</span>);
+0810             self.h.rois(roi_idxs) = [];
+0811             
+0812             <span class="keyword">if</span> trigEvent
+0813                 a.roi_idxs = roi_idxs;
+0814                 notify(self, <span class="string">'DeletedRois'</span>, <a href="DataEvent.html" class="code" title="classdef DataEvent < event.EventData">DataEvent</a>(a));
+0815             <span class="keyword">end</span>
+0816             
+0817             self.set_selected_rois = find(is_selected);
+0818             self.update();
+0819             disp(<span class="string">'end RoiEditor.delete_rois'</span>);
+0820         <span class="keyword">end</span>
+0821         
+0822         <a name="_sub30" href="#_subfunctions" class="code">function resize_rois(self, roi_idxs, new_rr, trigEvent)</a>
+0823             <span class="comment">% resize_rois: resizes the rois to the given size.</span>
+0824             <span class="comment">%</span>
+0825             <span class="comment">% @param: roi_idxs the rois to resize.</span>
+0826             <span class="comment">% @param: new_rr [xr, yr] the new size of the rois.</span>
+0827             <span class="comment">% @param: trigEvent flag indicating whether or not to trigger</span>
+0828             <span class="comment">% AlteredRois event. Default true.</span>
+0829             
+0830             <span class="keyword">if</span> ~self.is_editing_enabled
+0831                 <span class="comment">% Editing is disabled, so cannot resize rois.</span>
+0832                 disp(<span class="string">'Editing is disabled. Enable before resizing rois.'</span>);
+0833                 <span class="keyword">return</span>;
+0834             <span class="keyword">end</span>
+0835             
+0836             <span class="comment">% @todo: input checks</span>
+0837             <span class="keyword">if</span> nargin &lt; 5
+0838                 <span class="comment">% Default for trigEvent is true.</span>
+0839                 trigEvent = true;
+0840             <span class="keyword">end</span>
+0841             
+0842             <span class="keyword">if</span> numel(new_rr, 2) == 2
+0843                 self.rois.xyrra(roi_idxs, 3, :) = abs(new_rr(1));
+0844                 self.rois.xyrra(roi_idxs, 4, :) = abs(new_rr(2));
+0845             <span class="keyword">elseif</span> ndims(new_rr) == 3
+0846                 self.rois.xyrra(roi_idxs, 3, :) = abs(new_rr(:, 1, :));
+0847                 self.rois.xyrra(roi_idxs, 4, :) = abs(new_rr(:, 2, :));
+0848             <span class="keyword">elseif</span> ndims(new_rr) == 2
+0849                 self.rois.xyrra(roi_idxs, 3, :) = repmat(abs(new_rr(:, 1)), [1 1 size(self.rois.xyrra, 3)]);
+0850                 self.rois.xyrra(roi_idxs, 4, :) = repmat(abs(new_rr(:, 2)), [1 1 size(self.rois.xyrra, 3)]);
+0851             <span class="keyword">else</span>
+0852                 error(<span class="string">'new_rr shape not recognized'</span>);
+0853             <span class="keyword">end</span>
+0854             
+0855             <span class="keyword">if</span> trigEvent
+0856                 a.roi_idxs = roi_idxs;
+0857                 notify(self, <span class="string">'AlteredRois'</span>, <a href="DataEvent.html" class="code" title="classdef DataEvent < event.EventData">DataEvent</a>(a));
+0858             <span class="keyword">end</span>
+0859             self.update();
+0860         <span class="keyword">end</span>
+0861         
+0862         <a name="_sub31" href="#_subfunctions" class="code">function rotate_rois(self, roi_idxs, angle)</a>
+0863             <span class="comment">% rotate_rois: rotates the rois by the amount angle in radians.</span>
+0864             <span class="comment">%</span>
+0865             <span class="comment">% @param: roi_idxs the rois to rotate.</span>
+0866             <span class="comment">% @param: angle the amount to rotate the rois.</span>
+0867             <span class="comment">% @param: trigEvent flag indicating whether or not to trigger</span>
+0868             <span class="comment">% AlteredRois event. Default true.</span>
+0869             
+0870             <span class="keyword">if</span> ~self.is_editing_enabled
+0871                 <span class="comment">% Editing is disabled, so cannot rotate rois.</span>
+0872                 disp(<span class="string">'Editing is disabled. Enable before rotating rois.'</span>);
+0873                 <span class="keyword">return</span>;
+0874             <span class="keyword">end</span>
+0875             
+0876             <span class="keyword">if</span> nargin &lt; 5
+0877                 <span class="comment">% Default for trigEvent is true.</span>
+0878                 trigEvent = true;
+0879             <span class="keyword">end</span>
+0880             
+0881             self.rois.xyrra(roi_idxs, 5, :) = self.rois.xyrra(roi_idxs, 5, :) + angle;
+0882             
+0883             <span class="keyword">if</span> trigEvent
+0884                 a.roi_idxs = roi_idxs;
+0885                 notify(self, <span class="string">'AlteredRois'</span>, <a href="DataEvent.html" class="code" title="classdef DataEvent < event.EventData">DataEvent</a>(a));
+0886             <span class="keyword">end</span>
+0887             self.update();
+0888         <span class="keyword">end</span>
+0889         
+0890         <a name="_sub32" href="#_subfunctions" class="code">function cycle_move_mode(self)</a>
+0891             <span class="comment">% cycle_move_mode: changes the move_mode to the next mode in</span>
+0892             <span class="comment">% the cycle.</span>
+0893             
+0894             <span class="keyword">if</span> self.move_mode == RoiEditor.ShiftAfter
+0895                 self.move_mode = RoiEditor.ShiftAll;
+0896             <span class="keyword">elseif</span> self.move_mode == RoiEditor.ShiftAll
+0897                 self.move_mode = RoiEditor.Each;
+0898             <span class="keyword">elseif</span> self.move_mode == RoiEditor.Each
+0899                 self.move_mode = RoiEditor.MoveAfter;
+0900             <span class="keyword">elseif</span> self.move_mode == RoiEditor.MoveAfter
+0901                 self.move_mode = RoiEditor.MoveAll;
+0902             <span class="keyword">elseif</span> self.move_mode == RoiEditor.MoveAll;
+0903                 self.move_mode = RoiEditor.ShiftAfter;
+0904             <span class="keyword">end</span>   
+0905             
+0906             self.update();
+0907         <span class="keyword">end</span>
+0908         
+0909         <a name="_sub33" href="#_subfunctions" class="code">function toggle_show_inactive_rois(self)</a>
+0910             <span class="comment">% toggle_show_inactive_rois: flips the state of the</span>
+0911             <span class="comment">% show_inactive_rois flag.</span>
+0912             self.show_inactive_rois = ~self.show_inactive_rois;
+0913             self.update();
+0914         <span class="keyword">end</span>
+0915         
+0916         <a name="_sub34" href="#_subfunctions" class="code">function cycle_rois(self)</a>
+0917             <span class="comment">% cycle_rois: selects the next roi.</span>
+0918             <span class="keyword">if</span> self.get_num_rois() == 0
+0919                 <span class="comment">% Then there are no rois to cycle through.</span>
+0920                 <span class="keyword">return</span>;
+0921             <span class="keyword">end</span>
+0922                 
+0923             <span class="keyword">if</span> isempty(self.selected_rois)
+0924                 s = 1;
+0925             <span class="keyword">else</span>
+0926                 s = max(self.selected_rois);
+0927                 s = s+1;
+0928             <span class="keyword">end</span>
+0929             
+0930             <span class="keyword">if</span> s &gt; self.get_num_rois()
+0931                 s = 1;
+0932             <span class="keyword">end</span>
+0933             
+0934             self.set_selected_rois(s);
+0935             self.update();            
+0936         <span class="keyword">end</span>
+0937         
+0938         <a name="_sub35" href="#_subfunctions" class="code">function link_roi_editors(self, roi_editor)</a>
+0939             <span class="comment">% link_roi_editors: links this roi_editor to another one, so</span>
+0940             <span class="comment">% that rois are created/modified/deleted together. Only the roi</span>
+0941             <span class="comment">% moves are seperate. This is useful for analyzing</span>
+0942             <span class="comment">% ratio-imaging data.</span>
+0943             
+0944             <span class="keyword">if</span> self == roi_editor
+0945                 error(<span class="string">'Cannot link to self'</span>);
+0946             <span class="keyword">end</span>
+0947             
+0948             <span class="keyword">if</span> ~isfield(self.gui, <span class="string">'linked_roi_editors'</span>)
+0949                 self.gui.linked_roi_editors = [];
+0950             <span class="keyword">end</span>
+0951             
+0952             <span class="keyword">if</span> any(ismember(self.gui.linked_roi_editors, roi_editor))
+0953                 <span class="comment">% self is already linked to the other roi_editor.</span>
+0954                 <span class="keyword">return</span>;
+0955             <span class="keyword">end</span>
+0956             
+0957             <span class="comment">% Add the roi_editor to the list of linked roi_editors.</span>
+0958             self.gui.linked_roi_editors = [self.gui.linked_roi_editors roi_editor];
+0959             
+0960             addlistener(roi_editor, <span class="string">'NewRois'</span>, @self.link_new_rois_cb);
+0961             addlistener(roi_editor, <span class="string">'SelectionChanged'</span>, @self.link_selection_changed_cb);
+0962             addlistener(roi_editor, <span class="string">'FrameChanged'</span>, @self.link_frame_changed_cb);
+0963             addlistener(roi_editor, <span class="string">'DeletedRois'</span>, @self.link_deleted_rois_cb);
+0964             
+0965             <span class="comment">% Link the other editor to this one.</span>
+0966             roi_editor.link_roi_editors(self);
+0967         <span class="keyword">end</span>
+0968         
+0969         <a name="_sub36" href="#_subfunctions" class="code">function disable_roi_editing(self)</a>
+0970             <span class="comment">% disable_roi_editing: disables any changes to rois (no</span>
+0971             <span class="comment">% add, delete or alter). Rois can still be selected.</span>
+0972             self.is_editing_enabled = false;
+0973             self.update();
+0974         <span class="keyword">end</span>
+0975         
+0976         <a name="_sub37" href="#_subfunctions" class="code">function enable_roi_editing(self)</a>
+0977             <span class="comment">% enable_roi_editing: enables roi changes.</span>
+0978             self.is_editing_enabled = true;
+0979             self.update();
+0980         <span class="keyword">end</span>
+0981         
+0982         <a name="_sub38" href="#_subfunctions" class="code">function set_im_data(self, im, trigEvent, imx, imy)</a>
+0983             <span class="comment">% set_im_data: sets the image data. This will delete all of the</span>
+0984             <span class="comment">% current rois.</span>
+0985             <span class="comment">%</span>
+0986             <span class="comment">% @param: im the image data.</span>
+0987             
+0988             disp(<span class="string">'RoiEditor.set_im_data'</span>);
+0989             <span class="keyword">if</span> nargin &lt; 3 || isempty(trigEvent)
+0990                 trigEvent = true;
+0991             <span class="keyword">end</span>
+0992             
+0993             <span class="comment">% The defaults for imx, imy are based on size(im)</span>
+0994             <span class="keyword">if</span> nargin &lt; 4
+0995                 imx = [];
+0996             <span class="keyword">end</span>
+0997             <span class="keyword">if</span> nargin &lt; 5
+0998                 imy = [];
+0999             <span class="keyword">end</span>
+1000             
+1001             self.im_data = im;
+1002             
+1003             <span class="keyword">if</span> isempty(imx)
+1004                 self.im_x = 1:size(self.im_data, 2);
+1005             <span class="keyword">else</span>
+1006                 self.im_x = imx;
+1007             <span class="keyword">end</span>
+1008             <span class="keyword">if</span> isempty(imy)
+1009                 self.im_y = 1:size(self.im_data, 1);
+1010             <span class="keyword">else</span>
+1011                 self.im_y = imy;
+1012             <span class="keyword">end</span>
+1013             
+1014             <span class="comment">%self.current_frame = 1;</span>
+1015             
+1016             <span class="keyword">if</span> ndims(self.im_data) == 3
+1017                 <span class="comment">% then set all the level scrolls to the fulll range</span>
+1018                 self.h.level_scroll.Min = double(min(self.im_data(:)));
+1019                 self.h.level_scroll.Max = double(max(self.im_data(:)));
+1020                
+1021                 self.h.level_scroll2.Min = double(min(self.im_data(:)));
+1022                 self.h.level_scroll2.Max = double(max(self.im_data(:)));
+1023                 
+1024                 self.h.level_scroll3.Min = double(min(self.im_data(:)));
+1025                 self.h.level_scroll3.Max = double(max(self.im_data(:)));
+1026                 
+1027             <span class="keyword">else</span>
+1028                 <span class="comment">% Ok if everything is between 0 and 1, then treat this like</span>
+1029                 <span class="comment">% a true RGB image.</span>
+1030                 <span class="keyword">if</span> min(self.im_data(:)) &gt;= 0 &amp;&amp; max(self.im_data(:)) &lt;= 1
+1031                     self.h.level_scroll.Min = 0;
+1032                     self.h.level_scroll.Max = 1;
+1033                     self.h.level_scroll2.Min = 0;
+1034                     self.h.level_scroll2.Max = 1;
+1035                     self.h.level_scroll3.Min = 0;
+1036                     self.h.level_scroll3.Max = 1;
+1037                 <span class="keyword">else</span>
+1038                     <span class="comment">% Then set them each to their channels</span>
+1039                     self.h.level_scroll.Min = double(min(reshape(self.im_data(:,:,1,:), 1, [])));
+1040                     self.h.level_scroll.Max = double(max(reshape(self.im_data(:,:,1,:), 1, [])));
+1041                     self.h.level_scroll2.Min = double(min(reshape(self.im_data(:,:,2,:), 1, [])));
+1042                     self.h.level_scroll2.Max = double(max(reshape(self.im_data(:,:,2,:), 1, [])));
+1043                     self.h.level_scroll3.Min = double(min(reshape(self.im_data(:,:,3,:), 1, [])));
+1044                     self.h.level_scroll3.Max = double(max(reshape(self.im_data(:,:,3,:), 1, [])));
+1045                     <span class="comment">% @todo: alternatively, could set to min/max of all</span>
+1046                     <span class="comment">% channels.</span>
+1047                 <span class="keyword">end</span>
+1048             <span class="keyword">end</span>
+1049             
+1050             self.h.level_scroll.MinStep = 0.01 * (self.h.level_scroll.Max - self.h.level_scroll.Min);
+1051             self.h.level_scroll.set_max_range();
+1052             self.h.level_scroll2.MinStep = 0.01 * (self.h.level_scroll2.Max - self.h.level_scroll2.Min);
+1053             self.h.level_scroll2.set_max_range();
+1054             self.h.level_scroll3.MinStep = 0.01 * (self.h.level_scroll3.Max - self.h.level_scroll3.Min);
+1055             self.h.level_scroll3.set_max_range();
+1056             
+1057             
+1058             <span class="keyword">if</span> self.current_frame &gt; self.get_num_frames()
+1059                 self.current_frame = self.get_num_frames();
+1060             <span class="keyword">end</span>
+1061 
+1062             <span class="comment">% Check to make sure the ROIs are the right size.</span>
+1063             <span class="keyword">if</span> size(self.rois.xyrra, 3) &lt; size(self.im_data, 3)
+1064                 <span class="comment">% Then just copy the rest of the rois.</span>
+1065                 last_rois = self.rois.xyrra(:, :, end);
+1066                 
+1067                 num_extra_frames = size(self.im_data, 3) - size(self.rois.xyrra, 3);
+1068                 
+1069                 self.rois.xyrra(:,:,(end+1):(end+num_extra_frames)) = repmat(last_rois, [1,1,num_extra_frames]);
+1070             <span class="keyword">end</span>
+1071             
+1072             axis(self.h.im_axes, [self.im_x(1), self.im_x(end), self.im_y(1), self.im_y(end)]);
+1073             <span class="comment">%self.delete_rois(1:self.get_num_rois(), trigEvent);</span>
+1074             
+1075             self.update_frame_slider();
+1076             self.update();
+1077             disp(<span class="string">'end RoiEditor.set_im_data'</span>);
+1078         <span class="keyword">end</span>
+1079         
+1080         <a name="_sub39" href="#_subfunctions" class="code">function set.Parent(self, val)</a>
+1081             disp(<span class="string">'Setting RoiEditor Parent'</span>);
+1082             set(self.h.panel, <span class="string">'Parent'</span>, double(val))
+1083         <span class="keyword">end</span>
+1084         
+1085         <a name="_sub40" href="#_subfunctions" class="code">function set_levels(self, levels, range, trigEvent)</a>
+1086             <span class="comment">% set_levels(self, levels): set the color level values.</span>
+1087             <span class="comment">%</span>
+1088             <span class="comment">% @param: levels 2x1 or 2x3 matrix of levels values</span>
+1089             <span class="comment">% @param: range 2x1 or 2x3 matrix of full level range. Default</span>
+1090             <span class="comment">% is min/max of im data.</span>
+1091             
+1092             <span class="keyword">if</span> nargin &lt; 4 || isempty(trigEvent)
+1093                 <span class="comment">% Trigger Event by default</span>
+1094                 trigEvent = true;
+1095             <span class="keyword">end</span>
+1096             
+1097             <span class="keyword">if</span> nargin &lt; 3 || isempty(range)
+1098                 <span class="keyword">if</span> ndims(self.im_data) == 3
+1099                     range(1, 1) = double(min(self.im_data(:)));
+1100                     range(2, 1) = double(max(self.im_data(:)));
+1101                 <span class="keyword">else</span>
+1102                     <span class="comment">% Ok if everything is between 0 and 1, then treat this like</span>
+1103                     <span class="comment">% a true RGB image.</span>
+1104                     <span class="keyword">if</span> min(self.im_data(:)) &gt;= 0 &amp;&amp; max(self.im_data(:)) &lt;= 1
+1105                         range(1, 1) = 0;
+1106                         range(2, 1) = 1;
+1107                         range(1, 2) = 0;
+1108                         range(2, 2) = 1;
+1109                         range(1, 3) = 0;
+1110                         range(2, 3) = 1;
+1111                     <span class="keyword">else</span>
+1112                         <span class="comment">% Then set them each to their channels</span>
+1113                         range(1, 1) = double(min(reshape(self.im_data(:,:,1,:), 1, [])));
+1114                         range(2, 1) = double(max(reshape(self.im_data(:,:,1,:), 1, [])));
+1115                         range(1, 2) = double(min(reshape(self.im_data(:,:,2,:), 1, [])));
+1116                         range(2, 2) = double(max(reshape(self.im_data(:,:,2,:), 1, [])));
+1117                         range(1, 3) = double(min(reshape(self.im_data(:,:,3,:), 1, [])));
+1118                         range(2, 3) = double(max(reshape(self.im_data(:,:,3,:), 1, [])));
+1119                         <span class="comment">% @todo: alternatively, could set to min/max of all</span>
+1120                         <span class="comment">% channels.</span>
+1121                     <span class="keyword">end</span>
+1122                 <span class="keyword">end</span>
+1123             <span class="keyword">end</span>
+1124             
+1125             <span class="keyword">if</span> numel(range) == 2
+1126                 <span class="comment">% Then we will set all 3 ranges to the same</span>
+1127                 range = repmat(range(:), 1, 3);
+1128             <span class="keyword">end</span>
+1129             
+1130             <span class="comment">% This should always be true by this point</span>
+1131             assert(isequal(size(range), [2, 3]));
+1132             
+1133             <span class="comment">% @todo: check to make sure that the im data has nothing beyond</span>
+1134             <span class="comment">% the range</span>
+1135             
+1136             self.h.level_scroll.Min = range(1, 1);
+1137             self.h.level_scroll.Max = range(2, 1);
+1138             
+1139             self.h.level_scroll2.Min = range(1, 2);
+1140             self.h.level_scroll2.Max = range(2, 2);
+1141             
+1142             self.h.level_scroll3.Min = range(1, 3);
+1143             self.h.level_scroll3.Max = range(2, 3);
+1144             
+1145             <span class="keyword">if</span> numel(levels) == 2
+1146                 <span class="comment">% Then again just set all the levels to the same</span>
+1147                 levels = repmat(levels(:), 1, 3);
+1148             <span class="keyword">end</span>
+1149             
+1150             <span class="comment">% THis should also be true now</span>
+1151             assert(isequal(size(levels), [2, 3]));
+1152             
+1153             <span class="comment">% These will all call update...</span>
+1154             self.h.level_scroll.Value = levels(:, 1);
+1155             self.h.level_scroll2.Value = levels(:, 2);
+1156             self.h.level_scroll3.Value = levels(:, 3);
+1157             
+1158             <span class="keyword">if</span> trigEvent
+1159                 notify(self, <span class="string">'LevelsChanged'</span>);
+1160             <span class="keyword">end</span>
+1161         <span class="keyword">end</span>
+1162         
+1163         <a name="_sub41" href="#_subfunctions" class="code">function levels = get_levels(self)</a>
+1164             <span class="comment">% levels = get_levels(self): returns the color level values.</span>
+1165             
+1166             levels = zeros(2,3);
+1167             
+1168             levels(:, 1) = self.h.level_scroll.Value;
+1169             levels(:, 2) = self.h.level_scroll2.Value;
+1170             levels(:, 3) = self.h.level_scroll3.Value;
+1171         <span class="keyword">end</span>
+1172         
+1173         <a name="_sub42" href="#_subfunctions" class="code">function play_settings(self, play_rate, frame_step)</a>
+1174             <span class="comment">% Sets the play timing settings</span>
+1175             
+1176             <span class="keyword">if</span> nargin &lt; 2 || isempty(play_rate)
+1177                 play_rate = 0.01;
+1178             <span class="keyword">end</span>
+1179             
+1180             <span class="keyword">if</span> nargin &lt; 3 || isempty(frame_step)
+1181                 frame_step = 1;
+1182             <span class="keyword">end</span>
+1183             
+1184             self.gui.play_rate = play_rate;
+1185             self.gui.frame_step = frame_step;
+1186             
+1187             set(self.gui.play_timer, <span class="string">'Period'</span>, self.gui.play_rate);
+1188         <span class="keyword">end</span>
+1189         
+1190         <span class="comment">%%%%%%%%%% Utility Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+1191         <a name="_sub43" href="#_subfunctions" class="code">function frame = get_frame(self, frame_num)</a>
+1192             <span class="comment">% get_frame: returns the desired frame.</span>
+1193             <span class="comment">%</span>
+1194             <span class="comment">% @param: frame_num the desired frame number.</span>
+1195             <span class="comment">% @return: frame MxN or MxNx3 image.</span>
+1196             
+1197             <span class="keyword">if</span> frame_num &gt; self.get_num_frames()
+1198                 <span class="comment">% Then we are out of range.</span>
+1199                 frame = zeros(1,1);
+1200                 <span class="keyword">return</span>;
+1201             <span class="keyword">end</span>
+1202             
+1203             <span class="keyword">if</span> ndims(self.im_data) &lt;= 3
+1204                 <span class="comment">% Then we have MxNxt or MxNx1 (if its only 2 dimensional)</span>
+1205                 frame = self.im_data(:,:, frame_num);
+1206             <span class="keyword">else</span>
+1207                 <span class="comment">% Then we have MxNx3xt</span>
+1208                 frame = self.im_data(:,:,:, frame_num);
+1209             <span class="keyword">end</span>
+1210         <span class="keyword">end</span>
+1211         
+1212         <a name="_sub44" href="#_subfunctions" class="code">function nframe = get_nframe(self, frame_num)</a>
+1213             <span class="comment">% get_nframe: returns the globally normalized version of</span>
+1214             <span class="comment">% desired frame.</span>
+1215             <span class="comment">%</span>
+1216             <span class="comment">% @param: frame_num the desired frame number.</span>
+1217             <span class="comment">% @return: nframe MxN or MxNx3 image.</span>
+1218             
+1219             <span class="keyword">if</span> frame_num &gt; self.get_num_frames()
+1220                 <span class="comment">% Then we are out of range.</span>
+1221                 nframe = zeros(1,1);
+1222                 <span class="keyword">return</span>;
+1223             <span class="keyword">end</span>
+1224             
+1225              <span class="keyword">if</span> ndims(self.im_data) &lt;= 3
+1226                 <span class="comment">% Then we have MxNxt or MxNx1 (if its only 2 dimensional)</span>
+1227                 frame = double(self.im_data(:,:, frame_num));
+1228                 
+1229                 <span class="comment">% Ok so now lets get the level_scroll and rescale the frame</span>
+1230                 levels = self.h.level_scroll.Value;
+1231                 frame(frame &lt; levels(1)) = levels(1);
+1232                 frame(frame &gt; levels(2)) = levels(2);
+1233 
+1234                 nframe = (frame - levels(1))./(levels(2) - levels(1)) ; <span class="comment">% now stretch to full range</span>
+1235             <span class="keyword">else</span>
+1236                 <span class="comment">% Then we have MxNx3xt</span>
+1237                 frame = self.im_data(:,:,:, frame_num);
+1238                 
+1239                 rlevels = self.h.level_scroll.Value;
+1240                 glevels = self.h.level_scroll2.Value;
+1241                 blevels = self.h.level_scroll3.Value;
+1242                 
+1243                 nframe(:,:,1) = (max(min(frame(:,:,1), rlevels(2)), rlevels(1)) - rlevels(1)) ./ (rlevels(2) - rlevels(1));
+1244                 nframe(:,:,2) = (max(min(frame(:,:,2), glevels(2)), glevels(1)) - glevels(1)) ./ (glevels(2) - glevels(1));
+1245                 nframe(:,:,3) = (max(min(frame(:,:,3), blevels(2)), blevels(1)) - blevels(1)) ./ (blevels(2) - blevels(1));
+1246             <span class="keyword">end</span>
+1247         <span class="keyword">end</span>        
+1248         
+1249         <a name="_sub45" href="#_subfunctions" class="code">function nframes = get_num_frames(self)</a>
+1250             <span class="comment">% get_num_frames: returns the total number of frames.</span>
+1251             
+1252             <span class="keyword">if</span> ndims(self.im_data) &lt;= 3
+1253                 nframes = size(self.im_data, 3);
+1254             <span class="keyword">else</span>
+1255                 nframes = size(self.im_data, 4);
+1256             <span class="keyword">end</span>            
+1257         <span class="keyword">end</span>
+1258         
+1259         <a name="_sub46" href="#_subfunctions" class="code">function nrois = get_num_rois(self)</a>
+1260             <span class="comment">% get_num_rois: returns the number of rois.</span>
+1261             <span class="keyword">if</span> isempty(self.rois.xyrra)
+1262                 nrois = 0;
+1263             <span class="keyword">else</span>
+1264                 nrois = size(self.rois.xyrra, 1);
+1265             <span class="keyword">end</span>
+1266         <span class="keyword">end</span>
+1267         
+1268         <a name="_sub47" href="#_subfunctions" class="code">function update_frame_slider(self)</a>
+1269             <span class="comment">% update_frame_slider: sets the frame_slider settings to match</span>
+1270             <span class="comment">% the current im_data.</span>
+1271             
+1272             set(self.h.frame_slider, <span class="string">'Min'</span>, 1);
+1273             nf = self.get_num_frames();
+1274             <span class="keyword">if</span> nf &lt; 1
+1275                 <span class="comment">% Then we have no frames</span>
+1276                 set(self.h.frame_slider, <span class="string">'Max'</span>, 2, <span class="string">'SliderStep'</span>, [0 Inf]);
+1277             <span class="keyword">elseif</span> nf &lt; 2
+1278                 <span class="comment">% Then we have 1 frame</span>
+1279                 set(self.h.frame_slider, <span class="string">'Max'</span>, 2, <span class="string">'SliderStep'</span>, [0 Inf]);
+1280             <span class="keyword">else</span>
+1281                 set(self.h.frame_slider, <span class="string">'Max'</span>, nf, <span class="string">'SliderStep'</span>, [1./(nf-1), 10./(nf-1)]);
+1282             <span class="keyword">end</span>            
+1283         <span class="keyword">end</span>
+1284         
+1285         <a name="_sub48" href="#_subfunctions" class="code">function update_move_mode_push(self)</a>
+1286             <span class="comment">% update_move_mode_push: sets the move_mode_push settings to</span>
+1287             <span class="comment">% match the current state.</span>
+1288             
+1289             <span class="keyword">if</span> self.move_mode == RoiEditor.ShiftAfter
+1290                 set(self.h.move_mode_push, <span class="string">'String'</span>, <span class="string">'Shift After'</span>);
+1291             <span class="keyword">elseif</span> self.move_mode == RoiEditor.ShiftAll
+1292                 set(self.h.move_mode_push, <span class="string">'String'</span>, <span class="string">'Shift All'</span>);
+1293             <span class="keyword">elseif</span> self.move_mode == RoiEditor.Each
+1294                 set(self.h.move_mode_push, <span class="string">'String'</span>, <span class="string">'Each'</span>);
+1295             <span class="keyword">elseif</span> self.move_mode == RoiEditor.MoveAfter
+1296                 set(self.h.move_mode_push, <span class="string">'String'</span>, <span class="string">'Move After'</span>);
+1297             <span class="keyword">elseif</span> self.move_mode == RoiEditor.MoveAll
+1298                 set(self.h.move_mode_push, <span class="string">'String'</span>, <span class="string">'Move All'</span>);
+1299             <span class="keyword">else</span>
+1300                 error(<span class="string">'Unrecognized move mode'</span>);
+1301             <span class="keyword">end</span>
+1302         <span class="keyword">end</span>
+1303         
+1304         <a name="_sub49" href="#_subfunctions" class="code">function animate_roi_move(self, xy, roi_idxs)</a>
+1305             <span class="comment">% animate_roi_move: makes the animation of roi moves and</span>
+1306             <span class="comment">% updates the selected_rois and their positions.</span>
+1307             <span class="comment">%</span>
+1308             <span class="comment">% @param: xy the start xy point of the move.</span>
+1309             <span class="comment">% @param: roi_idxs the set of rois that fall in the start point.</span>
+1310             
+1311             <span class="keyword">if</span> ~self.is_editing_enabled
+1312                 <span class="comment">% Then pretend its just a click.</span>
+1313                 self.handle_click_in_roi(roi_idxs);
+1314                 <span class="keyword">return</span>;
+1315             <span class="keyword">end</span>
+1316             
+1317             <span class="comment">% If there are any selected rois already, give them top</span>
+1318             <span class="comment">% priority. We only want 1 roi to be the base of the move.</span>
+1319             <span class="comment">% If our roi is already selected then we are moving all</span>
+1320             <span class="comment">% selected rois as a group, if it is not selected, then we are</span>
+1321             <span class="comment">% selecting only the one that the mouse is in and moving that one.</span>
+1322             selected = ismember(roi_idxs, self.selected_rois);
+1323             <span class="keyword">if</span> ~any(selected)
+1324                 self.set_selected_rois(roi_idxs(1));
+1325             <span class="keyword">end</span>
+1326             
+1327             <span class="comment">% First get the handles of the roi</span>
+1328             current_roi_h = self.h.rois(self.selected_rois);
+1329             <span class="comment">% Now get all of the current roi values, we need to alter them</span>
+1330             <span class="comment">% relatively, since we are moving many rois at once potentially</span>
+1331             rois = self.rois.xyrra(self.selected_rois, :, self.current_frame);
+1332             <span class="comment">% Keep track of the maximum amount moved to check for whether</span>
+1333             <span class="comment">% the action was a click or drag.</span>
+1334             maxdist = 0;
+1335             
+1336             <span class="keyword">while</span> self.gui.fen.button_down()
+1337                 <span class="comment">% now to get the move, we just need to add the difference</span>
+1338                 <span class="comment">% in the start and end mouse positions to the center of the</span>
+1339                 <span class="comment">% rois.</span>
+1340                 point2 = get(self.h.im_axes, <span class="string">'CurrentPoint'</span>);
+1341                 
+1342                 px2 = point2(1);
+1343                 py2 = point2(3);
+1344                 
+1345                 d = sum((xy - [px2 py2]) .^ 2);
+1346                 <span class="keyword">if</span> d &gt; maxdist
+1347                     maxdist = d;
+1348                 <span class="keyword">end</span>
+1349                 
+1350                 rois(:, 1) = self.rois.xyrra(self.selected_rois, 1, self.current_frame) + px2 - xy(1);
+1351                 rois(:, 2) = self.rois.xyrra(self.selected_rois, 2, self.current_frame) + py2 - xy(2);
+1352                 
+1353                 <span class="comment">% Update the graphics.</span>
+1354                 [xs, ys] = <a href="oval2xy.html" class="code" title="function [x, y] = oval2xy(dims, detail, inscribed)">oval2xy</a>(rois, [], 0);
+1355                 <span class="keyword">for</span> i = 1:length(current_roi_h)
+1356                     set(current_roi_h(i), <span class="string">'XData'</span>, xs(i, :), <span class="string">'YData'</span>, ys(i, :));
+1357                 <span class="keyword">end</span>
+1358                 self.set_edit_marker_positions(rois(1,:));
+1359                 drawnow;
+1360             <span class="keyword">end</span>
+1361               
+1362             <span class="keyword">if</span> maxdist &lt; 2
+1363                 <span class="comment">% Then we didn't drag much, so probably just a click.</span>
+1364                 self.handle_click_in_roi(roi_idxs);
+1365                 <span class="keyword">return</span>;
+1366             <span class="keyword">end</span>
+1367             
+1368             self.make_roi_move([px2 py2] - xy);
+1369         <span class="keyword">end</span>
+1370         
+1371         <a name="_sub50" href="#_subfunctions" class="code">function handle_click_in_roi(self, roi_idxs)</a>
+1372             <span class="comment">% handle_click_in_roi: changes the selected_rois when there is</span>
+1373             <span class="comment">% a click inside an roi.</span>
+1374             <span class="comment">%</span>
+1375             <span class="comment">% @param: roi_idxs the rois that the click falls in.</span>
+1376             
+1377             <span class="keyword">if</span> length(roi_idxs) &gt; 1 &amp;&amp; any(ismember(roi_idxs, self.selected_rois))
+1378                 sel = ismember(roi_idxs, self.selected_rois);
+1379                 idx = find(sel, 1, <span class="string">'last'</span>);
+1380                 <span class="keyword">if</span> idx == length(sel)
+1381                     idx = 0;
+1382                 <span class="keyword">end</span>
+1383                 s_after_sel = roi_idxs((idx+1):end);
+1384                 first_not_selected = find(~ismember(s_after_sel, self.selected_rois), 1, <span class="string">'first'</span>);
+1385                 
+1386                 <span class="keyword">if</span> isempty(first_not_selected)
+1387                     <span class="comment">% Then all of the rois were already selected, so just</span>
+1388                     <span class="comment">% select the first one.</span>
+1389                     self.set_selected_rois(roi_idxs(1));
+1390                 <span class="keyword">else</span>
+1391                     <span class="comment">% Go to the next roi that is not selected.</span>
+1392                     self.set_selected_rois(s_after_sel(first_not_selected));
+1393                 <span class="keyword">end</span>
+1394             <span class="keyword">else</span>
+1395                 self.set_selected_rois(roi_idxs(1));
+1396             <span class="keyword">end</span>
+1397             
+1398             self.update();
+1399         <span class="keyword">end</span>
+1400         
+1401         <a name="_sub51" href="#_subfunctions" class="code">function make_roi_move(self, delta)</a>
+1402             <span class="comment">% make_roi_move: decides how to move the rois based on the</span>
+1403             <span class="comment">% current move_mode.</span>
+1404             
+1405             new_locs = zeros(length(self.selected_rois), 2);
+1406             new_locs(:, 1) = self.rois.xyrra(self.selected_rois, 1, self.current_frame) + delta(1);
+1407             new_locs(:, 2) = self.rois.xyrra(self.selected_rois, 2, self.current_frame) + delta(2);
+1408             <span class="keyword">if</span> self.move_mode == RoiEditor.ShiftAll
+1409                 <span class="comment">% ShiftAll moves all rois relatively for all frames</span>
+1410                 self.shift_rois(self.selected_rois, delta); <span class="comment">% Default moves all;</span>
+1411             <span class="keyword">elseif</span> self.move_mode == RoiEditor.ShiftAfter
+1412                 <span class="comment">% ShiftAfter moves rois relatively for only the current</span>
+1413                 <span class="comment">% frame and the following frames</span>
+1414                 self.shift_rois(self.selected_rois, delta, self.current_frame:self.get_num_frames());
+1415             <span class="keyword">elseif</span> self.move_mode == RoiEditor.Each
+1416                 <span class="comment">% Each moves only the rois in the current frame.</span>
+1417                 self.move_rois(self.selected_rois, new_locs, self.current_frame);
+1418             <span class="keyword">elseif</span> self.move_mode == RoiEditor.MoveAfter
+1419                 <span class="comment">% MoveAfter moves all rois after the current frame to the</span>
+1420                 <span class="comment">% their locations for the current frame.</span>
+1421                 self.move_rois(self.selected_rois, new_locs, self.current_frame:self.get_num_frames());
+1422             <span class="keyword">elseif</span> self.move_mode == RoiEditor.MoveAll
+1423                 <span class="comment">% MoveAll moves all rois to the location of the rois in the</span>
+1424                 <span class="comment">% current frame.</span>
+1425                 self.move_rois(self.selected_rois, new_locs);
+1426             <span class="keyword">else</span>
+1427                 error(<span class="string">'Move mode not recognized.'</span>);
+1428             <span class="keyword">end</span>
+1429         <span class="keyword">end</span>
+1430         
+1431         <a name="_sub52" href="#_subfunctions" class="code">function animate_roi_creation(self, xy)</a>
+1432             <span class="comment">% animate_roi_creation: makes an animation of roi creation and</span>
+1433             <span class="comment">% adds the new roi.</span>
+1434             <span class="comment">%</span>
+1435             <span class="comment">% @param: xy the start point of the roi creation.</span>
+1436             
+1437             <span class="keyword">if</span> ~self.is_editing_enabled
+1438                 <span class="comment">% Then no editing allowed, this is just a click on nothing.</span>
+1439                 self.set_selected_rois([]);
+1440                 self.update();
+1441                 <span class="keyword">return</span>;
+1442             <span class="keyword">end</span>
+1443             
+1444             <span class="comment">% First get the handle of the rois, we may need to create them</span>
+1445             <span class="keyword">if</span> self.get_num_rois() &lt; length(self.h.rois)
+1446                 <span class="comment">% Then the handle already exists, usually this doesn't</span>
+1447                 <span class="comment">% happen.</span>
+1448                 current_roi_h = self.h.rois(self.get_num_rois() + 1);                
+1449                 set(current_roi_h, <span class="string">'Visible'</span>, <span class="string">'on'</span>);
+1450             <span class="keyword">else</span>
+1451                 <span class="comment">% We need to create a new handle</span>
+1452                 current_roi_h = <a href="plot_oval.html" class="code" title="function h = plot_oval(dims, varargin)">plot_oval</a>([xy(1), xy(2), 0, 0, 0], <span class="string">'Parent'</span>, self.h.im_axes, <span class="string">'LineWidth'</span>, 2);
+1453                 
+1454                 idx = size(self.h.rois, 1) + 1;
+1455                 self.h.rois(idx, 1) = current_roi_h;                
+1456             <span class="keyword">end</span>
+1457             
+1458             roi = zeros(1, 5);
+1459             maxdist = 0;
+1460             <span class="keyword">while</span> self.gui.fen.button_down()
+1461                 <span class="comment">% Now while the mouse is getting dragged recalculate the</span>
+1462                 <span class="comment">% roi and redraw it.</span>
+1463                 point2 = get(self.h.im_axes, <span class="string">'CurrentPoint'</span>);
+1464                 px2 = point2(1);
+1465                 py2 = point2(3);
+1466                 
+1467                 left = min(xy(1), px2);
+1468                 right = max(xy(1), px2);
+1469                 bottom = min(xy(2), py2);
+1470                 top = max(xy(2), py2);
+1471                 
+1472                 roi(1) = (left + right) / 2;
+1473                 roi(2) = (bottom + top) / 2;
+1474                 roi(3) = (right - left) / 2;
+1475                 roi(4) = (top - bottom) / 2;                
+1476 
+1477                 [rx, ry] = <a href="oval2xy.html" class="code" title="function [x, y] = oval2xy(dims, detail, inscribed)">oval2xy</a>(roi, [], 0);
+1478                 
+1479                 set(current_roi_h, <span class="string">'Color'</span>, <span class="string">'w'</span>, <span class="string">'XData'</span>, rx, <span class="string">'YData'</span>, ry);
+1480                 
+1481                 d = sum((xy - [px2 py2]) .^ 2);
+1482                 <span class="keyword">if</span> maxdist &lt; d
+1483                     maxdist = d;
+1484                 <span class="keyword">end</span>
+1485                 
+1486                 drawnow;
+1487             <span class="keyword">end</span>
+1488             
+1489             <span class="comment">% Now check to see if this was just a click by seeing if the</span>
+1490             <span class="comment">% number of pixels moved to draw the ellipse is below threshold</span>
+1491             <span class="keyword">if</span> maxdist &lt; 10
+1492                 <span class="comment">% Then this point was too small, so we wont actually add an</span>
+1493                 <span class="comment">% roi.</span>
+1494                 self.set_selected_rois([]);
+1495                 self.update();
+1496                 <span class="keyword">return</span>;
+1497             <span class="keyword">end</span>
+1498             
+1499             <span class="comment">% Finally, make sure that the roi width and height is non-zero</span>
+1500             <span class="keyword">if</span> roi(3) == 0 || roi(4) == 0
+1501                 <span class="comment">% Then the roi has a zero dimension which isn't allowed.</span>
+1502                 <span class="comment">% Act like its just a click.</span>
+1503                 self.set_selected_rois([]);
+1504                 self.update();
+1505                 <span class="keyword">return</span>;
+1506             <span class="keyword">end</span>
+1507             
+1508             <span class="comment">% Now add the roi</span>
+1509             self.add_rois(roi);
+1510         <span class="keyword">end</span>
+1511         
+1512         <a name="_sub53" href="#_subfunctions" class="code">function animate_roi_rotation(self, xy)</a>
+1513             <span class="comment">% animate_roi_rotation: makes the animation of roi rotation and</span>
+1514             <span class="comment">% updates the selected_rois and their angles.</span>
+1515             <span class="comment">%</span>
+1516             <span class="comment">% @param: xy the start xy point of the rotation.</span>
+1517             
+1518             <span class="keyword">if</span> ~self.is_editing_enabled
+1519                 <span class="comment">% Then this is not allowed, do nothing?</span>
+1520                 <span class="keyword">return</span>;
+1521             <span class="keyword">end</span>
+1522             
+1523             <span class="comment">% Get the roi, the (1) is just to make sure we only have 1.</span>
+1524             roi = self.rois.xyrra(self.selected_rois(1), :, self.current_frame);
+1525             roi_h = self.h.rois(self.selected_rois(1));
+1526             
+1527             <span class="comment">% get the normalized start coordinates.</span>
+1528             x = xy(1) - roi(1);
+1529             y = xy(2) - roi(2);
+1530             xn = cos(-roi(5)) .* x - sin(-roi(5)) .* y;
+1531             yn = sin(-roi(5)) .* x + cos(-roi(5)) .* y;
+1532             
+1533             <span class="comment">% get the angle</span>
+1534             an = atan(yn ./ xn);
+1535             
+1536             roit = roi;
+1537             <span class="keyword">while</span> self.gui.fen.button_down()
+1538                 point2 = get(self.h.im_axes, <span class="string">'CurrentPoint'</span>);
+1539                 
+1540                 px2 = point2(1) - roi(1);
+1541                 py2 = point2(3) - roi(2);
+1542                 
+1543                 <span class="comment">% Now rotate the mouse point</span>
+1544                 xr = cos(-roi(5)) .* px2 - sin(-roi(5)) .* py2;
+1545                 yr = sin(-roi(5)) .* px2 + cos(-roi(5)) .* py2;
+1546                 
+1547                 <span class="comment">% Get the angle</span>
+1548                 ar = atan(yr ./ xr);
+1549                 deltaa = ar - an;
+1550                 
+1551                 roit(5) = roi(5) + wrapToPi(deltaa);
+1552                 
+1553                 <span class="comment">% Update the graphics</span>
+1554                 [xs, ys] = <a href="oval2xy.html" class="code" title="function [x, y] = oval2xy(dims, detail, inscribed)">oval2xy</a>(roit, [], 0);
+1555                 
+1556                 set(roi_h, <span class="string">'XData'</span>, xs, <span class="string">'YData'</span>, ys);
+1557                 self.set_edit_marker_positions(roit);
+1558                 
+1559                 drawnow;
+1560             <span class="keyword">end</span>
+1561             
+1562             self.rotate_rois(self.selected_rois(1), wrapToPi(deltaa));
+1563             <span class="comment">%self.resize_rois(self.selected_rois(1), [roi(3) + deltax ./ sqrt(2), roi(4)]);</span>
+1564         <span class="keyword">end</span>
+1565         
+1566         <a name="_sub54" href="#_subfunctions" class="code">function animate_roi_xresize(self, xy)</a>
+1567             <span class="comment">% animate_roi_xresize: makes the animation of resizing the roi</span>
+1568             <span class="comment">% in the x direction.</span>
+1569             <span class="comment">%</span>
+1570             <span class="comment">% @param: xy the start mouse position.</span>
+1571             
+1572             <span class="keyword">if</span> ~self.is_editing_enabled
+1573                 <span class="comment">% Then this is not allowed, do nothing?</span>
+1574                 <span class="keyword">return</span>;
+1575             <span class="keyword">end</span>
+1576             
+1577             <span class="comment">% Get the roi, the (1) is just to make sure we only have 1.</span>
+1578             roi = self.rois.xyrra(self.selected_rois(1), :, self.current_frame);
+1579             roi_h = self.h.rois(self.selected_rois(1));
+1580             
+1581             <span class="comment">% get the normalized start coordinates.</span>
+1582             x = xy(1) - roi(1);
+1583             y = xy(2) - roi(2);
+1584             xn = cos(-roi(5)) .* x - sin(-roi(5)) .* y;
+1585             
+1586             roit = roi;
+1587             <span class="keyword">while</span> self.gui.fen.button_down
+1588                 point2 = get(self.h.im_axes, <span class="string">'CurrentPoint'</span>);
+1589                 
+1590                 px2 = point2(1) - roi(1);
+1591                 py2 = point2(3) - roi(2);
+1592                 
+1593                 <span class="comment">% Now rotate the mouse point</span>
+1594                 xr = cos(-roi(5)) .* px2 - sin(-roi(5)) .* py2;
+1595                 
+1596                 <span class="comment">% The resize will be based only in the x direction.</span>
+1597                 deltax = xr - xn;
+1598                 
+1599                 roit(3) = roi(3) + deltax ./ sqrt(2);
+1600                 
+1601                 <span class="comment">% Update the graphics</span>
+1602                 [xs, ys] = <a href="oval2xy.html" class="code" title="function [x, y] = oval2xy(dims, detail, inscribed)">oval2xy</a>(roit, [], 0);
+1603                 set(roi_h, <span class="string">'XData'</span>, xs, <span class="string">'YData'</span>, ys);
+1604                 self.set_edit_marker_positions(roit);
+1605                 
+1606                 drawnow;
+1607             <span class="keyword">end</span>
+1608             
+1609             self.resize_rois(self.selected_rois(1), [roi(3) + deltax ./ sqrt(2), roi(4)]);
+1610         <span class="keyword">end</span>
+1611         
+1612         <a name="_sub55" href="#_subfunctions" class="code">function animate_roi_yresize(self, xy)</a>
+1613             <span class="comment">% animate_roi_yresize: makes the animation of resizing the roi</span>
+1614             <span class="comment">% in the y direction.</span>
+1615             <span class="comment">%</span>
+1616             <span class="comment">% @param: xy the start mouse position.</span>
+1617             
+1618             <span class="keyword">if</span> ~self.is_editing_enabled
+1619                 <span class="comment">% Then this is not allowed, do nothing?</span>
+1620                 <span class="keyword">return</span>;
+1621             <span class="keyword">end</span>
+1622             
+1623             <span class="comment">% Get the roi, the (1) is just to make sure we only have 1.</span>
+1624             roi = self.rois.xyrra(self.selected_rois(1), :, self.current_frame);
+1625             roi_h = self.h.rois(self.selected_rois(1));
+1626             
+1627             <span class="comment">% get the normalized start coordinates.</span>
+1628             x = xy(1) - roi(1);
+1629             y = xy(2) - roi(2);
+1630             
+1631             yn = sin(-roi(5)) .* x + cos(-roi(5)) .* y;
+1632             
+1633             roit = roi;
+1634             <span class="keyword">while</span> self.gui.fen.button_down()
+1635                 point2 = get(self.h.im_axes, <span class="string">'CurrentPoint'</span>);
+1636                 
+1637                 px2 = point2(1) - roi(1);
+1638                 py2 = point2(3) - roi(2);
+1639                 
+1640                 <span class="comment">% Now rotate the mouse point</span>
+1641                 yr = sin(-roi(5)) .* px2 + cos(-roi(5)) .* py2;
+1642                 
+1643                 <span class="comment">% The resize will be based only in the y direction.</span>
+1644                 deltay = yr - yn;
+1645                 
+1646                 roit(4) = roi(4) + deltay ./ sqrt(2);
+1647                 
+1648                 <span class="comment">% Update the graphics</span>
+1649                 [xs, ys] = <a href="oval2xy.html" class="code" title="function [x, y] = oval2xy(dims, detail, inscribed)">oval2xy</a>(roit, [], 0);
+1650                 set(roi_h, <span class="string">'XData'</span>, xs, <span class="string">'YData'</span>, ys);
+1651                 self.set_edit_marker_positions(roit);
+1652                 
+1653                 drawnow;
+1654             <span class="keyword">end</span>
+1655             
+1656             self.resize_rois(self.selected_rois(1), [roi(3), roi(4) + deltay ./ sqrt(2)]);
+1657         <span class="keyword">end</span>
+1658         
+1659         <a name="_sub56" href="#_subfunctions" class="code">function set_edit_marker_positions(self, roi)</a>
+1660             <span class="comment">% set_edit_marker_positions: sets the edit markers to the</span>
+1661             <span class="comment">% correct positions.</span>
+1662             
+1663             <span class="comment">% rotation marker</span>
+1664             x = roi(3);
+1665             y = roi(4);            
+1666             rx = cos(roi(5)) .* x - sin(roi(5)) .* y + roi(1);
+1667             ry = sin(roi(5)) .* x + cos(roi(5)) .* y + roi(2);            
+1668             set(self.h.rotation_marker, <span class="string">'XData'</span>, rx, <span class="string">'YData'</span>, ry);
+1669             
+1670             <span class="comment">% xresize marker</span>
+1671             xx = sqrt(2) .* cos(roi(5)) .* x + roi(1);
+1672             xy = sqrt(2) .* sin(roi(5)) .* x + roi(2);
+1673             set(self.h.xresize_marker, <span class="string">'XData'</span>, xx, <span class="string">'YData'</span>, xy);
+1674             
+1675             <span class="comment">% yresize marker</span>
+1676             
+1677             yx = -sqrt(2) .* sin(roi(5)) .* y + roi(1);
+1678             yy = sqrt(2) .* cos(roi(5)) .* y + roi(2);
+1679             set(self.h.yresize_marker, <span class="string">'XData'</span>, yx, <span class="string">'YData'</span>, yy);
+1680         <span class="keyword">end</span>
+1681     <span class="keyword">end</span> <span class="comment">%methods</span>
+1682 
+1683 <span class="keyword">end</span> <span class="comment">%classdef</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

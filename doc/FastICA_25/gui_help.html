@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gui_help</title>
+  <meta name="keywords" content="gui_help">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FastICA_25</a> &gt; gui_help.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FastICA_25&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gui_help
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function gui_help(which_help) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ Used by FASTICAG</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gui_advc.html" class="code" title="function gui_advc (action)">gui_advc</a>	</li><li><a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a>	</li><li><a href="gui_lc.html" class="code" title="function gui_lc (action)">gui_lc</a>	</li><li><a href="gui_sc.html" class="code" title="function gui_sc (action)">gui_sc</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function gui_help(which_help)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% Used by FASTICAG</span>
+0004 
+0005 <span class="comment">% All the help texts and title used by GUI are stored here.</span>
+0006 <span class="comment">% Make changes here.</span>
+0007 <span class="comment">% Also displays the helpwindow with the selected text</span>
+0008 
+0009 <span class="comment">% @(#)$Id: gui_help.m,v 1.6 2005/10/19 13:05:34 jarmo Exp $</span>
+0010 
+0011 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0012 <span class="keyword">switch</span> which_help
+0013 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0014 <span class="keyword">case</span> <span class="string">'pcamat'</span>
+0015 
+0016   helptitle = <span class="string">'FastICA: Reduce dimension'</span>;
+0017   helptext=[ <span class="keyword">...</span>
+0018     <span class="string">'You may reduce the dimension of the data by selecting only the     '</span>
+0019     <span class="string">'subspace corresponding to certain eigenvalues of the covariance    '</span>
+0020     <span class="string">'matrix of the data. Give the indices of the first and last         '</span>
+0021     <span class="string">'eigenvalues (sorted in descending order) to be included (all       '</span>
+0022     <span class="string">'eigenvalues in between will be included as well).  The eigenvalues '</span>
+0023     <span class="string">'and their indices can be seen in the graphical plot now on the     '</span>
+0024     <span class="string">'screen. The heights of the bars give the eigenvalues, with indices '</span>
+0025     <span class="string">'below.                                                             '</span>
+0026     <span class="string">'                                                                   '</span>
+0027     <span class="string">'For example, give ''1'' and ''n'' if you want to reduce the dimension  '</span>
+0028     <span class="string">'to n by principal component analysis, which means discarding the   '</span>
+0029     <span class="string">'subspaces corresponding to the smallest eigenvalues. Such a        '</span>
+0030     <span class="string">'dimension reduction may reduce noise and improve the performance of'</span>
+0031     <span class="string">'ICA.                                                               '</span>];
+0032 
+0033 
+0034 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0035 <span class="keyword">case</span> <span class="string">'gui_cb_about'</span>
+0036 
+0037   helptitle=<span class="string">'About FastICA'</span>;
+0038   helptext =[ <span class="keyword">...</span>
+0039     <span class="string">'FastICA for Matlab 7.x and 6.x                                            '</span>
+0040     <span class="string">'Version 2.5, October 19 2005                                              '</span>
+0041     <span class="string">'Copyright (c) Hugo Gävert, Jarmo Hurri, Jaakko Särelä, and Aapo Hyvärinen.'</span>
+0042     <span class="string">'                                                                          '</span>
+0043     <span class="string">'For more information please see:                                          '</span>
+0044     <span class="string">'http://www.cis.hut.fi/projects/ica/fastica/                               '</span>];
+0045 
+0046 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0047 <span class="keyword">case</span> <span class="string">'gui_cb_help'</span>
+0048 
+0049   helptitle=<span class="string">'FastICA GUI'</span>;
+0050   helptext = [<span class="keyword">...</span>
+0051     <span class="string">'Basic function:                                                            '</span>
+0052     <span class="string">'                                                                           '</span>
+0053     <span class="string">'- Click LOAD DATA and give the name of the variable that contains          '</span>
+0054     <span class="string">'  the data.                                                                '</span>
+0055     <span class="string">'                                                                           '</span>
+0056     <span class="string">'- Click DO ICA to perform the analysis.                                    '</span>
+0057     <span class="string">'                                                                           '</span>
+0058     <span class="string">'- Click SAVE RESULTS to store the results for future use.                  '</span>
+0059     <span class="string">'                                                                           '</span>
+0060     <span class="string">'Options:                                                                   '</span>
+0061     <span class="string">'                                                                           '</span>
+0062     <span class="string">'If the input matrix contains the signals as column vectors instead of      '</span>
+0063     <span class="string">'row vectors, click on TRANSPOSE to transpose the data matrix.              '</span>
+0064     <span class="string">'                                                                           '</span>
+0065     <span class="string">'Click on PLOT DATA to see the data as 1-D time signals.                    '</span>
+0066     <span class="string">'                                                                           '</span>
+0067     <span class="string">'Clicking REDUCE DIM gives you a graphical plot of the eigenvalue           '</span>
+0068     <span class="string">'structure of the covariance matrix of the data. You can then reduce        '</span>
+0069     <span class="string">'the dimension of the data by retaining only the subspaces corresponding to '</span>
+0070     <span class="string">'the largest (or smallest) eigenvalues (i.e. variances). To undo this       '</span>
+0071     <span class="string">'operation click ORIGINAL DIM. You can plot the whitened (preprocessed      '</span>
+0072     <span class="string">'data) by PLOT WHITENED.                                                    '</span>
+0073     <span class="string">'                                                                           '</span>
+0074     <span class="string">'Click on DO ICA to perform independent component analysis.                 '</span>
+0075     <span class="string">'Clicking on PLOT ICS has the same effect, except that DO ICA forces        '</span>
+0076     <span class="string">'recomputation of ICA.                                                      '</span>
+0077     <span class="string">'                                                                           '</span>
+0078     <span class="string">'You can choose the decorrelation approach by the ''Approach'' drop-down menu:'</span>
+0079     <span class="string">'deflation means that the independent components are estimated              '</span>
+0080     <span class="string">'one-by-one, whereas in the symmetric approach they are estimated in        '</span>
+0081     <span class="string">'parallel. You can now choose the number of independent components to be    '</span>
+0082     <span class="string">'estimated in both deflation and symmetric approaches.                      '</span>
+0083     <span class="string">'                                                                           '</span>
+0084     <span class="string">'You have a choice of three nonlinearities:                                 '</span>
+0085     <span class="string">'                                                                           '</span>
+0086     <span class="string">'''pow3'' (default) :  g(u)=u^3                                               '</span>
+0087     <span class="string">'''tanh''           :  g(u)=tanh(u)                                           '</span>
+0088     <span class="string">'''gauss''          :  g(u)=u*exp(-u^2/2)                                     '</span>
+0089     <span class="string">'''skew''           :  g(u)=u^2                                               '</span>
+0090     <span class="string">'                                                                           '</span>
+0091     <span class="string">'For example, you could choose approach=''symmetric'' and nonlinearity=''tanh'' '</span>
+0092     <span class="string">'to perform maximum likelihood ICA estimation for supergaussian data.       '</span>
+0093     <span class="string">'                                                                           '</span>
+0094     <span class="string">'If the algorithm does not seem to converge, you can use the stabilized     '</span>
+0095     <span class="string">'version of the fixed-point algorithm. To use the stabilized version,       '</span>
+0096     <span class="string">'choose ''on'' from the drop-down menu ''Stabilization''.                       '</span>
+0097     <span class="string">'If you have specified a value less than 1 for the parameter ''mu'' from      '</span>
+0098     <span class="string">'the ''Advanced Options'' menu then the ''Stabilization'' drop-down menu is     '</span>
+0099     <span class="string">'not active. This is because if the parameter ''mu'' is less than 1 then the  '</span>
+0100     <span class="string">'program will use the stabilized code. Please see the help for              '</span>
+0101     <span class="string">'Advanced Options for more information about stabilization.                 '</span>
+0102     <span class="string">'                                                                           '</span>
+0103     <span class="string">'The ADVANCED OPTIONS menu has its own HELP button.                         '</span>
+0104     <span class="string">'                                                                           '</span>
+0105     <span class="string">'During computations, an INTERRUPT button appears. Clicking the button      '</span>
+0106     <span class="string">'interrupts the computations.                                               '</span>];
+0107   
+0108 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0109 <span class="keyword">case</span> <span class="string">'gui_advc'</span>
+0110 
+0111   helptitle=<span class="string">'FastICA GUI: Advanced options'</span>;
+0112   helptext = [<span class="keyword">...</span>
+0113     <span class="string">'Advanced options:                                                     '</span>
+0114     <span class="string">'                                                                      '</span>
+0115     <span class="string">'In some cases, it may be desired to improve the statistical           '</span>
+0116     <span class="string">'performance of the algorithm by using a fine-tuning procedure. This   '</span>
+0117     <span class="string">'means that after (initial) convergence, the algorithm is run          '</span>
+0118     <span class="string">'(possibly) with a different nonlinearity, and using a smaller step    '</span>
+0119     <span class="string">'size and the stabilized version of the fixed-point algorithm.         '</span>
+0120     <span class="string">'You can specify the nonlinearity that will then be used with the      '</span>
+0121     <span class="string">'parameter ''Finetune''. If you set the the finetuning to ''off'', then the'</span>
+0122     <span class="string">'fine-tuning won''t be done.                                            '</span>
+0123     <span class="string">'                                                                      '</span>
+0124     <span class="string">'You can also fine-tune the nonlinearities used in the fixed-point     '</span>
+0125     <span class="string">'algorithm.                                                            '</span> 
+0126     <span class="string">'The nonlinearities tanh and gauss contain parameters a1 and a2, so    '</span>
+0127     <span class="string">'that the nonlinearities are in fact defined as:                       '</span>
+0128     <span class="string">'''tanh''           :  g(u)=tanh(a1*u)                                   '</span>
+0129     <span class="string">'''gauss''          :  g(u)=u*exp(-a2*u^2/2)                             '</span>
+0130     <span class="string">'The default values of a1 and a2 are 1, in which case they effectively '</span>
+0131     <span class="string">'disappear from the definitions.                                       '</span>
+0132     <span class="string">'                                                                      '</span>
+0133     <span class="string">'If the algorithm does not seem to converge, you can use the stabilized'</span>
+0134     <span class="string">'version of the fixed-point algorithm. There are two ways of doing     '</span>
+0135     <span class="string">'this. The first one is to explicitly specify the value of the step    '</span>
+0136     <span class="string">'size parameter ''mu''. The default value is 1. Choosing a value that    '</span>
+0137     <span class="string">'is smaller than 1 implies that the computations are made using the    '</span>
+0138     <span class="string">'stabilized fixed-point algorithm. The second way to use the stabilized'</span>
+0139     <span class="string">'version is simpler: choose ''on'' in the drop-down menu ''stabilization'' '</span>
+0140     <span class="string">'(on the main menu page). Then the value of mu will be changed         '</span>
+0141     <span class="string">'automatically during the ICA calculations. If the program senses that '</span>
+0142     <span class="string">'the algorithm is stuck between two points, it will halve the value of '</span>
+0143     <span class="string">'mu (.5 * mu) for duration of one round. (This is called a ''stroke.''). '</span>
+0144     <span class="string">'Also if there is no convergence before half of the maximum number of  '</span>
+0145     <span class="string">'iterations has been reached then the mu will be halved for the rest   '</span> 
+0146     <span class="string">'of the rounds.                                                        '</span>
+0147     <span class="string">'                                                                      '</span>
+0148     <span class="string">'The parameter ''epsilon'' is used to decide if the algorithm has        '</span>
+0149     <span class="string">'converged. A larger epsilon makes the convergence test less strict.   '</span>
+0150     <span class="string">'Note that if you use finetuning or stabilization, epsilon may need to '</span>
+0151     <span class="string">'be reduced accordingly.                                               '</span>
+0152     <span class="string">'                                                                      '</span>
+0153     <span class="string">'''Maximum number of iterations'' gives the absolute maximum of          '</span>
+0154     <span class="string">'iterations used in the estimation procedure. In the deflation         '</span>
+0155     <span class="string">'approach, this is iterations per component.                           '</span>
+0156     <span class="string">'                                                                      '</span>
+0157     <span class="string">'You can input the ''Initial state'' of the algorithm, i.e. the initial  '</span>
+0158     <span class="string">'value for A. Choose ''guess'' in the drop-down menu ''Initial state'',    '</span>
+0159     <span class="string">'click on ''Load Initial guess'', and give the name of the variable in   '</span>
+0160     <span class="string">'Matlab workspace that contains the initial value.                     '</span>
+0161     <span class="string">'                                                                      '</span>
+0162     <span class="string">'In the drop-down menu ''Display mode'' you can choose if the results are'</span>
+0163     <span class="string">'plotted during computations.  You may wish to switch this off         '</span>
+0164     <span class="string">'especially if you have lots of data which takes a long time to plot.  '</span>
+0165     <span class="string">'''Iteration between displays'' tells how often the running estimates of '</span>
+0166     <span class="string">'the independent components are plotted: A value of 1 means after every'</span>
+0167     <span class="string">'iteration.                                                            '</span>
+0168     <span class="string">'                                                                      '</span>
+0169     <span class="string">'If the data vector is very long (more than 10 000 points), it may be  '</span>
+0170     <span class="string">'advisable to use only a part of the data at every iteration. The      '</span>
+0171     <span class="string">'option ''Sample size'' allows you to give the proportion (0-1) of the   '</span>
+0172     <span class="string">'data that is used at every step. The sample is chosen randomly at     '</span>
+0173     <span class="string">'every step.                                                           '</span>
+0174     <span class="string">'                                                                      '</span>
+0175     <span class="string">'Click on DEFAULT to return to default values for all advanced options.'</span>
+0176     <span class="string">'You can make the new values take effect without closing the window by '</span>
+0177     <span class="string">'clicking APPLY.                                                       '</span>];
+0178 
+0179 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0180 <span class="keyword">case</span> <span class="string">'gui_lc_data'</span>
+0181 
+0182   helptitle=<span class="string">'FastICA GUI: Load data'</span>;
+0183   helptext = [<span class="keyword">...</span>
+0184     <span class="string">'Input the name of the variable in Matlab workspace that contains the  '</span>
+0185     <span class="string">'data. The data must be in a single matrix, each row (or column) giving'</span>
+0186     <span class="string">'the values of one signal. If the signals are in column vectors, click '</span>
+0187     <span class="string">'TRANSPOSE after loading the data to transpose the data matrix.        '</span>
+0188     <span class="string">'                                                                      '</span>
+0189     <span class="string">'If the data is in a file, load it to Matlab workspace first.          '</span>];
+0190 
+0191 <span class="keyword">case</span> <span class="string">'gui_lc_guess'</span>
+0192 
+0193   helptitle=<span class="string">'FastICA GUI: Load guess'</span>;
+0194   helptext = [<span class="keyword">...</span>
+0195     <span class="string">'Input the name of the variable in Matlab workspace that contains the'</span>
+0196     <span class="string">'initial value for the mixing matrix A, and click OK. If the initial '</span>
+0197     <span class="string">'value is in a file, load it to Matlab workspace first.              '</span>];
+0198 
+0199 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0200 <span class="keyword">case</span> <span class="string">'gui_sc'</span>
+0201 
+0202   helptitle=<span class="string">'FastICA GUI: Save results'</span>;
+0203   helptext = [<span class="keyword">...</span>
+0204     <span class="string">'The results will be saved as variables in Matlab workspace.            '</span>
+0205     <span class="string">'You give a suffix that identifies the variables. For example, if you   '</span>
+0206     <span class="string">'give ''_FASTICA'', the results will be stored in the following variables:'</span>
+0207     <span class="string">'                                                                       '</span>
+0208     <span class="string">'W_FASTICA   : estimate of the separating matrix                        '</span>
+0209     <span class="string">'A_FASTICA   : estimate of the mixing matrix                            '</span>
+0210     <span class="string">'IC_FASTICA  : estimated independent components (row vectors)           '</span>
+0211     <span class="string">'                                                                       '</span>
+0212     <span class="string">'Additional results related to preprocessing:                           '</span>
+0213     <span class="string">'D_FASTICA and E_FASTICA    : give the eigenvalue decomposition of the  '</span>
+0214     <span class="string">'                             covariance matrix                         '</span>
+0215     <span class="string">'whiteningMatrix_FASTICA    : matrix performing whitening and dimension '</span>
+0216     <span class="string">'                             reduction                                 '</span>
+0217     <span class="string">'dewhiteningMatrix_FASTICA  : the pseudoinverse of the whitening matrix '</span>
+0218     <span class="string">'whitesig_FASTICA           : whitened (i.e. preprocessed) signals.     '</span>];
+0219 
+0220 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0221 
+0222 <span class="keyword">end</span>
+0223 
+0224 helpwin(helptext, helptitle);</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

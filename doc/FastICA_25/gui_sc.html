@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gui_sc</title>
+  <meta name="keywords" content="gui_sc">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FastICA_25</a> &gt; gui_sc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FastICA_25&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gui_sc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function gui_sc (action) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ This file is used by FASTICAG</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gui_help.html" class="code" title="function gui_help(which_help)">gui_help</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function gui_sc (action)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% This file is used by FASTICAG</span>
+0004 
+0005 <span class="comment">% This file holds the callbacks for save-dialog</span>
+0006 
+0007 <span class="comment">% @(#)$Id: gui_sc.m,v 1.3 2003/09/08 11:28:59 jarmo Exp $</span>
+0008 
+0009 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0010 <span class="comment">% Global variables</span>
+0011 
+0012 <span class="comment">% Handle to the window</span>
+0013 <span class="keyword">global</span> hf_FastICA_Save;
+0014 
+0015 <span class="comment">% Handles to some of the controls in window</span>
+0016 <span class="keyword">global</span> he_FastICA_suffix;
+0017 
+0018 <span class="comment">% The needed main variables</span>
+0019 <span class="keyword">global</span> g_FastICA_ica_sig;
+0020 <span class="keyword">global</span> g_FastICA_ica_A;
+0021 <span class="keyword">global</span> g_FastICA_ica_W;
+0022 <span class="keyword">global</span> g_FastICA_white_sig;
+0023 <span class="keyword">global</span> g_FastICA_white_wm;
+0024 <span class="keyword">global</span> g_FastICA_white_dwm;
+0025 <span class="keyword">global</span> g_FastICA_pca_E;
+0026 <span class="keyword">global</span> g_FastICA_pca_D;
+0027 
+0028 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0029 <span class="comment">% This should not take long...</span>
+0030 watchonInFigure = watchon;
+0031 
+0032 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0033 <span class="keyword">switch</span> action
+0034 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0035 <span class="keyword">case</span> <span class="string">'Save'</span>
+0036  
+0037  suffix = deblank(get(he_FastICA_suffix, <span class="string">'String'</span>)); <span class="comment">% The suffix for the variables</span>
+0038 
+0039  fprintf(<span class="string">'Saving results in variables in Matlab workspace.\n'</span>);
+0040  assignin(<span class="string">'base'</span>,[<span class="string">'IC'</span> suffix],g_FastICA_ica_sig);
+0041  assignin(<span class="string">'base'</span>,[<span class="string">'A'</span> suffix],g_FastICA_ica_A);
+0042  assignin(<span class="string">'base'</span>,[<span class="string">'W'</span> suffix],g_FastICA_ica_W);
+0043  assignin(<span class="string">'base'</span>,[<span class="string">'whitesig'</span> suffix],g_FastICA_white_sig);
+0044  assignin(<span class="string">'base'</span>,[<span class="string">'whiteningMatrix'</span> suffix],g_FastICA_white_wm);
+0045  assignin(<span class="string">'base'</span>,[<span class="string">'dewhiteningMatrix'</span> suffix],g_FastICA_white_dwm);
+0046  assignin(<span class="string">'base'</span>,[<span class="string">'E'</span> suffix],g_FastICA_pca_E);
+0047  assignin(<span class="string">'base'</span>,[<span class="string">'D'</span> suffix],g_FastICA_pca_D);
+0048 
+0049  close(hf_FastICA_Save);                  <span class="comment">% close the dialog</span>
+0050  
+0051  <span class="comment">% Use return to avoid reaching the watchoff statement at the end</span>
+0052  <span class="comment">% (There used to be a 'break' statement here, but it resulted in</span>
+0053  <span class="comment">% errors in more recent version of Matlab -- jarmo)</span>
+0054  <span class="keyword">return</span>;
+0055   
+0056 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0057 <span class="keyword">case</span> <span class="string">'Cancel'</span>
+0058  
+0059  close(hf_FastICA_Save);                       <span class="comment">% do nothing just exit</span>
+0060 
+0061  <span class="comment">% Use return to avoid reaching the watchoff statement at the end</span>
+0062  <span class="comment">% (There used to be a 'break' statement here, but it resulted in</span>
+0063  <span class="comment">% errors in more recent version of Matlab -- jarmo)</span>
+0064  <span class="keyword">return</span>;
+0065 
+0066 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0067 <span class="keyword">case</span> <span class="string">'Help'</span>
+0068 
+0069  <a href="gui_help.html" class="code" title="function gui_help(which_help)">gui_help</a>(<span class="string">'gui_sc'</span>);
+0070 
+0071 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0072 <span class="keyword">end</span>    <span class="comment">% switch</span>
+0073 
+0074 watchoff (watchonInFigure);</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

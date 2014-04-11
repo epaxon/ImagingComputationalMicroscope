@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ecc_demo_partial_overlap</title>
+  <meta name="keywords" content="ecc_demo_partial_overlap">
+  <meta name="description" content="%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ecc</a> &gt; ecc_demo_partial_overlap.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ecc&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ecc_demo_partial_overlap
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ This is a demo execution of ECC image alignment algorithm
+ It shows results in the case of a partial overlap and shows
+ how the algortihm refines the results of feature-based matching
+
+
+ 20/2/2013, Georgios Evangelidis, georgios.evangelidis@inria.fr
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ecc.html" class="code" title="function [results, warp, warpedImage] = ecc(image, template, levels, noi, transform, delta_p_init)">ecc</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li><li><a href="spatial_interp.html" class="code" title="function out = spatial_interp(in, warp, str, transform, nx, ny)">spatial_interp</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0002 <span class="comment">% This is a demo execution of ECC image alignment algorithm</span>
+0003 <span class="comment">% It shows results in the case of a partial overlap and shows</span>
+0004 <span class="comment">% how the algortihm refines the results of feature-based matching</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% 20/2/2013, Georgios Evangelidis, georgios.evangelidis@inria.fr</span>
+0008 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0009 
+0010 transform = <span class="string">'homography'</span>;
+0011 
+0012 NoI = 20; <span class="comment">% number of iterations</span>
+0013 NoL = 1;  <span class="comment">% number of pyramid-levels</span>
+0014 
+0015 im_demo=imread(<span class="string">'wallImage.png'</span>); <span class="comment">% ... or try your image</span>
+0016 
+0017 [A,B,C]=size(im_demo);
+0018 
+0019 <span class="keyword">if</span> C==3
+0020     im_demo=rgb2gray(im_demo);
+0021 <span class="keyword">end</span>
+0022 imu8 = im_demo;
+0023 
+0024 im_demo=double(im_demo);
+0025 
+0026 template_demo = imread(<span class="string">'wallTemplate.png'</span>);
+0027 [A2, B2, C2] = size(template_demo);
+0028 
+0029 <span class="keyword">if</span> C2==3
+0030     template_demo = rgb2gray(template_demo);
+0031 <span class="keyword">end</span>
+0032 tempu8 = template_demo;
+0033 template_demo = double (template_demo);
+0034 
+0035 <span class="comment">%initialization by feature-based matching (use 1 iteration to see the</span>
+0036 <span class="comment">%initial registration)</span>
+0037     init = [0.7 -0.6 -34;
+0038         0.7 0.8 -70;
+0039         0.001 -0.001 1];
+0040 
+0041 <span class="comment">%call ECC</span>
+0042 [results, final_warp, warped_image]=<a href="ecc.html" class="code" title="function [results, warp, warpedImage] = ecc(image, template, levels, noi, transform, delta_p_init)">ecc</a>(im_demo, template_demo, NoL, NoI, transform, init);
+0043 mask = <a href="spatial_interp.html" class="code" title="function out = spatial_interp(in, warp, str, transform, nx, ny)">spatial_interp</a>(ones(A,B),final_warp, <span class="string">'linear'</span>, transform, 1:B2, 1:A2);
+0044 
+0045 figure; imshow(imu8);title(<span class="string">'Input Image'</span>);
+0046 figure; imshow(tempu8); title(<span class="string">'Template Image'</span>);
+0047 figure; imshow(uint8(warped_image)); title(<span class="string">'Final Warped Image'</span>);
+0048 
+0049 clear align1 align2;
+0050 
+0051 <span class="comment">% alignment based on initial warp</span>
+0052 warped_init = <a href="spatial_interp.html" class="code" title="function out = spatial_interp(in, warp, str, transform, nx, ny)">spatial_interp</a>(im_demo, init, <span class="string">'linear'</span>, transform, 1:B2, 1:A2);
+0053 align1 = double(tempu8).*mask;
+0054 align1(:,:,2) = double(warped_init).*mask;
+0055 align1(:,:,3) = double(tempu8).*mask;
+0056 figure;imshow(uint8(align1)); title(<span class="string">'Initial alignment'</span>);
+0057 
+0058 <span class="comment">% alignment based on final warp</span>
+0059 align2 = align1;
+0060 align2(:,:,2) = double(warped_image).*mask;
+0061 figure;imshow(uint8(align2)); title(<span class="string">'Final alignment'</span>);</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

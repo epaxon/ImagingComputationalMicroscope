@@ -1,0 +1,199 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of segment_ics</title>
+  <meta name="keywords" content="segment_ics">
+  <meta name="description" content="[segment_mask, segment_info] = segment_ics(comp): Segments ics into">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; segment_ics.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>segment_ics
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>[segment_mask, segment_info] = segment_ics(comp): Segments ics into</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [segment_masks, segment_info] = segment_ics(comp, thresh, down_size, min_area) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [segment_mask, segment_info] = segment_ics(comp): Segments ics into
+ localized components.
+
+ @param: comp the components in image form
+
+ @author: Paxon Frady
+ @created: 12/10/2013</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ImageComponentParser.html" class="code" title="classdef ImageComponentParser < hgsetget">ImageComponentParser</a>	class ImageComponentParser: gui to analyze the component ...</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="segment_ics.m">segment_ics.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [segment_masks, segment_info] = segment_ics(comp, thresh, down_size, min_area)</a>
+0002 <span class="comment">% [segment_mask, segment_info] = segment_ics(comp): Segments ics into</span>
+0003 <span class="comment">% localized components.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% @param: comp the components in image form</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% @author: Paxon Frady</span>
+0008 <span class="comment">% @created: 12/10/2013</span>
+0009 
+0010 <span class="keyword">if</span> nargin &lt; 2 || isempty(thresh)
+0011     thresh = 1; <span class="comment">% @todo: do max_corr_thresh?</span>
+0012 <span class="keyword">end</span>
+0013 
+0014 <span class="keyword">if</span> nargin &lt; 3 || isempty(down_size)
+0015     down_size = 1/4;
+0016 <span class="keyword">end</span>
+0017 
+0018 <span class="keyword">if</span> nargin &lt; 4 || isempty(min_area)
+0019     min_area = 6;
+0020 <span class="keyword">end</span>
+0021 
+0022 <span class="comment">% These are properties for regionprops</span>
+0023 properties = {<span class="string">'FilledImage'</span>, <span class="string">'Image'</span>, <span class="string">'BoundingBox'</span>, <span class="string">'Area'</span>, <span class="string">'Centroid'</span>, <span class="keyword">...</span>
+0024     <span class="string">'MajorAxisLength'</span>, <span class="string">'MinorAxisLength'</span>, <span class="string">'Orientation'</span>};
+0025 
+0026 <span class="comment">% These will be included in segment_struct</span>
+0027 <span class="comment">%all_segment_data = [];</span>
+0028 all_centroids = [];
+0029 all_segment_ids = [];
+0030 all_ic_ids = [];
+0031 all_rois = [];
+0032 all_is_pos = [];
+0033 
+0034 <span class="comment">% This is the main thing to return</span>
+0035 segment_masks = [];
+0036 
+0037 c = 1;
+0038 <span class="keyword">for</span> i = 1:size(comp, 3)
+0039     filt_im = imresize(imresize(comp(:,:,i), down_size), size(comp(:,:,i)));
+0040     
+0041     pos_mask = filt_im &gt; thresh;
+0042     neg_mask = -filt_im &gt; thresh;
+0043     
+0044     pos_mask = medfilt2(medfilt2(pos_mask));
+0045     neg_mask = medfilt2(medfilt2(neg_mask));
+0046     
+0047     pos_stats = regionprops(bwlabel(pos_mask), properties{:});
+0048     neg_stats = regionprops(bwlabel(neg_mask), properties{:});
+0049     
+0050     pos_areas = [pos_stats.Area];
+0051     neg_areas = [neg_stats.Area];
+0052     
+0053     pos_too_small = pos_areas &lt; min_area;
+0054     neg_too_small = neg_areas &lt; min_area;
+0055     
+0056     pos_stats(pos_too_small) = [];
+0057     neg_stats(neg_too_small) = [];
+0058     <span class="comment">% Got to fix the areas</span>
+0059     pos_areas(pos_too_small) = [];
+0060     neg_areas(neg_too_small) = [];    
+0061     
+0062     <span class="comment">% I use these a lot. This must be after you delete the small ones!</span>
+0063     lps = length(pos_stats);
+0064     lns = length(neg_stats);
+0065     
+0066     pos_centroids = reshape([pos_stats.Centroid], 2, []);
+0067     neg_centroids = reshape([neg_stats.Centroid], 2, []);
+0068     
+0069     centroids = [pos_centroids'; neg_centroids'];
+0070     
+0071     <span class="comment">%segment_data = zeros(length(pos_stats) + length(neg_stats), size(icp.pp.im_data, 3));</span>
+0072     rois = zeros(lps + lns, 5);
+0073     data_mask = zeros(size(comp, 1), size(comp, 2), lps + lns);
+0074     <span class="comment">%%</span>
+0075     <span class="keyword">for</span> j = 1:lps <span class="comment">% length(pos_stats)</span>
+0076         row_idxs = ceil(pos_stats(j).BoundingBox(2)):(ceil(pos_stats(j).BoundingBox(2)) + pos_stats(j).BoundingBox(4) - 1);
+0077         col_idxs = ceil(pos_stats(j).BoundingBox(1)):(ceil(pos_stats(j).BoundingBox(1)) + pos_stats(j).BoundingBox(3) - 1);
+0078         
+0079         pos_data_mask = zeros(size(comp(:,:,i)));
+0080         pos_data_mask(row_idxs, col_idxs) = max(pos_data_mask(row_idxs, col_idxs), pos_stats(j).Image);
+0081         
+0082         data_mask(:,:,j) = pos_data_mask;
+0083         
+0084         <span class="comment">%segment_data(j, :) = mean_roi(icp.pp.im_data, pos_data_mask);</span>
+0085         
+0086         rois(j, 1) = centroids(j, 1);
+0087         rois(j, 2) = centroids(j, 2);
+0088         rois(j, 3) = pos_stats(j).MajorAxisLength/2;
+0089         rois(j, 4) = pos_stats(j).MinorAxisLength/2;
+0090         rois(j, 5) = -pi / 180 * pos_stats(j).Orientation;
+0091     <span class="keyword">end</span>
+0092     
+0093     <span class="keyword">for</span> j = 1:length(neg_stats)
+0094         row_idxs = ceil(neg_stats(j).BoundingBox(2)):(ceil(neg_stats(j).BoundingBox(2)) + neg_stats(j).BoundingBox(4) - 1);
+0095         col_idxs = ceil(neg_stats(j).BoundingBox(1)):(ceil(neg_stats(j).BoundingBox(1)) + neg_stats(j).BoundingBox(3) - 1);
+0096         
+0097         neg_data_mask = zeros(size(comp(:,:,i)));
+0098         neg_data_mask(row_idxs, col_idxs) = max(neg_data_mask(row_idxs, col_idxs), neg_stats(j).Image);
+0099         
+0100         data_mask(:,:,j+lps) = neg_data_mask;
+0101         
+0102         <span class="comment">%segment_data(j+lps, :) = mean_roi(icp.pp.im_data, neg_data_mask);</span>
+0103                 
+0104         rois(j + lps, 1) = centroids(j + lps, 1);
+0105         rois(j + lps, 2) = centroids(j + lps, 2);
+0106         rois(j + lps, 3) = neg_stats(j).MajorAxisLength/2;
+0107         rois(j + lps, 4) = neg_stats(j).MinorAxisLength/2;
+0108         rois(j + lps, 5) = -pi / 180 * neg_stats(j).Orientation;
+0109     <span class="keyword">end</span>
+0110     
+0111     <span class="comment">%segment_data = segment_data ./ repmat(segment_data(:, 20), 1, size(segment_data, 2));</span>
+0112     <span class="comment">%%</span>
+0113 <span class="comment">%     figure(20);</span>
+0114 <span class="comment">%     clf();</span>
+0115 <span class="comment">%     subplot(2,1,1);</span>
+0116 <span class="comment">%     plot(segment_data');</span>
+0117 <span class="comment">%     subplot(2,1,2);</span>
+0118 <span class="comment">%     imagesc(sum(data_mask .* repmat(reshape(1:size(data_mask, 3), 1, 1, size(data_mask, 3)), size(data_mask, 1), size(data_mask, 2)), 3));</span>
+0119     
+0120     <span class="comment">%% Ok... I somehow need to save a bunch of stuff for each of the segments</span>
+0121     num_segments = lps + lns;
+0122     
+0123     all_segment_ids = [all_segment_ids; (c:(c + num_segments - 1))']; <span class="comment">% This will end up being 1;2;3;4;5;... but sanity check.</span>
+0124     <span class="comment">%all_segment_data = [all_segment_data; segment_data];</span>
+0125     all_centroids = [all_centroids; centroids];
+0126     all_ic_ids = [all_ic_ids; i * ones(num_segments, 1)];
+0127     all_rois = [all_rois; rois];
+0128     all_is_pos = [all_is_pos; true(lps, 1); false(length(neg_stats), 1)];
+0129     
+0130     segment_masks(:,:,c:(c+num_segments-1)) = data_mask;
+0131     
+0132     c = c+num_segments;
+0133     
+0134 <span class="keyword">end</span>
+0135 
+0136 <span class="comment">% This is just to return all the info and make it flexible.</span>
+0137 segment_info.segment_ids = all_segment_ids;
+0138 <span class="comment">%segment_struct.segment_data = all_segment_data;</span>
+0139 segment_info.centroids = all_centroids;
+0140 segment_info.ic_ids = all_ic_ids;
+0141 <span class="comment">% @todo: fix the rois with the x,y from the image.</span>
+0142 segment_info.rois = all_rois;
+0143 segment_info.is_pos = all_is_pos;
+0144 
+0145</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

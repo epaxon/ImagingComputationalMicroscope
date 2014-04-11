@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of install_icp</title>
+  <meta name="keywords" content="install_icp">
+  <meta name="description" content="% Run this to install ICP">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; install_icp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>install_icp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>% Run this to install ICP</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function install_icp() </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% Run this to install ICP</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="install_icp.m">install_icp.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function install_icp()</a>
+0002 <span class="comment">%% Run this to install ICP</span>
+0003 
+0004 <span class="comment">% @todo: check the version and for the right functions.</span>
+0005 currentdir = pwd();
+0006 
+0007 thisdir = fileparts(mfilename(<span class="string">'fullpath'</span>));
+0008 
+0009 addpath(thisdir);
+0010 addpath(fullfile(thisdir, <span class="string">'ecc'</span>));
+0011 addpath(fullfile(thisdir, <span class="string">'FastICA_25'</span>));
+0012 addpath(fullfile(thisdir, <span class="string">'Resources'</span>));
+0013 cd(fullfile(thisdir, <span class="string">'GUILayout-v1p13'</span>));
+0014 install();
+0015 cd(currentdir);
+0016 
+0017 <span class="keyword">if</span> savepath()
+0018     <span class="comment">% Then save failed</span>
+0019     fprintf(<span class="string">'- Failed to save path, you will need to re-install when MATLAB is restarted\n'</span>);
+0020 <span class="keyword">else</span>
+0021     fprintf(<span class="string">'+ Path saved\n'</span>);
+0022 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

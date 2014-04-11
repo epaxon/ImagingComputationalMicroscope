@@ -1,0 +1,533 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of icaplot</title>
+  <meta name="keywords" content="icaplot">
+  <meta name="description" content="ICAPLOT - plot signals in various ways">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FastICA_25</a> &gt; icaplot.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FastICA_25&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>icaplot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>ICAPLOT - plot signals in various ways</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function icaplot(mode, varargin); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">ICAPLOT - plot signals in various ways
+
+ ICAPLOT is mainly for plottinf and comparing the mixed signals and
+ separated ica-signals.
+
+ ICAPLOT has many different modes. The first parameter of the function
+ defines the mode. Other parameters and their order depends on the
+ mode. The explanation for the more common parameters is in the end.
+
+ Classic
+     icaplot('classic', s1, n1, range, xrange, titlestr)
+
+     Plots the signals in the same manner as the FASTICA and FASTICAG
+     programs do. All the signals are plotted in their own axis.
+
+ Complot
+     icaplot('complot', s1, n1, range, xrange, titlestr)
+
+     The signals are plotted on the same axis. This is good for
+     visualization of the shape of the signals. The scale of the signals 
+     has been altered so that they all fit nicely.
+
+ Histogram
+     icaplot('histogram', s1, n1, range, bins, style)
+     
+     The histogram of the signals is plotted. The number of bins can be
+     specified with 'bins'-parameter. The style for the histograms can
+     be either 'bar' (default) of 'line'.
+
+ Scatter
+     icaplot('scatter', s1, n1, s2, n2, range, titlestr, s1label,
+     s2label, markerstr)
+
+     A scatterplot is plotted so that the signal 1 is the 'X'-variable
+     and the signal 2 is the 'Y'-variable. The 'markerstr' can be used
+     to specify the maker used in the plot. The format for 'markerstr'
+     is the same as for Matlab's PLOT. 
+
+ Compare
+     icaplot('compare', s1, n1, s2, n2, range, xrange, titlestr,
+     s1label, s2label)
+
+     This for for comparing two signals. The main used in this context
+     would probably be to see how well the separated ICA-signals explain 
+     the observed mixed signals. The s2 signals are first scaled with
+     REGRESS function.
+
+ Compare - Sum
+     icaplot('sum', s1, n1, s2, n2, range, xrange, titlestr, s1label,
+     s2label)
+
+     The same as Compare, but this time the signals in s2 (specified by
+     n2) are summed together.
+
+ Compare - Sumerror
+     icaplot('sumerror', s1, n1, s2, n2, range, xrange, titlestr,
+     s1label, s2label)
+     
+     The same as Compare - Sum, but also the 'error' between the signal
+     1 and the summed IC's is plotted.
+
+
+ More common parameters
+     The signals to be plotted are in matrices s1 and s2. The n1 and n2
+     are used to tell the index of the signal or signals to be plotted
+     from s1 or s2. If n1 or n2 has a value of 0, then all the signals
+     from corresponding matrix will be plotted. The values for n1 and n2 
+     can also be vectors (like: [1 3 4]) In some casee if there are more
+     than 1 signal to be plotted from s1 or s2 then the plot will
+     contain as many subplots as are needed. 
+
+     The range of the signals to be plotted can be limited with
+     'range'-parameter. It's value is a vector ( 10000:15000 ). If range 
+     is 0, then the whole range will be plotted.
+
+     The 'xrange' is used to specify only the labels used on the
+     x-axis. The value of 'xrange' is a vector containing the x-values
+     for the plots or [start end] for begin and end of the range
+     ( 10000:15000 or [10 15] ). If xrange is 0, then value of range
+     will be used for x-labels.
+
+     You can give a title for the plot with 'titlestr'. Also the
+     's1label' and 's2label' are used to give more meaningfull label for 
+     the signals.
+
+     Lastly, you can omit some of the arguments from the and. You will
+     have to give values for the signal matrices (s1, s2) and the
+     indexes (n1, n2)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="remmean.html" class="code" title="function [newVectors, meanValue] = remmean(vectors);">remmean</a>	REMMEAN - remove the mean from vectors</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="dispsig.html" class="code" title="function dispsig(signalMatrix, range, titlestr);">dispsig</a>	DISPSIG - deprecated!</li><li><a href="fpica.html" class="code" title="function [A, W] = fpica(X, whiteningMatrix, dewhiteningMatrix, approach,numOfIC, g, finetune, a1, a2, myy, stabilization,epsilon, maxNumIterations, maxFinetune, initState,guess, sampleSize, displayMode, displayInterval,s_verbose);">fpica</a>	FPICA - Fixed point ICA. Main algorithm of FASTICA.</li><li><a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a>	</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function plotcompare(s1, n1, s2, n2, range, xrange);</a></li><li><a href="#_sub2" class="code">function [legendText, legendStyle]=legendcompare(n1, n2, s1l, s2l, externalLegend);</a></li><li><a href="#_sub3" class="code">function plotsum(s1, n1, s2, n2, range, xrange);</a></li><li><a href="#_sub4" class="code">function [legendText, legendStyle]=legendsum(n1, n2, s1l, s2l, externalLegend);</a></li><li><a href="#_sub5" class="code">function plotsumerror(s1, n1, s2, n2, range, xrange);</a></li><li><a href="#_sub6" class="code">function [legendText, legendStyle]=legendsumerror(n1, n2, s1l, s2l, externalLegend);</a></li><li><a href="#_sub7" class="code">function style=getStyles;</a></li><li><a href="#_sub8" class="code">function range=chkrange(r, s)</a></li><li><a href="#_sub9" class="code">function xrange=chkxrange(xr,r);</a></li><li><a href="#_sub10" class="code">function n=chkn(n,s)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function icaplot(mode, varargin);</a>
+0002 <span class="comment">%ICAPLOT - plot signals in various ways</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% ICAPLOT is mainly for plottinf and comparing the mixed signals and</span>
+0005 <span class="comment">% separated ica-signals.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% ICAPLOT has many different modes. The first parameter of the function</span>
+0008 <span class="comment">% defines the mode. Other parameters and their order depends on the</span>
+0009 <span class="comment">% mode. The explanation for the more common parameters is in the end.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Classic</span>
+0012 <span class="comment">%     icaplot('classic', s1, n1, range, xrange, titlestr)</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%     Plots the signals in the same manner as the FASTICA and FASTICAG</span>
+0015 <span class="comment">%     programs do. All the signals are plotted in their own axis.</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% Complot</span>
+0018 <span class="comment">%     icaplot('complot', s1, n1, range, xrange, titlestr)</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%     The signals are plotted on the same axis. This is good for</span>
+0021 <span class="comment">%     visualization of the shape of the signals. The scale of the signals</span>
+0022 <span class="comment">%     has been altered so that they all fit nicely.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% Histogram</span>
+0025 <span class="comment">%     icaplot('histogram', s1, n1, range, bins, style)</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%     The histogram of the signals is plotted. The number of bins can be</span>
+0028 <span class="comment">%     specified with 'bins'-parameter. The style for the histograms can</span>
+0029 <span class="comment">%     be either 'bar' (default) of 'line'.</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% Scatter</span>
+0032 <span class="comment">%     icaplot('scatter', s1, n1, s2, n2, range, titlestr, s1label,</span>
+0033 <span class="comment">%     s2label, markerstr)</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%     A scatterplot is plotted so that the signal 1 is the 'X'-variable</span>
+0036 <span class="comment">%     and the signal 2 is the 'Y'-variable. The 'markerstr' can be used</span>
+0037 <span class="comment">%     to specify the maker used in the plot. The format for 'markerstr'</span>
+0038 <span class="comment">%     is the same as for Matlab's PLOT.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">% Compare</span>
+0041 <span class="comment">%     icaplot('compare', s1, n1, s2, n2, range, xrange, titlestr,</span>
+0042 <span class="comment">%     s1label, s2label)</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%     This for for comparing two signals. The main used in this context</span>
+0045 <span class="comment">%     would probably be to see how well the separated ICA-signals explain</span>
+0046 <span class="comment">%     the observed mixed signals. The s2 signals are first scaled with</span>
+0047 <span class="comment">%     REGRESS function.</span>
+0048 <span class="comment">%</span>
+0049 <span class="comment">% Compare - Sum</span>
+0050 <span class="comment">%     icaplot('sum', s1, n1, s2, n2, range, xrange, titlestr, s1label,</span>
+0051 <span class="comment">%     s2label)</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%     The same as Compare, but this time the signals in s2 (specified by</span>
+0054 <span class="comment">%     n2) are summed together.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">% Compare - Sumerror</span>
+0057 <span class="comment">%     icaplot('sumerror', s1, n1, s2, n2, range, xrange, titlestr,</span>
+0058 <span class="comment">%     s1label, s2label)</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%     The same as Compare - Sum, but also the 'error' between the signal</span>
+0061 <span class="comment">%     1 and the summed IC's is plotted.</span>
+0062 <span class="comment">%</span>
+0063 <span class="comment">%</span>
+0064 <span class="comment">% More common parameters</span>
+0065 <span class="comment">%     The signals to be plotted are in matrices s1 and s2. The n1 and n2</span>
+0066 <span class="comment">%     are used to tell the index of the signal or signals to be plotted</span>
+0067 <span class="comment">%     from s1 or s2. If n1 or n2 has a value of 0, then all the signals</span>
+0068 <span class="comment">%     from corresponding matrix will be plotted. The values for n1 and n2</span>
+0069 <span class="comment">%     can also be vectors (like: [1 3 4]) In some casee if there are more</span>
+0070 <span class="comment">%     than 1 signal to be plotted from s1 or s2 then the plot will</span>
+0071 <span class="comment">%     contain as many subplots as are needed.</span>
+0072 <span class="comment">%</span>
+0073 <span class="comment">%     The range of the signals to be plotted can be limited with</span>
+0074 <span class="comment">%     'range'-parameter. It's value is a vector ( 10000:15000 ). If range</span>
+0075 <span class="comment">%     is 0, then the whole range will be plotted.</span>
+0076 <span class="comment">%</span>
+0077 <span class="comment">%     The 'xrange' is used to specify only the labels used on the</span>
+0078 <span class="comment">%     x-axis. The value of 'xrange' is a vector containing the x-values</span>
+0079 <span class="comment">%     for the plots or [start end] for begin and end of the range</span>
+0080 <span class="comment">%     ( 10000:15000 or [10 15] ). If xrange is 0, then value of range</span>
+0081 <span class="comment">%     will be used for x-labels.</span>
+0082 <span class="comment">%</span>
+0083 <span class="comment">%     You can give a title for the plot with 'titlestr'. Also the</span>
+0084 <span class="comment">%     's1label' and 's2label' are used to give more meaningfull label for</span>
+0085 <span class="comment">%     the signals.</span>
+0086 <span class="comment">%</span>
+0087 <span class="comment">%     Lastly, you can omit some of the arguments from the and. You will</span>
+0088 <span class="comment">%     have to give values for the signal matrices (s1, s2) and the</span>
+0089 <span class="comment">%     indexes (n1, n2)</span>
+0090 
+0091 <span class="comment">% @(#)$Id: icaplot.m,v 1.2 2003/04/05 14:23:58 jarmo Exp $</span>
+0092 
+0093 <span class="keyword">switch</span> mode
+0094 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0095   <span class="comment">% 'dispsig' is to replace the old DISPSIG</span>
+0096   <span class="comment">% '' &amp; 'classic' are just another names - '' quite short one :-)</span>
+0097  <span class="keyword">case</span> {<span class="string">''</span>, <span class="string">'classic'</span>, <span class="string">'dispsig'</span>} 
+0098   <span class="comment">% icaplot(mode, s1, n1, range, xrange, titlestr)</span>
+0099   <span class="keyword">if</span> length(varargin) &lt; 1, error(<span class="string">'Not enough arguments.'</span>); <span class="keyword">end</span>
+0100   <span class="keyword">if</span> length(varargin) &lt; 5, titlestr = <span class="string">''</span>;<span class="keyword">else</span> titlestr = varargin{5}; <span class="keyword">end</span>
+0101   <span class="keyword">if</span> length(varargin) &lt; 4, xrange = 0;<span class="keyword">else</span> xrange = varargin{4}; <span class="keyword">end</span>
+0102   <span class="keyword">if</span> length(varargin) &lt; 3, range = 0;<span class="keyword">else</span> range = varargin{3}; <span class="keyword">end</span>
+0103   <span class="keyword">if</span> length(varargin) &lt; 2, n1 = 0;<span class="keyword">else</span> n1 = varargin{2}; <span class="keyword">end</span>
+0104   s1 = varargin{1};
+0105   range=<a href="#_sub8" class="code" title="subfunction range=chkrange(r, s)">chkrange</a>(range, s1);
+0106   xrange=<a href="#_sub9" class="code" title="subfunction xrange=chkxrange(xr,r);">chkxrange</a>(xrange, range);
+0107   n1=<a href="#_sub10" class="code" title="subfunction n=chkn(n,s)">chkn</a>(n1, s1);
+0108 
+0109   clf;
+0110   
+0111   numSignals = size(n1, 2);
+0112   <span class="keyword">for</span> i = 1:numSignals,
+0113     subplot(numSignals, 1, i);
+0114     plot(xrange, s1(n1(i), range));
+0115   <span class="keyword">end</span>
+0116   subplot(numSignals,1, 1);
+0117   <span class="keyword">if</span> (~isempty(titlestr))
+0118     title(titlestr);
+0119   <span class="keyword">end</span>
+0120   
+0121 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0122  <span class="keyword">case</span> <span class="string">'complot'</span>
+0123   <span class="comment">% icaplot(mode, s1, n1, range, xrange, titlestr)</span>
+0124   <span class="keyword">if</span> length(varargin) &lt; 1, error(<span class="string">'Not enough arguments.'</span>); <span class="keyword">end</span>
+0125   <span class="keyword">if</span> length(varargin) &lt; 5, titlestr = <span class="string">''</span>;<span class="keyword">else</span> titlestr = varargin{5}; <span class="keyword">end</span>
+0126   <span class="keyword">if</span> length(varargin) &lt; 4, xrange = 0;<span class="keyword">else</span> xrange = varargin{4}; <span class="keyword">end</span>
+0127   <span class="keyword">if</span> length(varargin) &lt; 3, range = 0;<span class="keyword">else</span> range = varargin{3}; <span class="keyword">end</span>
+0128   <span class="keyword">if</span> length(varargin) &lt; 2, n1 = 0;<span class="keyword">else</span> n1 = varargin{2}; <span class="keyword">end</span>
+0129   s1 = <a href="remmean.html" class="code" title="function [newVectors, meanValue] = remmean(vectors);">remmean</a>(varargin{1});
+0130   range=<a href="#_sub8" class="code" title="subfunction range=chkrange(r, s)">chkrange</a>(range, s1);
+0131   xrange=<a href="#_sub9" class="code" title="subfunction xrange=chkxrange(xr,r);">chkxrange</a>(xrange, range);
+0132   n1=<a href="#_sub10" class="code" title="subfunction n=chkn(n,s)">chkn</a>(n1, s1);
+0133   
+0134   <span class="keyword">for</span> i = 1:size(n1, 2)
+0135     S1(i, :) = s1(n1(i), range);
+0136   <span class="keyword">end</span>
+0137   
+0138   alpha = mean(max(S1')-min(S1'));
+0139   <span class="keyword">for</span> i = 1:size(n1,2)
+0140     S2(i,:) = S1(i,:) - alpha*(i-1)*ones(size(S1(1,:)));
+0141   <span class="keyword">end</span>
+0142   
+0143   plot(xrange, S2');
+0144   axis([min(xrange) max(xrange) min(min(S2)) max(max(S2)) ]);
+0145   
+0146   set(gca,<span class="string">'YTick'</span>,(-size(S1,1)+1)*alpha:alpha:0);
+0147   set(gca,<span class="string">'YTicklabel'</span>,fliplr(n1));
+0148   
+0149   <span class="keyword">if</span> (~isempty(titlestr))
+0150     title(titlestr);
+0151   <span class="keyword">end</span>
+0152 
+0153 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0154  <span class="keyword">case</span> <span class="string">'histogram'</span>
+0155   <span class="comment">% icaplot(mode, s1, n1, range, bins, style)</span>
+0156   <span class="keyword">if</span> length(varargin) &lt; 1, error(<span class="string">'Not enough arguments.'</span>); <span class="keyword">end</span>
+0157   <span class="keyword">if</span> length(varargin) &lt; 5, style = <span class="string">'bar'</span>;<span class="keyword">else</span> style = varargin{5}; <span class="keyword">end</span>
+0158   <span class="keyword">if</span> length(varargin) &lt; 4, bins = 10;<span class="keyword">else</span> bins = varargin{4}; <span class="keyword">end</span>
+0159   <span class="keyword">if</span> length(varargin) &lt; 3, range = 0;<span class="keyword">else</span> range = varargin{3}; <span class="keyword">end</span>
+0160   <span class="keyword">if</span> length(varargin) &lt; 2, n1 = 0;<span class="keyword">else</span> n1 = varargin{2}; <span class="keyword">end</span>
+0161   s1 = varargin{1};
+0162   range = <a href="#_sub8" class="code" title="subfunction range=chkrange(r, s)">chkrange</a>(range, s1);
+0163   n1 = <a href="#_sub10" class="code" title="subfunction n=chkn(n,s)">chkn</a>(n1, s1);
+0164   
+0165   numSignals = size(n1, 2);
+0166   rows = floor(sqrt(numSignals));
+0167   columns = ceil(sqrt(numSignals));
+0168   <span class="keyword">while</span> (rows * columns &lt; numSignals)
+0169     columns = columns + 1;
+0170   <span class="keyword">end</span>
+0171   
+0172   <span class="keyword">switch</span> style
+0173    <span class="keyword">case</span> {<span class="string">''</span>, <span class="string">'bar'</span>}
+0174     <span class="keyword">for</span> i = 1:numSignals,
+0175       subplot(rows, columns, i);
+0176       hist(s1(n1(i), range), bins);
+0177       title(int2str(n1(i)));
+0178       drawnow;
+0179     <span class="keyword">end</span>
+0180     
+0181    <span class="keyword">case</span> <span class="string">'line'</span>
+0182     <span class="keyword">for</span> i = 1:numSignals,
+0183       subplot(rows, columns, i);
+0184       [Y, X]=hist(s1(n1(i), range), bins);
+0185       plot(X, Y);
+0186       title(int2str(n1(i)));
+0187       drawnow;
+0188     <span class="keyword">end</span>
+0189    <span class="keyword">otherwise</span>
+0190     fprintf(<span class="string">'Unknown style.\n'</span>)
+0191   <span class="keyword">end</span>
+0192 
+0193 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0194  <span class="keyword">case</span> <span class="string">'scatter'</span>
+0195   <span class="comment">% icaplot(mode, s1, n1, s2, n2, range, titlestr, xlabelstr, ylabelstr, markerstr)</span>
+0196   <span class="keyword">if</span> length(varargin) &lt; 4, error(<span class="string">'Not enough arguments.'</span>); <span class="keyword">end</span>
+0197   <span class="keyword">if</span> length(varargin) &lt; 9, markerstr = <span class="string">'.'</span>;<span class="keyword">else</span> markerstr = varargin{9}; <span class="keyword">end</span>
+0198   <span class="keyword">if</span> length(varargin) &lt; 8, ylabelstr = <span class="string">'Signal 2'</span>;<span class="keyword">else</span> ylabelstr = varargin{8}; <span class="keyword">end</span>
+0199   <span class="keyword">if</span> length(varargin) &lt; 7, xlabelstr = <span class="string">'Signal 1'</span>;<span class="keyword">else</span> xlabelstr = varargin{7}; <span class="keyword">end</span>
+0200   <span class="keyword">if</span> length(varargin) &lt; 6, titlestr = <span class="string">''</span>;<span class="keyword">else</span> titlestr = varargin{6}; <span class="keyword">end</span>
+0201   <span class="keyword">if</span> length(varargin) &lt; 5, range = 0;<span class="keyword">else</span> range = varargin{5}; <span class="keyword">end</span>
+0202   n2 = varargin{4};
+0203   s2 = varargin{3};
+0204   n1 = varargin{2};
+0205   s1 = varargin{1};
+0206   range = <a href="#_sub8" class="code" title="subfunction range=chkrange(r, s)">chkrange</a>(range, s1);
+0207   n1 = <a href="#_sub10" class="code" title="subfunction n=chkn(n,s)">chkn</a>(n1, s1);
+0208   n2 = <a href="#_sub10" class="code" title="subfunction n=chkn(n,s)">chkn</a>(n2, s2);
+0209   
+0210   rows = size(n1, 2);
+0211   columns = size(n2, 2);
+0212   <span class="keyword">for</span> r = 1:rows
+0213     <span class="keyword">for</span> c = 1:columns
+0214       subplot(rows, columns, (r-1)*columns + c);
+0215       plot(s1(n1(r), range),s2(n2(c), range),markerstr);
+0216       <span class="keyword">if</span> (~isempty(titlestr))
+0217     title(titlestr);
+0218       <span class="keyword">end</span>
+0219       <span class="keyword">if</span> (rows*columns == 1)
+0220     xlabel(xlabelstr);
+0221     ylabel(ylabelstr);
+0222       <span class="keyword">else</span> 
+0223     xlabel([xlabelstr <span class="string">' ('</span> int2str(n1(r)) <span class="string">')'</span>]);
+0224     ylabel([ylabelstr <span class="string">' ('</span> int2str(n2(c)) <span class="string">')'</span>]);
+0225       <span class="keyword">end</span>
+0226       drawnow;
+0227     <span class="keyword">end</span>
+0228   <span class="keyword">end</span>
+0229   
+0230 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0231  <span class="keyword">case</span> {<span class="string">'compare'</span>, <span class="string">'sum'</span>, <span class="string">'sumerror'</span>}
+0232   <span class="comment">% icaplot(mode, s1, n1, s2, n2, range, xrange, titlestr, s1label, s2label)</span>
+0233   <span class="keyword">if</span> length(varargin) &lt; 4, error(<span class="string">'Not enough arguments.'</span>); <span class="keyword">end</span>
+0234   <span class="keyword">if</span> length(varargin) &lt; 9, s2label = <span class="string">'IC'</span>;<span class="keyword">else</span> s2label = varargin{9}; <span class="keyword">end</span>
+0235   <span class="keyword">if</span> length(varargin) &lt; 8, s1label = <span class="string">'Mix'</span>;<span class="keyword">else</span> s1label = varargin{8}; <span class="keyword">end</span>
+0236   <span class="keyword">if</span> length(varargin) &lt; 7, titlestr = <span class="string">''</span>;<span class="keyword">else</span> titlestr = varargin{7}; <span class="keyword">end</span>
+0237   <span class="keyword">if</span> length(varargin) &lt; 6, xrange = 0;<span class="keyword">else</span> xrange = varargin{6}; <span class="keyword">end</span>
+0238   <span class="keyword">if</span> length(varargin) &lt; 5, range = 0;<span class="keyword">else</span> range = varargin{5}; <span class="keyword">end</span>
+0239   s1 = varargin{1};
+0240   n1 = varargin{2};
+0241   s2 = varargin{3};
+0242   n2 = varargin{4};
+0243   range = <a href="#_sub8" class="code" title="subfunction range=chkrange(r, s)">chkrange</a>(range, s1);
+0244   xrange = <a href="#_sub9" class="code" title="subfunction xrange=chkxrange(xr,r);">chkxrange</a>(xrange, range);
+0245   n1 = <a href="#_sub10" class="code" title="subfunction n=chkn(n,s)">chkn</a>(n1, s1);
+0246   n2 = <a href="#_sub10" class="code" title="subfunction n=chkn(n,s)">chkn</a>(n2, s2);
+0247 
+0248   numSignals = size(n1, 2);
+0249   <span class="keyword">if</span> (numSignals &gt; 1)
+0250     externalLegend = 1;
+0251   <span class="keyword">else</span>
+0252     externalLegend = 0;
+0253   <span class="keyword">end</span>
+0254   
+0255   rows = floor(sqrt(numSignals+externalLegend));
+0256   columns = ceil(sqrt(numSignals+externalLegend));
+0257   <span class="keyword">while</span> (rows * columns &lt; (numSignals+externalLegend))
+0258     columns = columns + 1;
+0259   <span class="keyword">end</span>
+0260   
+0261   clf;
+0262   
+0263   <span class="keyword">for</span> j = 1:numSignals
+0264     subplot(rows, columns, j);
+0265     <span class="keyword">switch</span> mode
+0266      <span class="keyword">case</span> <span class="string">'compare'</span>
+0267       <a href="#_sub1" class="code" title="subfunction plotcompare(s1, n1, s2, n2, range, xrange);">plotcompare</a>(s1, n1(j), s2,n2, range, xrange);
+0268       [legendtext,legendstyle]=<a href="#_sub2" class="code" title="subfunction [legendText, legendStyle]=legendcompare(n1, n2, s1l, s2l, externalLegend);">legendcompare</a>(n1(j),n2,s1label,s2label,externalLegend);
+0269      <span class="keyword">case</span> <span class="string">'sum'</span>
+0270       <a href="#_sub3" class="code" title="subfunction plotsum(s1, n1, s2, n2, range, xrange);">plotsum</a>(s1, n1(j), s2,n2, range, xrange);
+0271       [legendtext,legendstyle]=<a href="#_sub4" class="code" title="subfunction [legendText, legendStyle]=legendsum(n1, n2, s1l, s2l, externalLegend);">legendsum</a>(n1(j),n2,s1label,s2label,externalLegend);
+0272      <span class="keyword">case</span> <span class="string">'sumerror'</span>
+0273       <a href="#_sub5" class="code" title="subfunction plotsumerror(s1, n1, s2, n2, range, xrange);">plotsumerror</a>(s1, n1(j), s2,n2, range, xrange);
+0274       [legendtext,legendstyle]=<a href="#_sub6" class="code" title="subfunction [legendText, legendStyle]=legendsumerror(n1, n2, s1l, s2l, externalLegend);">legendsumerror</a>(n1(j),n2,s1label,s2label,externalLegend);
+0275     <span class="keyword">end</span>
+0276     
+0277     <span class="keyword">if</span> externalLegend
+0278       title([titlestr <span class="string">' ('</span> s1label  <span class="string">' '</span> int2str(n1(j)) <span class="string">')'</span>]);
+0279     <span class="keyword">else</span>
+0280       legend(char(legendtext));
+0281       <span class="keyword">if</span> (~isempty(titlestr))
+0282     title(titlestr);
+0283       <span class="keyword">end</span>
+0284     <span class="keyword">end</span>
+0285   <span class="keyword">end</span>
+0286   
+0287   <span class="keyword">if</span> (externalLegend)
+0288     subplot(rows, columns, numSignals+1);
+0289     legendsize = size(legendtext, 2);
+0290     hold on;
+0291     <span class="keyword">for</span> i=1:legendsize
+0292       plot([0 1],[legendsize-i legendsize-i], char(legendstyle(i)));
+0293       text(1.5, legendsize-i, char(legendtext(i)));
+0294     <span class="keyword">end</span>
+0295     hold off;
+0296     axis([0 6 -1 legendsize]);
+0297     axis off;
+0298   <span class="keyword">end</span>
+0299   
+0300 
+0301 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0302 <span class="keyword">end</span>
+0303 
+0304 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0305 <a name="_sub1" href="#_subfunctions" class="code">function plotcompare(s1, n1, s2, n2, range, xrange);</a>
+0306   style=getStyles;
+0307   K = regress(s1(n1,:)',s2');
+0308   plot(xrange, s1(n1,range), char(style(1)));
+0309   hold on
+0310   <span class="keyword">for</span> i=1:size(n2,2)
+0311     plotstyle=char(style(i+1));
+0312     plot(xrange, K(n2(i))*s2(n2(i),range), plotstyle);
+0313   <span class="keyword">end</span>
+0314   hold off
+0315 
+0316 <a name="_sub2" href="#_subfunctions" class="code">function [legendText, legendStyle]=legendcompare(n1, n2, s1l, s2l, externalLegend);</a>
+0317   style=getStyles;
+0318   <span class="keyword">if</span> (externalLegend)
+0319     legendText(1)={[s1l <span class="string">' (see the titles)'</span>]};
+0320   <span class="keyword">else</span>
+0321     legendText(1)={[s1l <span class="string">' '</span>, int2str(n1)]};
+0322   <span class="keyword">end</span>
+0323   legendStyle(1)=style(1);
+0324   <span class="keyword">for</span> i=1:size(n2, 2)
+0325     legendText(i+1) = {[s2l <span class="string">' '</span> int2str(n2(i))]};
+0326     legendStyle(i+1) = style(i+1);
+0327   <span class="keyword">end</span>
+0328 
+0329 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0330 <a name="_sub3" href="#_subfunctions" class="code">function plotsum(s1, n1, s2, n2, range, xrange);</a>
+0331   K = diag(regress(s1(n1,:)',s2'));
+0332   sigsum = sum(K(:,n2)*s2(n2,:));
+0333   plot(xrange, s1(n1, range),<span class="string">'k-'</span>, <span class="keyword">...</span>
+0334        xrange, sigsum(range), <span class="string">'b-'</span>);
+0335 
+0336 <a name="_sub4" href="#_subfunctions" class="code">function [legendText, legendStyle]=legendsum(n1, n2, s1l, s2l, externalLegend);</a>
+0337   <span class="keyword">if</span> (externalLegend)
+0338     legendText(1)={[s1l <span class="string">' (see the titles)'</span>]};
+0339   <span class="keyword">else</span>
+0340     legendText(1)={[s1l <span class="string">' '</span>, int2str(n1)]};
+0341   <span class="keyword">end</span>
+0342   legendText(2)={[<span class="string">'Sum of '</span> s2l <span class="string">': '</span>, int2str(n2)]};
+0343   legendStyle={<span class="string">'k-'</span>;<span class="string">'b-'</span>};
+0344 
+0345 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0346 <a name="_sub5" href="#_subfunctions" class="code">function plotsumerror(s1, n1, s2, n2, range, xrange);</a>
+0347   K = diag(regress(s1(n1,:)',s2'));
+0348   sigsum = sum(K(:,n2)*s2(n2,:));
+0349   plot(xrange, s1(n1, range),<span class="string">'k-'</span>, <span class="keyword">...</span>
+0350        xrange, sigsum(range), <span class="string">'b-'</span>, <span class="keyword">...</span>
+0351        xrange, s1(n1, range)-sigsum(range), <span class="string">'r-'</span>);
+0352 
+0353 <a name="_sub6" href="#_subfunctions" class="code">function [legendText, legendStyle]=legendsumerror(n1, n2, s1l, s2l, externalLegend);</a>
+0354   <span class="keyword">if</span> (externalLegend)
+0355     legendText(1)={[s1l <span class="string">' (see the titles)'</span>]};
+0356   <span class="keyword">else</span>
+0357     legendText(1)={[s1l <span class="string">' '</span>, int2str(n1)]};
+0358   <span class="keyword">end</span>
+0359   legendText(2)={[<span class="string">'Sum of '</span> s2l <span class="string">': '</span>, int2str(n2)]};
+0360   legendText(3)={<span class="string">'&quot;Error&quot;'</span>};
+0361   legendStyle={<span class="string">'k-'</span>;<span class="string">'b-'</span>;<span class="string">'r-'</span>};
+0362 
+0363 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0364 <a name="_sub7" href="#_subfunctions" class="code">function style=getStyles;</a>
+0365   color = {<span class="string">'k'</span>,<span class="string">'r'</span>,<span class="string">'g'</span>,<span class="string">'b'</span>,<span class="string">'m'</span>,<span class="string">'c'</span>,<span class="string">'y'</span>};
+0366   line = {<span class="string">'-'</span>,<span class="string">':'</span>,<span class="string">'-.'</span>,<span class="string">'--'</span>};
+0367   <span class="keyword">for</span> i = 0:size(line,2)-1
+0368     <span class="keyword">for</span> j = 1:size(color, 2)
+0369       style(j + i*size(color, 2)) = strcat(color(j), line(i+1));
+0370     <span class="keyword">end</span>
+0371   <span class="keyword">end</span>
+0372 
+0373 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0374 <a name="_sub8" href="#_subfunctions" class="code">function range=chkrange(r, s)</a>
+0375   <span class="keyword">if</span> r == 0
+0376     range = 1:size(s, 2);
+0377   <span class="keyword">else</span>
+0378     range = r;
+0379   <span class="keyword">end</span>
+0380 
+0381 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0382 <a name="_sub9" href="#_subfunctions" class="code">function xrange=chkxrange(xr,r);</a>
+0383   <span class="keyword">if</span> xr == 0
+0384     xrange = r;
+0385   <span class="keyword">elseif</span> size(xr, 2) == 2
+0386     xrange = xr(1):(xr(2)-xr(1))/(size(r,2)-1):xr(2);
+0387   <span class="keyword">elseif</span> size(xr, 2)~=size(r, 2)
+0388     error(<span class="string">'Xrange and range have different sizes.'</span>);
+0389   <span class="keyword">else</span>
+0390     xrange = xr;
+0391   <span class="keyword">end</span>
+0392 
+0393 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0394 <a name="_sub10" href="#_subfunctions" class="code">function n=chkn(n,s)</a>
+0395   <span class="keyword">if</span> n == 0
+0396     n = 1:size(s, 1);
+0397   <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of image_jacobian</title>
+  <meta name="keywords" content="image_jacobian">
+  <meta name="description" content="%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ecc</a> &gt; image_jacobian.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ecc&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>image_jacobian
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function G = image_jacobian(gx, gy, jac, nop) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+G = IMAGE_JACOBIAN(GX, GY, JAC, NOP)
+ This function computes the jacobian G of the warped image wrt parameters. 
+ This matrix depends on the gradient of the warped image, as 
+ well as on the jacobian JAC of the warp transform wrt parameters. 
+ For a detailed definition of matrix G, see the paper text.
+
+ Input variables:
+ GX:           the warped image gradient in x (horizontal) direction,
+ GY:           the warped image gradient in y (vertical) direction,
+ JAC:            the jacobian matrix J of the warp transform wrt parameters,
+ NOP:          the number of parameters.
+
+ Output:
+ G:            The jacobian matrix G.
+--------------------------------------
+ $ Ver: 1.1, 7/1/2012,  released by Georgios D. Evangelidis.
+ For any comment, please contact evagelid@ceid.upatras.gr
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ecc.html" class="code" title="function [results, warp, warpedImage] = ecc(image, template, levels, noi, transform, delta_p_init)">ecc</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function G = image_jacobian(gx, gy, jac, nop)</a>
+0002 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0003 <span class="comment">%G = IMAGE_JACOBIAN(GX, GY, JAC, NOP)</span>
+0004 <span class="comment">% This function computes the jacobian G of the warped image wrt parameters.</span>
+0005 <span class="comment">% This matrix depends on the gradient of the warped image, as</span>
+0006 <span class="comment">% well as on the jacobian JAC of the warp transform wrt parameters.</span>
+0007 <span class="comment">% For a detailed definition of matrix G, see the paper text.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Input variables:</span>
+0010 <span class="comment">% GX:           the warped image gradient in x (horizontal) direction,</span>
+0011 <span class="comment">% GY:           the warped image gradient in y (vertical) direction,</span>
+0012 <span class="comment">% JAC:            the jacobian matrix J of the warp transform wrt parameters,</span>
+0013 <span class="comment">% NOP:          the number of parameters.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Output:</span>
+0016 <span class="comment">% G:            The jacobian matrix G.</span>
+0017 <span class="comment">%--------------------------------------</span>
+0018 <span class="comment">% $ Ver: 1.1, 7/1/2012,  released by Georgios D. Evangelidis.</span>
+0019 <span class="comment">% For any comment, please contact evagelid@ceid.upatras.gr</span>
+0020 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0021 
+0022 [h,w]=size(gx);
+0023 
+0024 <span class="keyword">if</span> nargin&lt;4
+0025     error(<span class="string">'Not enough input arguments'</span>);
+0026 <span class="keyword">end</span>
+0027 
+0028 gx=repmat(gx,1,nop);
+0029 gy=repmat(gy,1,nop);
+0030 
+0031 G=gx.*jac(1:h,:)+gy.*jac(h+1:<span class="keyword">end</span>,:);
+0032 G=reshape(G,h*w,nop);</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

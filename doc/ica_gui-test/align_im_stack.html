@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of align_im_stack</title>
+  <meta name="keywords" content="align_im_stack">
+  <meta name="description" content="im_stack = align_im_stack(im): Aligns an image stack using image">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; align_im_stack.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>align_im_stack
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>im_stack = align_im_stack(im): Aligns an image stack using image</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [im_stack, warp] = align_im_stack(im, n_iters, n_levels, transform, viz) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> im_stack = align_im_stack(im): Aligns an image stack using image
+ registration -- Motion correction algorithm.
+
+ @param: im image data MxNxT
+ @param: n_iters the number of iterations to run the alignment. Deafult
+ 20.
+ @param: n_levels the number of pyramid-levels. Default 1.
+ @param: transform the type of transform. Default 'affine';
+ @param: viz flag to show visualization. Default 0.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ImageComponentParser.html" class="code" title="classdef ImageComponentParser < hgsetget">ImageComponentParser</a>	class ImageComponentParser: gui to analyze the component ...</li><li><a href="icp_basics.html" class="code" title="">icp_basics</a>	A quick overview of ICP and the data</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="align_im_stack.m">align_im_stack.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [im_stack, warp] = align_im_stack(im, n_iters, n_levels, transform, viz)</a>
+0002 <span class="comment">% im_stack = align_im_stack(im): Aligns an image stack using image</span>
+0003 <span class="comment">% registration -- Motion correction algorithm.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% @param: im image data MxNxT</span>
+0006 <span class="comment">% @param: n_iters the number of iterations to run the alignment. Deafult</span>
+0007 <span class="comment">% 20.</span>
+0008 <span class="comment">% @param: n_levels the number of pyramid-levels. Default 1.</span>
+0009 <span class="comment">% @param: transform the type of transform. Default 'affine';</span>
+0010 <span class="comment">% @param: viz flag to show visualization. Default 0.</span>
+0011 
+0012 <span class="keyword">if</span> nargin &lt; 2 || isempty(n_iters)
+0013     n_iters = 20;
+0014 <span class="keyword">end</span>
+0015 
+0016 <span class="keyword">if</span> nargin &lt; 3 || isempty(n_levels)
+0017     n_levels = 1;
+0018 <span class="keyword">end</span>
+0019 
+0020 <span class="keyword">if</span> nargin &lt; 4 || isempty(transform)
+0021     transform = <span class="string">'affine'</span>;
+0022     <span class="comment">% transform = 'translation';</span>
+0023     <span class="comment">%transform = 'homography';</span>
+0024     <span class="comment">%transform = 'euclidean';</span>
+0025 <span class="keyword">end</span>
+0026 
+0027 <span class="keyword">if</span> nargin &lt; 5 || isempty(viz)
+0028     viz = 0;
+0029 <span class="keyword">end</span>
+0030 
+0031 transform_types = {<span class="string">'affine'</span>, <span class="string">'translation'</span>, <span class="string">'homography'</span>, <span class="string">'euclidean'</span>};
+0032 
+0033 <span class="keyword">switch</span> transform
+0034     <span class="keyword">case</span> transform_types;
+0035     <span class="keyword">otherwise</span> error(<span class="string">'Incorrect transform type. Must be one of [affine, translation, homography, euclidean]'</span>);
+0036 <span class="keyword">end</span>
+0037 
+0038 im = double(im);
+0039 
+0040 im_stack = zeros(size(im));
+0041 warp = [];
+0042 final_warp = eye(2,3)
+0043 <span class="keyword">for</span> i = 1:size(im, 3)
+0044     [results, final_warp, warped_image] = ecc(im(:,:,i), im(:,:,1), n_levels, n_iters, transform, final_warp);
+0045     
+0046     im_stack(:,:,i) = spatial_interp(im(:,:,i), final_warp, <span class="string">'linear'</span>, transform, 1:size(im, 2), 1:size(im, 1));
+0047     warp(:,:,i) = final_warp;
+0048 <span class="keyword">end</span>    
+0049 
+0050 <span class="comment">%%% IDK how to handle this, but I'm just going to hack it for now. The</span>
+0051 <span class="comment">%%% edges of the aligned images need to be cut off.</span>
+0052 xmx = ceil(max(warp(1,3,:)));
+0053 ymx = ceil(max(warp(2,3,:)));
+0054 
+0055 im_stack = im_stack((1+ymx):(end-ymx), (1+xmx):(end-xmx), :);
+0056 
+0057 <span class="comment">%%</span>
+0058 
+0059 figure(21);
+0060 clf();
+0061 c = 1;
+0062 <span class="keyword">for</span> i = 1:size(warp, 1)
+0063     <span class="keyword">for</span> j = 1:size(warp, 2)
+0064         subplot(size(warp, 1), size(warp, 2), c);
+0065         plot(squeeze(warp(i,j,:)));
+0066         axis tight;
+0067         
+0068         c = c+1;
+0069     <span class="keyword">end</span>
+0070 <span class="keyword">end</span>
+0071 
+0072 
+0073 <span class="comment">%%</span>
+0074 
+0075 xy1 = ones(3, size(warp, 3));
+0076 xy0 = xy1;
+0077 xy0(1:2, :) = 0;
+0078 xy0_warp = xy0;
+0079 xy1_warp = xy1;
+0080 <span class="keyword">for</span> i = 1:size(warp, 3)
+0081     xy0_warp(1:2, i) = warp(:,:,i) * xy0(:, i);
+0082     xy1_warp(1:2, i) = warp(:,:,i) * xy1(:, i);
+0083 <span class="keyword">end</span>
+0084 
+0085 figure(22);
+0086 clf();
+0087 hold on;
+0088 plot(xy0_warp(1,:), xy0_warp(2,:), <span class="string">'k'</span>);
+0089 plot(xy0_warp(1,1), xy0_warp(2,1), <span class="string">'o'</span>, <span class="string">'MarkerFaceColor'</span>, <span class="string">'k'</span>, <span class="string">'MarkerSize'</span>, 5);
+0090 plot(xy1_warp(1,:)-1, xy1_warp(2,:)-1, <span class="string">'b'</span>);</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

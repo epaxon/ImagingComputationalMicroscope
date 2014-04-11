@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of whitenv</title>
+  <meta name="keywords" content="whitenv">
+  <meta name="description" content="WHITENV - Whitenv vectors.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FastICA_25</a> &gt; whitenv.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FastICA_25&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>whitenv
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>WHITENV - Whitenv vectors.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [newVectors, whiteningMatrix, dewhiteningMatrix] = whitenv(vectors, E, D, s_verbose); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">WHITENV - Whitenv vectors.
+
+ [newVectors, whiteningMatrix, dewhiteningMatrix] = ...
+                               whitenv(vectors, E, D, verbose);
+
+ Whitens the data (row vectors) and reduces dimension. Returns
+ the whitened vectors (row vectors), whitening and dewhitening matrices.
+
+ ARGUMENTS
+
+ vectors       Data in row vectors.
+ E             Eigenvector matrix from function 'pcamat'
+ D             Diagonal eigenvalue matrix from function 'pcamat'
+ verbose       Optional. Default is 'on'
+
+ EXAMPLE
+       [E, D] = pcamat(vectors);
+       [nv, wm, dwm] = whitenv(vectors, E, D);
+
+
+ This function is needed by FASTICA and FASTICAG
+
+   See also <a href="pcamat.html" class="code" title="function [E, D] = pcamat(vectors, firstEig, lastEig, s_interactive,s_verbose);">PCAMAT</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="fastica.html" class="code" title="function [Out1, Out2, Out3] = fastica(mixedsig, varargin)">fastica</a>	FASTICA - Fast Independent Component Analysis</li><li><a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [newVectors, whiteningMatrix, dewhiteningMatrix] = whitenv </a><span class="keyword">...</span>
+0002     (vectors, E, D, s_verbose);
+0003 <span class="comment">%WHITENV - Whitenv vectors.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% [newVectors, whiteningMatrix, dewhiteningMatrix] = ...</span>
+0006 <span class="comment">%                               whitenv(vectors, E, D, verbose);</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Whitens the data (row vectors) and reduces dimension. Returns</span>
+0009 <span class="comment">% the whitened vectors (row vectors), whitening and dewhitening matrices.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% ARGUMENTS</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% vectors       Data in row vectors.</span>
+0014 <span class="comment">% E             Eigenvector matrix from function 'pcamat'</span>
+0015 <span class="comment">% D             Diagonal eigenvalue matrix from function 'pcamat'</span>
+0016 <span class="comment">% verbose       Optional. Default is 'on'</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% EXAMPLE</span>
+0019 <span class="comment">%       [E, D] = pcamat(vectors);</span>
+0020 <span class="comment">%       [nv, wm, dwm] = whitenv(vectors, E, D);</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% This function is needed by FASTICA and FASTICAG</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%   See also PCAMAT</span>
+0026 
+0027 <span class="comment">% @(#)$Id: whitenv.m,v 1.3 2003/10/12 09:04:43 jarmo Exp $</span>
+0028 
+0029 <span class="comment">% ========================================================</span>
+0030 <span class="comment">% Default value for 'verbose'</span>
+0031 <span class="keyword">if</span> nargin &lt; 4, s_verbose = <span class="string">'on'</span>; <span class="keyword">end</span>
+0032 
+0033 <span class="comment">% Check the optional parameter verbose;</span>
+0034 <span class="keyword">switch</span> lower(s_verbose)
+0035  <span class="keyword">case</span> <span class="string">'on'</span>
+0036   b_verbose = 1;
+0037  <span class="keyword">case</span> <span class="string">'off'</span>
+0038   b_verbose = 0;
+0039  <span class="keyword">otherwise</span>
+0040   error(sprintf(<span class="string">'Illegal value [ %s ] for parameter: ''verbose''\n'</span>, s_verbose));
+0041 <span class="keyword">end</span>
+0042 
+0043 <span class="comment">% ========================================================</span>
+0044 <span class="comment">% In some cases, rounding errors in Matlab cause negative</span>
+0045 <span class="comment">% eigenvalues (elements in the diagonal of D). Since it</span>
+0046 <span class="comment">% is difficult to know when this happens, it is difficult</span>
+0047 <span class="comment">% to correct it automatically. Therefore an error is</span>
+0048 <span class="comment">% signalled and the correction is left to the user.</span>
+0049 <span class="keyword">if</span> any (diag (D) &lt; 0),
+0050   error (sprintf ([<span class="string">'[ %d ] negative eigenvalues computed from the'</span> <span class="keyword">...</span>
+0051            <span class="string">' covariance matrix.\nThese are due to rounding'</span> <span class="keyword">...</span>
+0052            <span class="string">' errors in Matlab (the correct eigenvalues are\n'</span> <span class="keyword">...</span>
+0053            <span class="string">'probably very small).\nTo correct the situation,'</span> <span class="keyword">...</span>
+0054            <span class="string">' please reduce the number of dimensions in the'</span> <span class="keyword">...</span>
+0055            <span class="string">' data\nby using the ''lastEig'' argument in'</span> <span class="keyword">...</span>
+0056            <span class="string">' function FASTICA, or ''Reduce dim.'' button\nin'</span> <span class="keyword">...</span>
+0057            <span class="string">' the graphical user interface.'</span>], <span class="keyword">...</span>
+0058           sum (diag (D) &lt; 0)));
+0059 <span class="keyword">end</span>
+0060 
+0061 <span class="comment">% ========================================================</span>
+0062 <span class="comment">% Calculate the whitening and dewhitening matrices (these handle</span>
+0063 <span class="comment">% dimensionality simultaneously).</span>
+0064 whiteningMatrix = inv (sqrt (D)) * E';
+0065 dewhiteningMatrix = E * sqrt (D);
+0066 
+0067 <span class="comment">% Project to the eigenvectors of the covariance matrix.</span>
+0068 <span class="comment">% Whiten the samples and reduce dimension simultaneously.</span>
+0069 <span class="keyword">if</span> b_verbose, fprintf (<span class="string">'Whitening...\n'</span>); <span class="keyword">end</span>
+0070 newVectors =  whiteningMatrix * vectors;
+0071 
+0072 <span class="comment">% ========================================================</span>
+0073 <span class="comment">% Just some security...</span>
+0074 <span class="keyword">if</span> ~isreal(newVectors)
+0075   error (<span class="string">'Whitened vectors have imaginary values.'</span>);
+0076 <span class="keyword">end</span>
+0077 
+0078 <span class="comment">% Print some information to user</span>
+0079 <span class="keyword">if</span> b_verbose
+0080   fprintf (<span class="string">'Check: covariance differs from identity by [ %g ].\n'</span>, <span class="keyword">...</span>
+0081     max (max (abs (cov (newVectors', 1) - eye (size (newVectors, 1))))));
+0082 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

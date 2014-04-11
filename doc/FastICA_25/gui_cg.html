@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gui_cg</title>
+  <meta name="keywords" content="gui_cg">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FastICA_25</a> &gt; gui_cg.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FastICA_25&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gui_cg
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function gui_cg() </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ This function is needed by FASTICAG</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function gui_cg()</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% This function is needed by FASTICAG</span>
+0004 
+0005 <span class="comment">% This file just removes the global variables</span>
+0006 <span class="comment">% that are used in FASTICAG from the memory</span>
+0007 
+0008 <span class="comment">% @(#)$Id: gui_cg.m,v 1.2 2003/04/05 14:23:57 jarmo Exp $</span>
+0009 
+0010 clear <span class="keyword">global</span> c_FastICA_appr_strD;
+0011 clear <span class="keyword">global</span> c_FastICA_appr_strV;
+0012 clear <span class="keyword">global</span> c_FastICA_dMod_strD;
+0013 clear <span class="keyword">global</span> c_FastICA_dMod_strV;
+0014 clear <span class="keyword">global</span> c_FastICA_finetune_strD;
+0015 clear <span class="keyword">global</span> c_FastICA_finetune_strV;
+0016 clear <span class="keyword">global</span> c_FastICA_g1_strD;
+0017 clear <span class="keyword">global</span> c_FastICA_g1_strV;
+0018 clear <span class="keyword">global</span> c_FastICA_g2_strD;
+0019 clear <span class="keyword">global</span> c_FastICA_g2_strV;
+0020 clear <span class="keyword">global</span> c_FastICA_iSta_strD;
+0021 clear <span class="keyword">global</span> c_FastICA_iSta_strV;
+0022 clear <span class="keyword">global</span> c_FastICA_stabili_strD;
+0023 clear <span class="keyword">global</span> c_FastICA_stabili_strV;
+0024 clear <span class="keyword">global</span> c_FastICA_verb_strD;
+0025 clear <span class="keyword">global</span> c_FastICA_verb_strV;
+0026 clear <span class="keyword">global</span> g_FastICA_a1;
+0027 clear <span class="keyword">global</span> g_FastICA_a2;
+0028 clear <span class="keyword">global</span> g_FastICA_approach;
+0029 clear <span class="keyword">global</span> g_FastICA_displayIn;
+0030 clear <span class="keyword">global</span> g_FastICA_displayMo;
+0031 clear <span class="keyword">global</span> g_FastICA_epsilon;
+0032 clear <span class="keyword">global</span> g_FastICA_finetune;
+0033 clear <span class="keyword">global</span> g_FastICA_g;
+0034 clear <span class="keyword">global</span> g_FastICA_ica_A;
+0035 clear <span class="keyword">global</span> g_FastICA_ica_W;
+0036 clear <span class="keyword">global</span> g_FastICA_ica_sig;
+0037 clear <span class="keyword">global</span> g_FastICA_initGuess;
+0038 clear <span class="keyword">global</span> g_FastICA_initState;
+0039 clear <span class="keyword">global</span> g_FastICA_interrupt;
+0040 clear <span class="keyword">global</span> g_FastICA_loadType;
+0041 clear <span class="keyword">global</span> g_FastICA_maxFinetune;
+0042 clear <span class="keyword">global</span> g_FastICA_maxNumIte;
+0043 clear <span class="keyword">global</span> g_FastICA_mixedmean;
+0044 clear <span class="keyword">global</span> g_FastICA_mixedsig;
+0045 clear <span class="keyword">global</span> g_FastICA_myy;
+0046 clear <span class="keyword">global</span> g_FastICA_numOfIC;
+0047 clear <span class="keyword">global</span> g_FastICA_pca_D;
+0048 clear <span class="keyword">global</span> g_FastICA_pca_E;
+0049 clear <span class="keyword">global</span> g_FastICA_sampleSize;
+0050 clear <span class="keyword">global</span> g_FastICA_stabilization;
+0051 clear <span class="keyword">global</span> g_FastICA_verbose;
+0052 clear <span class="keyword">global</span> g_FastICA_white_dwm;
+0053 clear <span class="keyword">global</span> g_FastICA_white_sig;
+0054 clear <span class="keyword">global</span> g_FastICA_white_wm;
+0055 clear <span class="keyword">global</span> hb_FastICA_initGuess;
+0056 clear <span class="keyword">global</span> he_FastICA_a1;
+0057 clear <span class="keyword">global</span> he_FastICA_a2;
+0058 clear <span class="keyword">global</span> he_FastICA_displayInterval;
+0059 clear <span class="keyword">global</span> he_FastICA_epsilon;
+0060 clear <span class="keyword">global</span> he_FastICA_file;
+0061 clear <span class="keyword">global</span> he_FastICA_suffix;
+0062 clear <span class="keyword">global</span> he_FastICA_maxFinetune;
+0063 clear <span class="keyword">global</span> he_FastICA_maxIterations;
+0064 clear <span class="keyword">global</span> he_FastICA_myy;
+0065 clear <span class="keyword">global</span> he_FastICA_numOfIC;
+0066 clear <span class="keyword">global</span> he_FastICA_sampleSize;
+0067 clear <span class="keyword">global</span> hf_FastICA_MAIN;
+0068 clear <span class="keyword">global</span> hf_FastICA_AdvOpt;
+0069 clear <span class="keyword">global</span> hf_FastICA_Load;
+0070 clear <span class="keyword">global</span> hf_FastICA_Save;
+0071 clear <span class="keyword">global</span> hpm_FastICA_approach;
+0072 clear <span class="keyword">global</span> hpm_FastICA_displayMode;
+0073 clear <span class="keyword">global</span> hpm_FastICA_finetune;
+0074 clear <span class="keyword">global</span> hpm_FastICA_g;
+0075 clear <span class="keyword">global</span> hpm_FastICA_initState;
+0076 clear <span class="keyword">global</span> hpm_FastICA_stabilization;
+0077 clear <span class="keyword">global</span> hpm_FastICA_verbose;
+0078 clear <span class="keyword">global</span> ht_FastICA_dim;
+0079 clear <span class="keyword">global</span> ht_FastICA_icaStatus;
+0080 clear <span class="keyword">global</span> ht_FastICA_initGuess;
+0081 clear <span class="keyword">global</span> ht_FastICA_mixedStatus;
+0082 clear <span class="keyword">global</span> ht_FastICA_newDim;
+0083 clear <span class="keyword">global</span> ht_FastICA_numOfSamp;
+0084 clear <span class="keyword">global</span> ht_FastICA_whiteStatus;</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

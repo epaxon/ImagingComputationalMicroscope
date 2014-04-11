@@ -1,0 +1,629 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gui_cb</title>
+  <meta name="keywords" content="gui_cb">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FastICA_25</a> &gt; gui_cb.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FastICA_25&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gui_cb
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function gui_cb(action) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ This file is used by FASTICAG</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gui_adv.html" class="code" title="function gui_adv(x, y)">gui_adv</a>	</li><li><a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a>	</li><li><a href="gui_cg.html" class="code" title="function gui_cg()">gui_cg</a>	</li><li><a href="gui_help.html" class="code" title="function gui_help(which_help)">gui_help</a>	</li><li><a href="gui_l.html" class="code" title="function gui_l (x, y)">gui_l</a>	</li><li><a href="gui_s.html" class="code" title="function gui_s (x, y)">gui_s</a>	</li><li><a href="icaplot.html" class="code" title="function icaplot(mode, varargin);">icaplot</a>	ICAPLOT - plot signals in various ways</li><li><a href="pcamat.html" class="code" title="function [E, D] = pcamat(vectors, firstEig, lastEig, s_interactive,s_verbose);">pcamat</a>	PCAMAT - Calculates the pca for data</li><li><a href="remmean.html" class="code" title="function [newVectors, meanValue] = remmean(vectors);">remmean</a>	REMMEAN - remove the mean from vectors</li><li><a href="whitenv.html" class="code" title="function [newVectors, whiteningMatrix, dewhiteningMatrix] = whitenv(vectors, E, D, s_verbose);">whitenv</a>	WHITENV - Whitenv vectors.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="fasticag.html" class="code" title="function fasticag(mixedsig, InitialGuess)">fasticag</a>	FASTICAG - Fast Independent Component Analysis, the Graphical User Interface</li><li><a href="gui_advc.html" class="code" title="function gui_advc (action)">gui_advc</a>	</li><li><a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a>	</li><li><a href="gui_lc.html" class="code" title="function gui_lc (action)">gui_lc</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function gui_cb(action)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% This file is used by FASTICAG</span>
+0004 
+0005 <span class="comment">% This file holds the callbacks to the main window</span>
+0006 
+0007 <span class="comment">% @(#)$Id: gui_cb.m,v 1.5 2003/09/10 10:33:41 jarmo Exp $</span>
+0008 
+0009 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0010 <span class="comment">% Global variables</span>
+0011 
+0012 <span class="comment">% Handle to the main figure</span>
+0013 <span class="keyword">global</span> hf_FastICA_MAIN;
+0014 
+0015 <span class="comment">% Handles for needed controls in main figure;</span>
+0016 <span class="keyword">global</span> ht_FastICA_mixedStatus;
+0017 <span class="keyword">global</span> ht_FastICA_dim;
+0018 <span class="keyword">global</span> ht_FastICA_numOfSamp;
+0019 <span class="keyword">global</span> ht_FastICA_newDim;
+0020 <span class="keyword">global</span> ht_FastICA_whiteStatus;
+0021 <span class="keyword">global</span> ht_FastICA_icaStatus;
+0022 <span class="keyword">global</span> hpm_FastICA_approach;
+0023 <span class="keyword">global</span> he_FastICA_numOfIC;
+0024 <span class="keyword">global</span> hpm_FastICA_g;
+0025 <span class="keyword">global</span> hpm_FastICA_stabilization;
+0026 
+0027 <span class="comment">% Main values are stored here</span>
+0028 <span class="keyword">global</span> g_FastICA_mixedsig;
+0029 <span class="keyword">global</span> g_FastICA_mixedmean;
+0030 <span class="keyword">global</span> g_FastICA_pca_D;
+0031 <span class="keyword">global</span> g_FastICA_pca_E;
+0032 <span class="keyword">global</span> g_FastICA_white_sig;
+0033 <span class="keyword">global</span> g_FastICA_white_wm;
+0034 <span class="keyword">global</span> g_FastICA_white_dwm;
+0035 <span class="keyword">global</span> g_FastICA_ica_sig;
+0036 <span class="keyword">global</span> g_FastICA_ica_A;
+0037 <span class="keyword">global</span> g_FastICA_ica_W;
+0038 <span class="keyword">global</span> g_FastICA_initGuess;
+0039 <span class="keyword">global</span> g_FastICA_approach;
+0040 <span class="keyword">global</span> g_FastICA_numOfIC;
+0041 <span class="keyword">global</span> g_FastICA_g;
+0042 <span class="keyword">global</span> g_FastICA_finetune;
+0043 <span class="keyword">global</span> g_FastICA_a1;
+0044 <span class="keyword">global</span> g_FastICA_a2;
+0045 <span class="keyword">global</span> g_FastICA_myy;
+0046 <span class="keyword">global</span> g_FastICA_stabilization;
+0047 <span class="keyword">global</span> g_FastICA_epsilon;
+0048 <span class="keyword">global</span> g_FastICA_maxNumIte;
+0049 <span class="keyword">global</span> g_FastICA_maxFinetune;
+0050 <span class="keyword">global</span> g_FastICA_sampleSize;
+0051 <span class="keyword">global</span> g_FastICA_initState;
+0052 <span class="keyword">global</span> g_FastICA_displayMo;
+0053 <span class="keyword">global</span> g_FastICA_displayIn;
+0054 <span class="keyword">global</span> g_FastICA_verbose;
+0055 
+0056 <span class="comment">% String values are here</span>
+0057 <span class="keyword">global</span> c_FastICA_appr_strV;
+0058 <span class="keyword">global</span> c_FastICA_g1_strD;
+0059 <span class="keyword">global</span> c_FastICA_g1_strV;
+0060 <span class="keyword">global</span> c_FastICA_g2_strD;
+0061 <span class="keyword">global</span> c_FastICA_g2_strV;
+0062 <span class="keyword">global</span> c_FastICA_finetune_strD;
+0063 <span class="keyword">global</span> c_FastICA_finetune_strV;
+0064 <span class="keyword">global</span> c_FastICA_stabili_strV;
+0065 <span class="keyword">global</span> c_FastICA_iSta_strV;
+0066 <span class="keyword">global</span> c_FastICA_dMod_strV;
+0067 <span class="keyword">global</span> c_FastICA_verb_strV;
+0068 
+0069 <span class="comment">% What is the load type of load dialog</span>
+0070 <span class="keyword">global</span> g_FastICA_loadType;
+0071 
+0072 <span class="comment">% Global variable for stopping the ICA calculations</span>
+0073 <span class="keyword">global</span> g_FastICA_interrupt;
+0074 
+0075 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0076 <span class="comment">% What ever we do, it will take some time... not much, but some :-)</span>
+0077 watchonInFigure = watchon;
+0078 
+0079 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0080 <span class="keyword">switch</span> action
+0081 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0082 <span class="keyword">case</span> <span class="string">'InitAll'</span>
+0083 
+0084  <span class="comment">% If the data is already loaded, then get the information from data</span>
+0085  <span class="comment">% and show to the user (also set g_FastICA_numOfIC)</span>
+0086  <span class="keyword">if</span> ~isempty(g_FastICA_mixedsig)
+0087    set(ht_FastICA_mixedStatus, <span class="string">'String'</span>, <span class="string">''</span>);
+0088    [dim, numofsamp] = size(g_FastICA_mixedsig);
+0089    set(ht_FastICA_dim, <span class="string">'String'</span>, int2str(dim));
+0090    set(ht_FastICA_numOfSamp, <span class="string">'String'</span>, int2str(numofsamp));
+0091    set(ht_FastICA_newDim, <span class="string">'String'</span>, int2str(dim));
+0092    set(he_FastICA_numOfIC, <span class="string">'String'</span>, int2str(dim));
+0093    g_FastICA_numOfIC = dim;
+0094    g_FastICA_mixedmean = [];
+0095  <span class="keyword">end</span>
+0096 
+0097 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0098 <span class="keyword">case</span> <span class="string">'LoadData'</span>
+0099 
+0100  handle = findobj(<span class="string">'Tag'</span>,<span class="string">'f_FastICALoad'</span>);  <span class="comment">% Check if the window is already</span>
+0101  <span class="keyword">if</span> isempty(handle)                        <span class="comment">% open. If not then open it.</span>
+0102    pos = get(hf_FastICA_MAIN, <span class="string">'Position'</span>);
+0103    <span class="comment">% Based on the feedback obtained from some users, it seems</span>
+0104    <span class="comment">% that at least in some systems, pos can sometimes be empty. A</span>
+0105    <span class="comment">% similar check is done a few lines below.</span>
+0106    <span class="keyword">if</span> ~isempty (pos),
+0107      <a href="gui_l.html" class="code" title="function gui_l (x, y)">gui_l</a>(pos(1), pos(2));
+0108    <span class="keyword">else</span>
+0109      <a href="gui_l.html" class="code" title="function gui_l (x, y)">gui_l</a> (0, 0);
+0110    <span class="keyword">end</span>
+0111  <span class="keyword">else</span>
+0112    <span class="keyword">if</span> strcmp(g_FastICA_loadType, <span class="string">'data'</span>)   <span class="comment">% Check if it was the same load</span>
+0113      figure(handle);                       <span class="comment">% window. If it wasn't then</span>
+0114    <span class="keyword">else</span>                                    <span class="comment">% close the other window first</span>
+0115      close(handle);                        <span class="comment">% and then open the load window</span>
+0116      fprintf(<span class="string">'''Load initial guess'' -dialog closed!\n'</span>);
+0117      pos = get(hf_FastICA_MAIN, <span class="string">'Position'</span>);
+0118      <span class="keyword">if</span> ~isempty (pos),
+0119        <a href="gui_l.html" class="code" title="function gui_l (x, y)">gui_l</a>(pos(1), pos(2));
+0120      <span class="keyword">else</span>
+0121        <a href="gui_l.html" class="code" title="function gui_l (x, y)">gui_l</a> (0, 0);
+0122      <span class="keyword">end</span>
+0123    <span class="keyword">end</span>
+0124  <span class="keyword">end</span>
+0125  
+0126  <span class="comment">% gui_cb NewData; - is called from the load function if not canceled...</span>
+0127 
+0128 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0129 <span class="keyword">case</span> <span class="string">'NewData'</span>
+0130 
+0131  <span class="comment">% New data is loaded or the old data changed. We need to find out</span>
+0132  <span class="comment">% somethings about the new data... and do some other stuff also...</span>
+0133  [dim, numofsamp] = size(g_FastICA_mixedsig);
+0134  set(ht_FastICA_dim, <span class="string">'String'</span>, dim);
+0135  set(ht_FastICA_newDim, <span class="string">'String'</span>, dim);
+0136  set(ht_FastICA_numOfSamp, <span class="string">'String'</span>, numofsamp);
+0137  set(he_FastICA_numOfIC, <span class="string">'String'</span>, int2str(dim));
+0138  
+0139  g_FastICA_numOfIC = dim;    <span class="comment">% Default for numOfIC = the new dimension</span>
+0140                  <span class="comment">% PCA needs to be calculated again.</span>
+0141  g_FastICA_pca_E = [];       <span class="comment">% We use this to check if PCA is calculated</span>
+0142  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NullWhite;           <span class="comment">% Whitening needs to be done again also</span>
+0143  
+0144 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0145 <span class="keyword">case</span> <span class="string">'NullWhite'</span>
+0146 
+0147  <span class="comment">% Whitening needs to done again next time it's needed</span>
+0148  g_FastICA_white_sig = [];   <span class="comment">% We use this to check if whitening is calculated</span>
+0149  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NullICA;             <span class="comment">% The FPICA must be calculated again</span>
+0150 
+0151 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0152 <span class="keyword">case</span> <span class="string">'NullICA'</span>
+0153 
+0154  <span class="comment">% If IC's are needed they have to bee calculated again</span>
+0155  g_FastICA_ica_sig = [];     <span class="comment">% We use this to check if FPICA is calculated</span>
+0156  set(ht_FastICA_icaStatus,<span class="string">'String'</span>,<span class="string">'Not yet done'</span>);
+0157 
+0158 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0159 <span class="keyword">case</span> <span class="string">'Transpose'</span>
+0160 
+0161  <span class="keyword">if</span> isempty(g_FastICA_mixedmean)
+0162    g_FastICA_mixedsig = g_FastICA_mixedsig';
+0163  <span class="keyword">else</span>
+0164    g_FastICA_mixedsig = (g_FastICA_mixedsig + <span class="keyword">...</span>
+0165              g_FastICA_mixedmean * <span class="keyword">...</span>
+0166              ones(1,size(g_FastICA_mixedsig, 2)))';
+0167    g_FastICA_mixedmean = [];
+0168  <span class="keyword">end</span>
+0169  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NewData;             <span class="comment">% Data has been changed</span>
+0170 
+0171 
+0172 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0173 <span class="keyword">case</span> <span class="string">'DoPCA'</span>
+0174 
+0175  <span class="keyword">if</span> ~isempty(g_FastICA_mixedsig)
+0176    <span class="comment">% We'll remove mean of the data here also just in case...</span>
+0177    <span class="keyword">if</span> isempty(g_FastICA_mixedmean)
+0178      [g_FastICA_mixedsig, g_FastICA_mixedmean] = <a href="remmean.html" class="code" title="function [newVectors, meanValue] = remmean(vectors);">remmean</a>(g_FastICA_mixedsig);
+0179    <span class="keyword">end</span>
+0180    
+0181    <span class="comment">% Do PCA interactively: ask the user for eigenvalues</span>
+0182    [g_FastICA_pca_E, g_FastICA_pca_D] = <a href="pcamat.html" class="code" title="function [E, D] = pcamat(vectors, firstEig, lastEig, s_interactive,s_verbose);">pcamat</a>(g_FastICA_mixedsig, <span class="keyword">...</span>
+0183                            0, 0, <span class="string">'gui'</span>, <span class="keyword">...</span>
+0184                            deblank(c_FastICA_verb_strV(g_FastICA_verbose,:)));
+0185    
+0186    newdim = size(g_FastICA_pca_D, 1);
+0187    set(ht_FastICA_newDim, <span class="string">'String'</span>, int2str(newdim));
+0188    set(he_FastICA_numOfIC, <span class="string">'String'</span>, int2str(newdim));
+0189    g_FastICA_numOfIC = newdim;
+0190    <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NullWhite;           <span class="comment">% Whitening needs to be done again also</span>
+0191                    <span class="comment">% but we'll do it when it's needed.</span>
+0192  <span class="keyword">else</span>
+0193    fprintf(<span class="string">'Data not loaded yet!\n\n'</span>);
+0194  <span class="keyword">end</span>
+0195 
+0196 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0197 <span class="keyword">case</span> <span class="string">'OrigDim'</span>
+0198 
+0199  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NewData;
+0200 
+0201 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0202 <span class="keyword">case</span> <span class="string">'ShowMixed'</span>
+0203 
+0204  <span class="keyword">if</span> ~isempty(g_FastICA_mixedsig)
+0205    handle = findobj(<span class="string">'Tag'</span>,<span class="string">'f_FastICA_mix'</span>);  <span class="comment">% Check if the window is already</span>
+0206    <span class="keyword">if</span> isempty(handle)                        <span class="comment">% open. If not then open it.</span>
+0207      figure(<span class="string">'Tag'</span>, <span class="string">'f_FastICA_mix'</span>, <span class="keyword">...</span>
+0208         <span class="string">'Name'</span>, <span class="string">'FastICA: Plot data'</span>, <span class="keyword">...</span>
+0209         <span class="string">'NumberTitle'</span>, <span class="string">'off'</span>);
+0210    <span class="keyword">else</span>
+0211      figure(handle);
+0212      clf;        <span class="comment">% clear the figure for next plots</span>
+0213    <span class="keyword">end</span>
+0214    <span class="keyword">if</span> isempty(g_FastICA_mixedmean)
+0215      <a href="icaplot.html" class="code" title="function icaplot(mode, varargin);">icaplot</a>(<span class="string">'dispsig'</span>,g_FastICA_mixedsig, 0, 0, 0, <span class="string">'Mixed signals'</span>);
+0216    <span class="keyword">else</span>
+0217      <a href="icaplot.html" class="code" title="function icaplot(mode, varargin);">icaplot</a>(<span class="string">'dispsig'</span>,g_FastICA_mixedsig + g_FastICA_mixedmean * <span class="keyword">...</span>
+0218          ones(1, size(g_FastICA_mixedsig, 2)), 0, 0, 0, <span class="string">'Mixed signals'</span>);
+0219    <span class="keyword">end</span>
+0220  <span class="keyword">else</span>
+0221    fprintf(<span class="string">'Data not loaded yet!\n\n'</span>);
+0222  <span class="keyword">end</span>
+0223 
+0224 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0225 <span class="keyword">case</span> <span class="string">'ShowWhite'</span>
+0226 
+0227  <span class="keyword">if</span> ~isempty(g_FastICA_mixedsig)
+0228    <span class="keyword">if</span> isempty(g_FastICA_white_sig)     <span class="comment">% if whitening is not done, we need to</span>
+0229      <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> Whiten;                    <span class="comment">% do it before we can display the</span>
+0230    <span class="keyword">end</span>                                 <span class="comment">% whitened signals</span>
+0231    
+0232    handle = findobj(<span class="string">'Tag'</span>,<span class="string">'f_FastICA_white'</span>);  <span class="comment">% Check if the window is already</span>
+0233    <span class="keyword">if</span> isempty(handle)                          <span class="comment">% open. If not then open it.</span>
+0234      figure(<span class="string">'Tag'</span>, <span class="string">'f_FastICA_white'</span>, <span class="keyword">...</span>
+0235         <span class="string">'Name'</span>, <span class="string">'FastICA: Plot whitened'</span>, <span class="keyword">...</span>
+0236         <span class="string">'NumberTitle'</span>, <span class="string">'off'</span>);
+0237    <span class="keyword">else</span>
+0238      figure(handle);
+0239      clf;        <span class="comment">% clear the figure for next plots</span>
+0240    <span class="keyword">end</span>
+0241    <a href="icaplot.html" class="code" title="function icaplot(mode, varargin);">icaplot</a>(<span class="string">'dispsig'</span>,g_FastICA_white_sig,0,0,0,<span class="string">'Whitened signals'</span>);
+0242  <span class="keyword">else</span>
+0243    fprintf(<span class="string">'Data not loaded yet!\n\n'</span>);
+0244  <span class="keyword">end</span>
+0245 
+0246 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0247 <span class="keyword">case</span> <span class="string">'Whiten'</span>
+0248 
+0249  set(ht_FastICA_whiteStatus,<span class="string">'String'</span>,<span class="string">'Computing...'</span>);
+0250  
+0251  <span class="comment">% If PCA is not calculated, we'll have to calculate it now,</span>
+0252  <span class="comment">% we'll do it without guestions - we don't reduce the dimension</span>
+0253  <span class="comment">% here - but PCAMAT might reduce the dimension automatically.</span>
+0254  <span class="keyword">if</span> isempty(g_FastICA_pca_E)
+0255    <span class="comment">% We'll remove mean of the data here also just in case...</span>
+0256    <span class="keyword">if</span> isempty(g_FastICA_mixedmean)
+0257      [g_FastICA_mixedsig, g_FastICA_mixedmean] = <a href="remmean.html" class="code" title="function [newVectors, meanValue] = remmean(vectors);">remmean</a>(g_FastICA_mixedsig);
+0258    <span class="keyword">end</span>
+0259    
+0260    [g_FastICA_pca_E, g_FastICA_pca_D] = <a href="pcamat.html" class="code" title="function [E, D] = pcamat(vectors, firstEig, lastEig, s_interactive,s_verbose);">pcamat</a>(g_FastICA_mixedsig, 1, <span class="keyword">...</span>
+0261                            size(g_FastICA_mixedsig, <span class="keyword">...</span>
+0262                             1), <span class="string">'off'</span>, <span class="keyword">...</span>
+0263                            deblank(c_FastICA_verb_strV(g_FastICA_verbose,:)));
+0264    
+0265    <span class="comment">% Check if the dimension was reduced automatically</span>
+0266    newdim = size(g_FastICA_pca_D, 1);
+0267    set(ht_FastICA_newDim, <span class="string">'String'</span>, int2str(newdim));
+0268    <span class="comment">% Check if the numOfIC now has illegal value entered</span>
+0269    <span class="comment">% We do that by telling the program that there is new value</span>
+0270    <span class="comment">% entered for NumOfIC.</span>
+0271    <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> ChangeNumOfIC;
+0272  <span class="keyword">end</span>
+0273  
+0274  <span class="comment">% And now we can calculate whitening...</span>
+0275  [g_FastICA_white_sig, g_FastICA_white_wm, g_FastICA_white_dwm] = <span class="keyword">...</span>
+0276                                   <a href="whitenv.html" class="code" title="function [newVectors, whiteningMatrix, dewhiteningMatrix] = whitenv(vectors, E, D, s_verbose);">whitenv</a>(g_FastICA_mixedsig, g_FastICA_pca_E, g_FastICA_pca_D, deblank(c_FastICA_verb_strV(g_FastICA_verbose,:)));
+0277  
+0278  set (ht_FastICA_whiteStatus,<span class="string">'String'</span>,<span class="string">''</span>);
+0279 
+0280 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0281 <span class="keyword">case</span> <span class="string">'ChangeApproach'</span>
+0282 
+0283  <span class="comment">% Get the old value for g</span>
+0284  eval([<span class="string">'g_str = c_FastICA_g'</span> int2str(g_FastICA_approach) <span class="string">'_strV;'</span>]);
+0285  old_g = deblank(g_str(g_FastICA_g,:));
+0286  
+0287  <span class="comment">% Get and set the new value for approach</span>
+0288  g_FastICA_approach = get(hpm_FastICA_approach, <span class="string">'Value'</span>);
+0289  
+0290  <span class="comment">% The possible values for g depend on the value of approach...</span>
+0291  eval([<span class="string">'g_str = c_FastICA_g'</span> int2str(g_FastICA_approach) <span class="string">'_strD;'</span>]);
+0292  set(hpm_FastICA_g, <span class="string">'String'</span>, g_str);
+0293  
+0294  <span class="comment">% Match the old g value from the new g values so that if the</span>
+0295  <span class="comment">% old_g can be found from the new values (anywhere), then set new g</span>
+0296  <span class="comment">% to that value, and if it's not found then set the new value to 1.</span>
+0297  match = 0;
+0298  eval([<span class="string">'g_str = c_FastICA_g'</span> int2str(g_FastICA_approach) <span class="string">'_strV;'</span>]);
+0299  <span class="keyword">for</span> i=1:size(g_str,1)
+0300    <span class="keyword">if</span> strcmp(old_g, deblank(g_str(i,:)))
+0301      match = i;
+0302    <span class="keyword">end</span>
+0303  <span class="keyword">end</span>
+0304  <span class="keyword">if</span> match == 0
+0305    match = 1;   <span class="comment">% the old g is not availabe anymore, set g = 1.</span>
+0306  <span class="keyword">end</span>
+0307  g_FastICA_g = match;
+0308  set(hpm_FastICA_g, <span class="string">'Value'</span>, match);
+0309  
+0310  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NullICA;      <span class="comment">% The options are changed so we must calculate ICA again</span>
+0311  
+0312 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0313 <span class="keyword">case</span> <span class="string">'ChangeNumOfIC'</span>
+0314 
+0315  <span class="comment">% Get the new value... and store it later on after some checks</span>
+0316  numofic = str2num(get(he_FastICA_numOfIC, <span class="string">'String'</span>));
+0317  
+0318  <span class="comment">% The number of IC can't be less than 1 or more than the reduced dimension.</span>
+0319  numoficmax = str2num(get(ht_FastICA_newDim, <span class="string">'String'</span>));
+0320  <span class="keyword">if</span> numofic &lt; 1
+0321    set(he_FastICA_numOfIC, <span class="string">'String'</span>, <span class="string">'1'</span>);
+0322    g_FastICA_numOfIC = 1;
+0323  <span class="keyword">elseif</span> numofic &gt; numoficmax
+0324    set(he_FastICA_numOfIC, <span class="string">'String'</span>, int2str (numoficmax));
+0325    g_FastICA_numOfIC = numoficmax;
+0326  <span class="keyword">else</span>
+0327    g_FastICA_numOfIC = numofic;
+0328  <span class="keyword">end</span>
+0329  
+0330  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NullICA;      <span class="comment">% The options are changed so we must calculate ICA again</span>
+0331  
+0332 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0333 <span class="keyword">case</span> <span class="string">'ChangeG'</span>
+0334 
+0335  <span class="comment">% Get the new value for g.</span>
+0336  g_FastICA_g = get(hpm_FastICA_g, <span class="string">'Value'</span>);
+0337  
+0338  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NullICA;      <span class="comment">% The options are changed so we must calculate ICA again</span>
+0339  
+0340 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0341 <span class="keyword">case</span> <span class="string">'ChangeStab'</span>
+0342 
+0343  <span class="comment">% Get the new value for g.</span>
+0344  g_FastICA_stabilization = get(hpm_FastICA_stabilization, <span class="string">'Value'</span>);
+0345  
+0346  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NullICA;      <span class="comment">% The options are changed so we must calculate ICA again</span>
+0347  
+0348 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0349 <span class="keyword">case</span> <span class="string">'AdvOpt'</span>
+0350 
+0351  handle = findobj(<span class="string">'Tag'</span>,<span class="string">'f_FastICAAdvOpt'</span>);
+0352  <span class="keyword">if</span> isempty(handle)                        <span class="comment">% Check to see if the window is</span>
+0353    pos = get(hf_FastICA_MAIN, <span class="string">'Position'</span>);     <span class="comment">% already open...</span>
+0354    <span class="keyword">if</span> ~isempty (pos),
+0355      <a href="gui_adv.html" class="code" title="function gui_adv(x, y)">gui_adv</a>(pos(1), pos(2));
+0356    <span class="keyword">else</span>
+0357      <a href="gui_adv.html" class="code" title="function gui_adv(x, y)">gui_adv</a>(0, 0);
+0358    <span class="keyword">end</span>
+0359  <span class="keyword">else</span>
+0360    figure(handle)
+0361  <span class="keyword">end</span>
+0362  
+0363 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0364 <span class="keyword">case</span> <span class="string">'ShowICASig'</span>
+0365 
+0366  <span class="keyword">if</span> ~isempty(g_FastICA_mixedsig)
+0367    <span class="comment">% If the IC's are not already calculated, we'll do it now</span>
+0368    <span class="keyword">if</span> isempty(g_FastICA_ica_sig)
+0369      <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> DoFPICA;
+0370    <span class="keyword">end</span>
+0371    
+0372    <span class="comment">% The signals may have been already displaued by the FPICA function</span>
+0373    <span class="comment">% BUT the FPICA may also have shown either the basis of the filters</span>
+0374    <span class="comment">% so the signals still need to be shown - besides the mean was added</span>
+0375    <span class="comment">% in only later after FPICA</span>
+0376    
+0377    <span class="comment">% Also notice that in this version if there was something wrong in FPICA</span>
+0378    <span class="comment">% Then the results are []. - We don't try to plot them!</span>
+0379    <span class="keyword">if</span> ~isempty(g_FastICA_ica_sig')
+0380      handle = findobj(<span class="string">'Tag'</span>,<span class="string">'f_FastICA_ica'</span>);  <span class="comment">% Check if the window is already</span>
+0381      <span class="keyword">if</span> isempty(handle)                        <span class="comment">% open. If not then open it.</span>
+0382        figure(<span class="string">'Tag'</span>, <span class="string">'f_FastICA_ica'</span>, <span class="keyword">...</span>
+0383           <span class="string">'Name'</span>, <span class="string">'FastICA: Plot ICs'</span>, <span class="keyword">...</span>
+0384           <span class="string">'NumberTitle'</span>, <span class="string">'off'</span>);
+0385      <span class="keyword">else</span>
+0386        figure(handle);
+0387        clf;        <span class="comment">% clear the figure for next plots</span>
+0388      <span class="keyword">end</span>
+0389      
+0390      <a href="icaplot.html" class="code" title="function icaplot(mode, varargin);">icaplot</a>(<span class="string">'dispsig'</span>, g_FastICA_ica_sig, 0, <span class="keyword">...</span>
+0391          0, 0, <span class="string">'Independent components'</span>);
+0392    <span class="keyword">end</span>
+0393  <span class="keyword">else</span>
+0394    fprintf(<span class="string">'Data not loaded yet!\n\n'</span>);
+0395  <span class="keyword">end</span>
+0396  
+0397 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0398 <span class="keyword">case</span> <span class="string">'DoFPICA'</span>
+0399 
+0400  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> DisableButtons;
+0401  g_FastICA_interrupt = 0;
+0402  
+0403  <span class="keyword">if</span> ~isempty(g_FastICA_mixedsig)
+0404    <span class="keyword">if</span> isempty(g_FastICA_white_sig)     <span class="comment">% We need the whitened signal here</span>
+0405      <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> Whiten;
+0406    <span class="keyword">end</span>
+0407    
+0408    set(ht_FastICA_icaStatus,<span class="string">'String'</span>,<span class="string">'Computing...'</span>);
+0409    
+0410    <span class="comment">% The possible values for g depend on approach</span>
+0411    eval([<span class="string">'g_str = c_FastICA_g'</span> int2str(g_FastICA_approach) <span class="string">'_strV;'</span>]);
+0412    
+0413    <span class="comment">% We'll contruct a command string which we'll later on evaluate...</span>
+0414    <span class="comment">% This is where the Fixed point algorithm is used.</span>
+0415    command_str = [<span class="string">'[g_FastICA_ica_A,g_FastICA_ica_W]='</span> <span class="keyword">...</span>
+0416           <span class="string">'fpica(g_FastICA_white_sig,'</span> <span class="keyword">...</span><span class="comment"> </span>
+0417           <span class="string">'g_FastICA_white_wm,'</span> <span class="keyword">...</span><span class="comment"> </span>
+0418           <span class="string">'g_FastICA_white_dwm,'</span> <span class="keyword">...</span>
+0419           <span class="string">''''</span> deblank(c_FastICA_appr_strV(g_FastICA_approach,:)) <span class="keyword">...</span>
+0420           <span class="string">''','</span> <span class="keyword">...</span>
+0421           <span class="string">'g_FastICA_numOfIC,'</span> <span class="keyword">...</span>
+0422           <span class="string">''''</span> deblank(g_str(g_FastICA_g,:)) <span class="string">''','</span> <span class="keyword">...</span>
+0423           <span class="string">''''</span> <span class="keyword">...</span>
+0424           deblank(c_FastICA_finetune_strV(g_FastICA_finetune,:)) <span class="keyword">...</span>
+0425           <span class="string">''','</span> <span class="keyword">...</span>
+0426           <span class="string">'g_FastICA_a1,'</span> <span class="keyword">...</span>
+0427           <span class="string">'g_FastICA_a2,'</span> <span class="keyword">...</span>
+0428           <span class="string">'g_FastICA_myy,'</span> <span class="keyword">...</span>
+0429           <span class="string">''''</span> <span class="keyword">...</span>
+0430           deblank(c_FastICA_stabili_strV(g_FastICA_stabilization,:)) <span class="keyword">...</span>
+0431           <span class="string">''','</span> <span class="keyword">...</span>
+0432           <span class="string">'g_FastICA_epsilon,'</span> <span class="keyword">...</span>
+0433           <span class="string">'g_FastICA_maxNumIte,'</span> <span class="keyword">...</span>
+0434           <span class="string">'g_FastICA_maxFinetune,'</span> <span class="keyword">...</span>
+0435           <span class="string">''''</span> deblank(c_FastICA_iSta_strV(g_FastICA_initState,:)) <span class="keyword">...</span>
+0436           <span class="string">''','</span> <span class="keyword">...</span>
+0437           <span class="string">'g_FastICA_initGuess,'</span> <span class="keyword">...</span>
+0438           <span class="string">'g_FastICA_sampleSize,'</span> <span class="keyword">...</span>
+0439           <span class="string">''''</span> deblank(c_FastICA_dMod_strV(g_FastICA_displayMo,:)) <span class="keyword">...</span>
+0440           <span class="string">''','</span> <span class="keyword">...</span>
+0441           <span class="string">'g_FastICA_displayIn,'</span> <span class="keyword">...</span>
+0442           <span class="string">''''</span> deblank(c_FastICA_verb_strV(g_FastICA_verbose,:)) <span class="keyword">...</span>
+0443           <span class="string">''');'</span>];
+0444    
+0445 
+0446    <span class="comment">% If the user wants to plot while computing...</span>
+0447    <span class="comment">% let's at least plot it to the right figure then</span>
+0448    <span class="keyword">if</span> ~strcmp(deblank(c_FastICA_dMod_strV(g_FastICA_displayMo,:)),<span class="string">'off'</span>)
+0449      handle = findobj(<span class="string">'Tag'</span>,<span class="string">'f_FastICA_ica'</span>);  <span class="comment">% Check if the window is already</span>
+0450      <span class="keyword">if</span> isempty(handle)                        <span class="comment">% open. If not then open it.</span>
+0451        figure(<span class="string">'Tag'</span>, <span class="string">'f_FastICA_ica'</span>, <span class="keyword">...</span>
+0452           <span class="string">'Name'</span>, <span class="string">'FastICA: Plot ICs'</span>, <span class="keyword">...</span>
+0453           <span class="string">'NumberTitle'</span>, <span class="string">'off'</span>);
+0454      <span class="keyword">else</span>
+0455        figure(handle);
+0456        clf;        <span class="comment">% clear the figure for next plots</span>
+0457      <span class="keyword">end</span>
+0458    <span class="keyword">end</span>
+0459    
+0460    <span class="comment">% ... and so let's do it...</span>
+0461    eval(command_str);
+0462    
+0463    <span class="comment">% Also notice that in this version if there was something wrong in FPICA</span>
+0464    <span class="comment">% Then the results are [].</span>
+0465    <span class="keyword">if</span> ~isempty(g_FastICA_ica_W)
+0466      <span class="comment">% Add the mean back in.</span>
+0467      g_FastICA_ica_sig = g_FastICA_ica_W * g_FastICA_mixedsig <span class="keyword">...</span>
+0468              + (g_FastICA_ica_W * g_FastICA_mixedmean) <span class="keyword">...</span>
+0469              * ones(1,size(g_FastICA_mixedsig, 2));
+0470      set (ht_FastICA_icaStatus,<span class="string">'String'</span>,<span class="string">'Done'</span>);
+0471    <span class="keyword">else</span>
+0472      <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> NullICA;  <span class="comment">% set icasig=[] and do what ever needs to be done then</span>
+0473    <span class="keyword">end</span>
+0474    
+0475    <span class="keyword">if</span> ~(g_FastICA_interrupt)
+0476      <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> EnableButtons;
+0477    <span class="keyword">end</span>
+0478  <span class="keyword">else</span>
+0479    fprintf(<span class="string">'Data not loaded yet!\n\n'</span>);
+0480  <span class="keyword">end</span>
+0481 
+0482 
+0483 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0484 <span class="keyword">case</span> <span class="string">'Interrupt'</span>
+0485  g_FastICA_interrupt = 1;
+0486  set(ht_FastICA_icaStatus,<span class="string">'String'</span>,<span class="string">'Interrupted'</span>);
+0487  <a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a> EnableButtons;
+0488 
+0489 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0490 <span class="keyword">case</span> <span class="string">'DisableButtons'</span>
+0491  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_Transpose'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0492  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_ShowMixed'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0493  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_DoPCA'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0494  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_OrigDim'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0495  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_ShowWhite'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0496  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_advOpt'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0497  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_ShowICASig'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0498  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_LoadData'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0499  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_DoFPICA'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0500  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_SaveData'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0501  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_Quit'</span>),<span class="string">'Enable'</span>,<span class="string">'off'</span>);
+0502  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_Interrupt'</span>),<span class="string">'Visible'</span>,<span class="string">'on'</span>);
+0503  drawnow;
+0504 
+0505 
+0506 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0507 <span class="keyword">case</span> <span class="string">'EnableButtons'</span>
+0508  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_Transpose'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0509  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_ShowMixed'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0510  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_DoPCA'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0511  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_OrigDim'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0512  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_ShowWhite'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0513  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_advOpt'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0514  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_ShowICASig'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0515  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_LoadData'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0516  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_DoFPICA'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0517  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_SaveData'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0518  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_Quit'</span>),<span class="string">'Enable'</span>,<span class="string">'on'</span>);
+0519  set(findobj(<span class="string">'Tag'</span>,<span class="string">'b_Interrupt'</span>),<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0520  drawnow;
+0521 
+0522 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0523 <span class="keyword">case</span> <span class="string">'SaveData'</span>
+0524 
+0525  handle = findobj(<span class="string">'Tag'</span>,<span class="string">'f_FastICASave'</span>);  <span class="comment">% Check if the window is already</span>
+0526  <span class="keyword">if</span> isempty(handle)                        <span class="comment">% open. If not then open it.</span>
+0527    pos = get(hf_FastICA_MAIN, <span class="string">'Position'</span>);
+0528    <span class="keyword">if</span> ~isempty (pos),
+0529      <a href="gui_s.html" class="code" title="function gui_s (x, y)">gui_s</a>(pos(1), pos(2));
+0530    <span class="keyword">else</span>
+0531      <a href="gui_s.html" class="code" title="function gui_s (x, y)">gui_s</a>(0, 0);
+0532    <span class="keyword">end</span>
+0533  <span class="keyword">else</span>
+0534    figure(handle);                       <span class="comment">% window. If it wasn't then</span>
+0535  <span class="keyword">end</span>
+0536  
+0537  
+0538 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0539 <span class="keyword">case</span> <span class="string">'Quit'</span>
+0540 
+0541  <span class="comment">% We'll close the other dialogs if they are open.</span>
+0542  Tags = [<span class="string">'f_FastICALoad  '</span>
+0543      <span class="string">'f_FastICAAdvOpt'</span>
+0544      <span class="string">'f_FastICASave  '</span>
+0545      <span class="string">'f_FastICA_mix  '</span>
+0546      <span class="string">'f_FastICA_white'</span>
+0547      <span class="string">'f_FastICA_ica  '</span>];
+0548  <span class="keyword">for</span> i=1:size(Tags,1)
+0549    handle = findobj(<span class="string">'Tag'</span>, deblank(Tags(i,:)));
+0550    <span class="keyword">if</span> ~isempty(handle)
+0551      close(handle);
+0552    <span class="keyword">end</span>
+0553  <span class="keyword">end</span>
+0554 
+0555  <span class="comment">% Close this window</span>
+0556  close(hf_FastICA_MAIN);
+0557  
+0558  <span class="comment">% Clear the used global variables.</span>
+0559  <a href="gui_cg.html" class="code" title="function gui_cg()">gui_cg</a>;
+0560 
+0561  <span class="comment">% Use return to avoid reaching the watchoff statement at the end</span>
+0562  <span class="comment">% (There used to be a 'break' statement here, but it resulted in</span>
+0563  <span class="comment">% errors in more recent version of Matlab -- jarmo)</span>
+0564  <span class="keyword">return</span>;
+0565  <span class="comment">% ... and we're done.</span>
+0566 
+0567 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0568 <span class="keyword">case</span> <span class="string">'About'</span>
+0569 
+0570  <a href="gui_help.html" class="code" title="function gui_help(which_help)">gui_help</a>(<span class="string">'gui_cb_about'</span>);
+0571 
+0572 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0573 <span class="keyword">case</span> <span class="string">'Help'</span>
+0574 
+0575  <a href="gui_help.html" class="code" title="function gui_help(which_help)">gui_help</a>(<span class="string">'gui_cb_help'</span>);
+0576   
+0577 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0578 
+0579 <span class="keyword">end</span>    <span class="comment">% switch</span>
+0580 
+0581 watchoff (watchonInFigure);</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

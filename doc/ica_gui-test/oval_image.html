@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of oval_image</title>
+  <meta name="keywords" content="oval_image">
+  <meta name="description" content="Finds the pixels that fall within the borders of the oval and returns">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; oval_image.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>oval_image
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Finds the pixels that fall within the borders of the oval and returns</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [oval_pixels, box] = oval_image(oval, im_x, im_y) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Finds the pixels that fall within the borders of the oval and returns
+ them as a logical image where 1 indicates the pixel is within the oval's
+ border, and 0 indicates it is not. The size of the oval image will be the
+ minimum size that can contain the entire oval.
+
+ @param: oval coordinates of oval, indicated by xyrr
+ @param: max_range describes the limiting coordinates of an oval. 
+   i.e. if oval had to be on a 256x256 image, then max_range would be
+   [1, 256, 1, 256].
+ @return: oval_pixels binary image of which pixels are within oval
+ @return: box the coordinates of the bounding box used to calculate oval
+
+ @file: oval_image.m
+ @brief: Returns the pixels which fall inside given oval
+ @author: Paxon Frady
+ @created: 4/1/2010</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="mean_roi.html" class="code" title="function data = mean_roi(ccd_movie, roi_data, im_x, im_y)">mean_roi</a>	This function uses the roi_data and takes the mean value for the pixels</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="oval_image.m">oval_image.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [oval_pixels, box] = oval_image(oval, im_x, im_y)</a>
+0002 <span class="comment">% Finds the pixels that fall within the borders of the oval and returns</span>
+0003 <span class="comment">% them as a logical image where 1 indicates the pixel is within the oval's</span>
+0004 <span class="comment">% border, and 0 indicates it is not. The size of the oval image will be the</span>
+0005 <span class="comment">% minimum size that can contain the entire oval.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% @param: oval coordinates of oval, indicated by xyrr</span>
+0008 <span class="comment">% @param: max_range describes the limiting coordinates of an oval.</span>
+0009 <span class="comment">%   i.e. if oval had to be on a 256x256 image, then max_range would be</span>
+0010 <span class="comment">%   [1, 256, 1, 256].</span>
+0011 <span class="comment">% @return: oval_pixels binary image of which pixels are within oval</span>
+0012 <span class="comment">% @return: box the coordinates of the bounding box used to calculate oval</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% @file: oval_image.m</span>
+0015 <span class="comment">% @brief: Returns the pixels which fall inside given oval</span>
+0016 <span class="comment">% @author: Paxon Frady</span>
+0017 <span class="comment">% @created: 4/1/2010</span>
+0018 
+0019 box(:,1) = floor(oval(:,1) - oval(:,3));
+0020 box(:,2) = ceil(oval(:,1) + oval(:,3));
+0021 box(:,3) = floor(oval(:,2) - oval(:,4));
+0022 box(:,4) = ceil(oval(:,2) + oval(:,4));
+0023 
+0024 <span class="comment">% Find the full range of the box that we should check.</span>
+0025 minx = min(box(:,1));
+0026 maxx = max(box(:,2));
+0027 miny = min(box(:,3));
+0028 maxy = max(box(:,4));
+0029 
+0030 <span class="keyword">if</span> nargin == 2
+0031     error(<span class="string">'Need 1 or 3 arguments'</span>);
+0032 <span class="keyword">elseif</span> nargin &gt; 2
+0033     minx = max(minx, min(im_x));
+0034     maxx = min(maxx, max(im_x));
+0035     miny = max(miny, min(im_y));
+0036     maxy = min(maxy, max(im_y));
+0037 <span class="keyword">else</span>
+0038     im_x = minx:maxx;
+0039     im_y = miny:maxy;
+0040 <span class="keyword">end</span>
+0041 <span class="comment">% Reassign box to fit within the allowed range.</span>
+0042 box = [minx, maxx, miny, maxy];
+0043 
+0044 xvals = im_x(im_x &gt;= minx &amp; im_x &lt;= maxx);
+0045 yvals = im_y(im_y &gt;= miny &amp; im_y &lt;= maxy);
+0046 
+0047 <span class="comment">% create a matrix of the x and y values that will span the entire space.</span>
+0048 [square_x, square_y, ~] = meshgrid(xvals, yvals, ones(size(oval, 1), 1));
+0049 
+0050 <span class="comment">% Now make the oval values also span the entire space.</span>
+0051 ovalr = reshape(oval', 1, 4, size(oval, 1));
+0052 ovalrep1 = repmat(ovalr(:, 1, :), [size(square_x, 1), size(square_x, 2), 1]);
+0053 ovalrep2 = repmat(ovalr(:, 2, :), [size(square_x, 1), size(square_x, 2), 1]);
+0054 ovalrep3 = repmat(ovalr(:, 3, :), [size(square_x, 1), size(square_x, 2), 1]);
+0055 ovalrep4 = repmat(ovalr(:, 4, :), [size(square_x, 1), size(square_x, 2), 1]);
+0056 
+0057 <span class="comment">% Now we can calculate the distances for the entire space.</span>
+0058 d = ((ovalrep1 - square_x) ./ ovalrep3) .^ 2 + ((ovalrep2 - square_y) ./ ovalrep4) .^ 2;
+0059 
+0060 oval_pixels = d &lt; 1;</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_rois_from_components</title>
+  <meta name="keywords" content="calc_rois_from_components">
+  <meta name="description" content="rois = calc_rois_from_components(comp): Estimates ROI positions from the">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; calc_rois_from_components.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>calc_rois_from_components
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>rois = calc_rois_from_components(comp): Estimates ROI positions from the</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function rois = calc_rois_from_components(comp, x, y) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> rois = calc_rois_from_components(comp): Estimates ROI positions from the
+ independent components.
+
+ @param: comp the components in image form. 
+ @param: x the x values of the image. Default 1:size(comp, 2).
+ @param: y the y values of the image. Default 1:size(comp, 1).
+ @return: rois Nx5 array of roi components.
+
+ @author: Paxon Frady
+ @created: 9/5/2013</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ImageComponentParser.html" class="code" title="classdef ImageComponentParser < hgsetget">ImageComponentParser</a>	class ImageComponentParser: gui to analyze the component ...</li><li><a href="icp_basics.html" class="code" title="">icp_basics</a>	A quick overview of ICP and the data</li><li><a href="make_feature_matrix.html" class="code" title="function [feature_matrix, feature_weights] = make_feature_matrix(ics, im_data)">make_feature_matrix</a>	[feature_matrix, feature_weights] = make_feature_matrix(icp): creates a</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="calc_rois_from_components.m">calc_rois_from_components.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function rois = calc_rois_from_components(comp, x, y)</a>
+0002 <span class="comment">% rois = calc_rois_from_components(comp): Estimates ROI positions from the</span>
+0003 <span class="comment">% independent components.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% @param: comp the components in image form.</span>
+0006 <span class="comment">% @param: x the x values of the image. Default 1:size(comp, 2).</span>
+0007 <span class="comment">% @param: y the y values of the image. Default 1:size(comp, 1).</span>
+0008 <span class="comment">% @return: rois Nx5 array of roi components.</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% @author: Paxon Frady</span>
+0011 <span class="comment">% @created: 9/5/2013</span>
+0012 
+0013 <span class="keyword">if</span> nargin &lt; 2 || isempty(x)
+0014     x = 1:size(comp, 2);
+0015 <span class="keyword">end</span>
+0016 
+0017 <span class="keyword">if</span> nargin &lt; 3 || isempty(y)
+0018     y = 1:size(comp, 1);
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="comment">% Number of std for significance.</span>
+0022 sig_thresh = 2;
+0023 
+0024 <span class="comment">% @todo: checks</span>
+0025 
+0026 rois = nan(size(comp, 3), 5);
+0027 
+0028 properties = {<span class="string">'Area'</span>, <span class="string">'Centroid'</span>, <span class="string">'MajorAxisLength'</span>, <span class="string">'MinorAxisLength'</span>, <span class="string">'Orientation'</span>};
+0029 
+0030 <span class="keyword">for</span> i = 1:size(comp, 3)
+0031     sig = comp(:,:,i);
+0032     
+0033     sig_pos_idx = find(sig(:) &gt; sig_thresh * std(sig(:)));
+0034     sig_neg_idx = find(-sig(:) &gt; sig_thresh * std(sig(:)));
+0035     
+0036 <span class="comment">%     sig_pos_idx = find(sig(:) &gt; sig_thresh);</span>
+0037 <span class="comment">%     sig_neg_idx = find(-sig(:) &gt; sig_thresh);</span>
+0038     
+0039     sig_im = zeros(size(comp, 1), size(comp, 2));
+0040     
+0041     sig_im(sig_pos_idx) = 1;
+0042     <span class="comment">%sig_im(sig_neg_idx) = -1;</span>
+0043     sig_im(sig_neg_idx) = 1;
+0044     
+0045     <span class="comment">%sig_im_filt = mediflt2(sig_im, [3, 3]);</span>
+0046     
+0047     stats = regionprops(bwlabel(sig_im), properties{:});
+0048     
+0049     areas = [stats.Area];
+0050     
+0051     [~, sidx] = sort(areas, <span class="string">'descend'</span>);
+0052     
+0053     <span class="comment">% just take the largest</span>
+0054     cx = stats(sidx(1)).Centroid(1);
+0055     cy = stats(sidx(1)).Centroid(2);
+0056     vx = stats(sidx(1)).MajorAxisLength/2;
+0057     vy = stats(sidx(1)).MinorAxisLength/2;
+0058     an = -pi / 180 * stats(sidx(1)).Orientation;
+0059     
+0060     <span class="comment">% Convert roi based on the x, y</span>
+0061 <span class="comment">%     cx = interp1(1:size(comp, 2), x, cx);</span>
+0062 <span class="comment">%     cy = interp1(1:size(comp, 2), y, cy);</span>
+0063 <span class="comment">%</span>
+0064 <span class="comment">%     vx = vx / mean(diff(x));</span>
+0065 <span class="comment">%     vy = vy / mean(diff(y));</span>
+0066     
+0067     rois(i,:) = [cx, cy, vx, vy, an];
+0068     
+0069 <span class="comment">%     rois(i,:) = [stats(sidx(1)).Centroid, stats(sidx(1)).MajorAxisLength/2, stats(sidx(1)).MinorAxisLength/2, -pi/180*stats(sidx(1)).Orientation];</span>
+0070 
+0071 <span class="comment">%     disp(rois(i,:));</span>
+0072 <span class="comment">%     figure(41);</span>
+0073 <span class="comment">%     clf();</span>
+0074 <span class="comment">%     hold on;</span>
+0075 <span class="comment">%     imagesc(sig_im);</span>
+0076 <span class="comment">%     [x,y] = oval2xy(rois(i,:));</span>
+0077 <span class="comment">%     plot(x', y');</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">%     pause;</span>
+0080 <span class="keyword">end</span>
+0081 
+0082 rois(:, 1) = interp1(1:size(comp, 2), x, rois(:, 1));
+0083 rois(:, 2) = interp1(1:size(comp, 1), y, rois(:, 2));
+0084 rois(:, 3) = mean(diff(x)) * rois(:, 3) / 2;
+0085 rois(:, 4) = mean(diff(y)) * rois(:, 4) / 2;</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

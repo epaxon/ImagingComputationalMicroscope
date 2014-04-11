@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of icp_basics</title>
+  <meta name="keywords" content="icp_basics">
+  <meta name="description" content="A quick overview of ICP and the data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; icp_basics.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>icp_basics
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>A quick overview of ICP and the data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> A quick overview of ICP and the data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ImageComponentParser.html" class="code" title="classdef ImageComponentParser < hgsetget">ImageComponentParser</a>	class ImageComponentParser: gui to analyze the component ...</li><li><a href="align_im_stack.html" class="code" title="function [im_stack, warp] = align_im_stack(im, n_iters, n_levels, transform, viz)">align_im_stack</a>	im_stack = align_im_stack(im): Aligns an image stack using image</li><li><a href="calc_rois_from_components.html" class="code" title="function rois = calc_rois_from_components(comp, x, y)">calc_rois_from_components</a>	rois = calc_rois_from_components(comp): Estimates ROI positions from the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="icp_basics.m">icp_basics.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% A quick overview of ICP and the data</span>
+0002 
+0003 <span class="comment">% ICP image data analysis is broken into stages: Pre-processing,</span>
+0004 <span class="comment">% PCA, then ICA. At each stage you can look at various things.</span>
+0005 <span class="comment">% There are tabs at the bottom that control the display and give you access</span>
+0006 <span class="comment">% to the run buttons. You can just click run ica and everything will get</span>
+0007 <span class="comment">% run sequentially.</span>
+0008 <span class="comment">%   When you have the PCA or ICA tabs open the viewer shows you the weights</span>
+0009 <span class="comment">% of each components. You can click through with the slider at the bottom</span>
+0010 <span class="comment">% and view different components. The Component plot will show you the</span>
+0011 <span class="comment">% current component.</span>
+0012 <span class="comment">%   There is also a 3D plot so you can look at the components in that</span>
+0013 <span class="comment">% space. You can change which components you want to look at, and theres a</span>
+0014 <span class="comment">% rotation button (for help visualizing). The 3D plot will change depending</span>
+0015 <span class="comment">% if you have the PCA or ICA tab open.</span>
+0016 <span class="comment">%   Once the ICA analyis is done you can click on calc rois button and it</span>
+0017 <span class="comment">% will come up with rois for each component (see</span>
+0018 <span class="comment">% calc_rois_from_components). You can also make your own ROIs and different</span>
+0019 <span class="comment">% ROI sets. Just use the mouse on the image to manipulate, and create ROIs.</span>
+0020 <span class="comment">% press ctrl+delete to delete the currently selected rois. You can add or</span>
+0021 <span class="comment">% delete roi sets with the + and - buttons below the roi set list.</span>
+0022 <span class="comment">%   This is still very much a work in progress, so forgive me for bugs and</span>
+0023 <span class="comment">% things that are incomplete. Maybe we should put a versioning system</span>
+0024 <span class="comment">% together if you guys are interested in further developing this.</span>
+0025 
+0026 <span class="comment">%% ICP Example</span>
+0027 
+0028 <span class="comment">% Start an ICP</span>
+0029 icp = <a href="ImageComponentParser.html" class="code" title="classdef ImageComponentParser < hgsetget">ImageComponentParser</a>();
+0030 
+0031 <span class="comment">%% Loading Data</span>
+0032 <span class="comment">% ICP is designed to be both a useful GUI and a programatically accessible</span>
+0033 <span class="comment">% interface to ICA based image analysis. All GUI functions call matlab</span>
+0034 <span class="comment">% functions, which can be called from command line or in scripts.</span>
+0035 <span class="comment">% Open the sample data using the ICP menu:</span>
+0036 <span class="comment">% :: ICP&gt;Load Data.</span>
+0037 <span class="comment">% Then load sample_data.mat, and icp will read in the image data.</span>
+0038 <span class="comment">% Programatically:</span>
+0039 icp.load_data(<span class="string">'sample_data.mat'</span>);
+0040 
+0041 <span class="comment">% Alternatively data can be entered from a matlab variable:</span>
+0042 load(<span class="string">'sample_data.mat'</span>); <span class="comment">% produces data</span>
+0043 icp.set_data(data);
+0044 
+0045 <span class="comment">%% Settings</span>
+0046 <span class="comment">% In order to change the basic settings, pop-up menus can be accessed in</span>
+0047 <span class="comment">% the GUI. To change the preprocessing settings, use the ICP menu:</span>
+0048 <span class="comment">% :: ICP&gt;Edit Settings&gt;PreProcessing</span>
+0049 <span class="comment">% The settings can be accessed programatically in the settings struct, lets</span>
+0050 <span class="comment">% set the preprocessing settings programatically:</span>
+0051 
+0052 icp.settings.preprocessing.smooth_window = [1 1 1]; <span class="comment">% Smooth over MxNxT pixels</span>
+0053 icp.settings.preprocessing.down_sample = [1 1 1];
+0054 
+0055 <span class="comment">% The image data was previously down sampled so it would be a small file.</span>
+0056 <span class="comment">% Above we set the preprocessing settings such that we use the same data.</span>
+0057 <span class="comment">% If your analysis takes too much time or memory, try smoothing and</span>
+0058 <span class="comment">% downsampling more.</span>
+0059 
+0060 <span class="comment">% There are also settings for PCA and ICA you can see them here</span>
+0061 disp(<span class="string">'PCA Settings:'</span>);
+0062 disp(icp.settings.pca);
+0063 disp(<span class="string">'ICA Settings:'</span>);
+0064 disp(icp.settings.ica);
+0065 
+0066 <span class="comment">% An important setting for ica is [which_pcs] this tells ICA which</span>
+0067 <span class="comment">% principal components to look at, and determines the number of ICs the</span>
+0068 <span class="comment">% algorithm returns. Here we will use the first 100 PCs, to look at the</span>
+0069 <span class="comment">% data.</span>
+0070 icp.settings.ica.which_pcs = 1:100;
+0071 
+0072 <span class="comment">%% Motion Correction</span>
+0073 <span class="comment">% A simple image-registration based motion correction algorithm is part of</span>
+0074 <span class="comment">% the ICP. The motion correction function can be changed to an outside</span>
+0075 <span class="comment">% function and you can get the GUI to call it by changing the settings:</span>
+0076 
+0077 icp.settings.preprocessing.motion_correction_func = @<a href="align_im_stack.html" class="code" title="function [im_stack, warp] = align_im_stack(im, n_iters, n_levels, transform, viz)">align_im_stack</a>
+0078 <span class="comment">% Note: you'll have to make sure the function arguments are the same as</span>
+0079 <span class="comment">% [align_im_stack] in order for the GUI to call the function correctly.</span>
+0080 
+0081 <span class="comment">%% Pre-Processing</span>
+0082 <span class="comment">% The pre-processing stage is used to down sample the data, run filters,</span>
+0083 <span class="comment">% and take other pre-processing steps.</span>
+0084 
+0085 icp.run_preprocessing();
+0086 
+0087 <span class="comment">%% PCA</span>
+0088 <span class="comment">% The next stage is to break the image pixels down into principal</span>
+0089 <span class="comment">% components. This can be run by going to the PCA tab and clicking &quot;Run PCA&quot;.</span>
+0090 
+0091 <span class="comment">% This algorithm looks for components that explain the maximum</span>
+0092 <span class="comment">% amount of variance of the image data. This will typically show you the</span>
+0093 <span class="comment">% most significant aspects of the data in the first few PCs.</span>
+0094 
+0095 icp.run_pca();
+0096 
+0097 <span class="comment">% Once PCA is complete, the results can be viewed by opening the PCA tab</span>
+0098 <span class="comment">% and examining the frames in the ROI Editor. Each frame corresponds to the</span>
+0099 <span class="comment">% weights of the PC at each pixel. The component plot shows the PC over</span>
+0100 <span class="comment">% time.</span>
+0101 
+0102 <span class="comment">% The results of the PCA analysis are stored in the pca struct</span>
+0103 disp(<span class="string">'PCA Results:'</span>);
+0104 disp(icp.pca);
+0105 
+0106 <span class="comment">%% ICA</span>
+0107 <span class="comment">% The next stage is to look for the individual cells using the ICA</span>
+0108 <span class="comment">% algorithm. This can be run by going to the ICA tab and clicking &quot;Run ICA&quot;.</span>
+0109 
+0110 <span class="comment">% ICA searches for components that are maximally independent based on the</span>
+0111 <span class="comment">% statistics of the PCA decomposition. This will pull out signals coming</span>
+0112 <span class="comment">% from a single cell.</span>
+0113 
+0114 icp.run_ica();
+0115 
+0116 <span class="comment">% Note that ICA looks for a fixed number of components based on the number</span>
+0117 <span class="comment">% of PCs it analyzes based on [settings.ica.which_pcs]. Asking for more or</span>
+0118 <span class="comment">% less components can give different results -- too few components will</span>
+0119 <span class="comment">% lead to different cells being grouped as 1, too many components will</span>
+0120 <span class="comment">% occasionally cause cells to be split into multiple components.</span>
+0121 
+0122 <span class="comment">% The ICs can be viewed in a similar fashion as the PCs inside the ROI Editor.</span>
+0123 
+0124 <span class="comment">% The results of ICA are stored in the ica struct</span>
+0125 disp(<span class="string">'ICA Results:'</span>);
+0126 disp(icp.ica);
+0127 
+0128 <span class="comment">%% ROI</span>
+0129 <span class="comment">% Basic ROI analysis can be done inside ICP. Oval shaped ROIs can be drawn</span>
+0130 <span class="comment">% using the ROI Editor.</span>
+0131 <span class="comment">% Create ROI: Click on an empty spot in the ROI editor and drag to draw</span>
+0132 <span class="comment">%             a new oval, release to create the ROI.</span>
+0133 <span class="comment">% Move ROI: Click and drag inside a created ROI to move it to a new</span>
+0134 <span class="comment">%           position.</span>
+0135 <span class="comment">% Resize ROI: A selected ROI will have 3 black boxes. The outer boxes can</span>
+0136 <span class="comment">%             be clicked and dragged to resize the ROI.</span>
+0137 <span class="comment">% Rotate ROI: The inner black box can be clicked and dragged to rotate the</span>
+0138 <span class="comment">%             ROI.</span>
+0139 <span class="comment">% Delete ROI: select an ROI and press &lt;ctrl+delete&gt; to delete it.</span>
+0140 <span class="comment">%</span>
+0141 <span class="comment">% The data of an ROI is shown in the Data plot. This is the average of all</span>
+0142 <span class="comment">% pixels inside the ROI for each frame.</span>
+0143 
+0144 <span class="comment">%% Automatically Generated ROI</span>
+0145 <span class="comment">% A simple algorithm to calculate ROIs from the ICA results is also</span>
+0146 <span class="comment">% provided. In this case ICP calls an outside function called</span>
+0147 <span class="comment">% [calc_rois_from_components]. This algorithm contains parameters that work</span>
+0148 <span class="comment">% for my data, but may need to be altered to work for different data types.</span>
+0149 <span class="comment">% ICP can be told to use an alternative function in the settings:</span>
+0150 
+0151 icp.settings.post.calc_rois_func = @<a href="calc_rois_from_components.html" class="code" title="function rois = calc_rois_from_components(comp, x, y)">calc_rois_from_components</a>;
+0152 
+0153 <span class="comment">% To run the automated ROI generation algorithm go to the Segmentation tab</span>
+0154 <span class="comment">% and click &quot;Calc ROIs&quot;. Or can call the function:</span>
+0155 rois = icp.calc_rois();
+0156 
+0157 <span class="comment">%% ROI Sets</span>
+0158 <span class="comment">% Several Roi Sets can be handled simultaneously. This is so manual ROIs</span>
+0159 <span class="comment">% and automatically generated ROIs can be analyzed.</span>
+0160 
+0161 <span class="comment">%% Segmentation</span>
+0162 
+0163 <span class="comment">%% Clustering</span>
+0164</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

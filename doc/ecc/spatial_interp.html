@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of spatial_interp</title>
+  <meta name="keywords" content="spatial_interp">
+  <meta name="description" content="%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ecc</a> &gt; spatial_interp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ecc&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>spatial_interp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function out = spatial_interp(in, warp, str, transform, nx, ny) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OUT = SPATIAL_INTERP(IN, WARP, STR, TRANSFORM, NX, NY)
+ This function implements the 2D spatial interpolation of image IN 
+(inverse warping). The coordinates defined by NX,NY are projected through 
+ WARP thus resulting in new subpixel coordinates. The intensity values in 
+ new pixel coordinates are computed via bilinear interpolation
+ of image IN. For other valid interpolation methods look at the help 
+ of Matlab function INTERP2.
+
+ Input variables:
+ IN:           the input image which must be warped,
+ WARP:         the warp transform,
+ STR:          the string corresponds to interpolation method: 'linear',
+               'cubic' etc (for details look at the help file of 
+               Matlab function INTERP2),
+ TRANSFORM:    the type of adopted transform: {'translation','euclidean','affine','homography'}
+ NX:           the x-coordinate values of horizontal side of ROI (i.e. [xmin:xmax]),
+ NY:           the y-coordinate values of vertical side of ROI (i.e. [ymin:ymax]),
+
+ Output:
+ OUT:          The warped (interpolated) image
+--------------------------------------
+ $ Ver: 1.3, 13/5/2012,  released by Georgios D. Evangelidis.
+ Email: georgios.evangelidis@inria.fr
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ecc.html" class="code" title="function [results, warp, warpedImage] = ecc(image, template, levels, noi, transform, delta_p_init)">ecc</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li><li><a href="ecc_demo.html" class="code" title="">ecc_demo</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li><li><a href="ecc_demo_partial_overlap.html" class="code" title="">ecc_demo_partial_overlap</a>	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function out = spatial_interp(in, warp, str, transform, nx, ny)</a>
+0002 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0003 <span class="comment">%OUT = SPATIAL_INTERP(IN, WARP, STR, TRANSFORM, NX, NY)</span>
+0004 <span class="comment">% This function implements the 2D spatial interpolation of image IN</span>
+0005 <span class="comment">%(inverse warping). The coordinates defined by NX,NY are projected through</span>
+0006 <span class="comment">% WARP thus resulting in new subpixel coordinates. The intensity values in</span>
+0007 <span class="comment">% new pixel coordinates are computed via bilinear interpolation</span>
+0008 <span class="comment">% of image IN. For other valid interpolation methods look at the help</span>
+0009 <span class="comment">% of Matlab function INTERP2.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Input variables:</span>
+0012 <span class="comment">% IN:           the input image which must be warped,</span>
+0013 <span class="comment">% WARP:         the warp transform,</span>
+0014 <span class="comment">% STR:          the string corresponds to interpolation method: 'linear',</span>
+0015 <span class="comment">%               'cubic' etc (for details look at the help file of</span>
+0016 <span class="comment">%               Matlab function INTERP2),</span>
+0017 <span class="comment">% TRANSFORM:    the type of adopted transform: {'translation','euclidean','affine','homography'}</span>
+0018 <span class="comment">% NX:           the x-coordinate values of horizontal side of ROI (i.e. [xmin:xmax]),</span>
+0019 <span class="comment">% NY:           the y-coordinate values of vertical side of ROI (i.e. [ymin:ymax]),</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Output:</span>
+0022 <span class="comment">% OUT:          The warped (interpolated) image</span>
+0023 <span class="comment">%--------------------------------------</span>
+0024 <span class="comment">% $ Ver: 1.3, 13/5/2012,  released by Georgios D. Evangelidis.</span>
+0025 <span class="comment">% Email: georgios.evangelidis@inria.fr</span>
+0026 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0027 
+0028 
+0029 <span class="comment">% in affine or euclidean case, make the warp matrix 3x3</span>
+0030 <span class="keyword">if</span> (strcmp(transform,<span class="string">'affine'</span>)||strcmp(transform,<span class="string">'euclidean'</span>))
+0031    <span class="keyword">if</span> size(warp,1)==2
+0032        warp=[warp;zeros(1,3)];
+0033    <span class="keyword">end</span>
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="keyword">if</span> strcmp(transform,<span class="string">'translation'</span>)
+0037     warp = [eye(2) warp];
+0038     warp = [warp; zeros(1,3)];
+0039 <span class="keyword">end</span>
+0040 
+0041 [xx yy] = meshgrid(nx, ny);
+0042 xy=[xx(:)';yy(:)';ones(1,length(yy(:)))];
+0043 
+0044 <span class="comment">%3x3 matrix transformation</span>
+0045 A = warp;
+0046 A(3,3) = 1;
+0047 
+0048 <span class="comment">% new coordinates</span>
+0049 xy_prime = A * xy;
+0050 
+0051 <span class="keyword">if</span> strcmp(transform,<span class="string">'homography'</span>)
+0052 
+0053     <span class="comment">% division due to homogeneous coordinates</span>
+0054     xy_prime(1,:) = xy_prime(1,:)./xy_prime(3,:);
+0055     xy_prime(2,:) = xy_prime(2,:)./xy_prime(3,:);
+0056 <span class="keyword">end</span>
+0057 
+0058 <span class="comment">% Ignore third row</span>
+0059 xy_prime = xy_prime(1:2,:);
+0060 
+0061 <span class="comment">% Subpixel interpolation</span>
+0062 out = interp2(in, xy_prime(1,:), xy_prime(2,:), str);
+0063 out(isnan(out))=0;<span class="comment">%replace Nan</span>
+0064 out=reshape(out,length(ny),length(nx));</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

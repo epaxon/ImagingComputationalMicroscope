@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of viz_function</title>
+  <meta name="keywords" content="viz_function">
+  <meta name="description" content="colors = viz_function(icp): takes an icp (or just the components?) and">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; viz_function.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>viz_function
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>colors = viz_function(icp): takes an icp (or just the components?) and</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function colors = viz_function(icp) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> colors = viz_function(icp): takes an icp (or just the components?) and
+ computes a volor for each component for visualization.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="norm_range.html" class="code" title="function nmat = norm_range(mat, rmin, rmax)">norm_range</a>	nmat = norm_range(mat) returns a normalized matrix such that the values</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ImageComponentParser.html" class="code" title="classdef ImageComponentParser < hgsetget">ImageComponentParser</a>	class ImageComponentParser: gui to analyze the component ...</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="viz_function.m">viz_function.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function colors = viz_function(icp)</a>
+0002 <span class="comment">% colors = viz_function(icp): takes an icp (or just the components?) and</span>
+0003 <span class="comment">% computes a volor for each component for visualization.</span>
+0004 
+0005 <span class="comment">% Ok this is just a test function to get to the interface.</span>
+0006 
+0007 <span class="comment">% Lets return some colors based on the first 3 pcs. The A matrix contains</span>
+0008 <span class="comment">% the PC weight for each IC.</span>
+0009 <span class="comment">%colors = norm_range(abs(icp.ica.A(:, [3, 5, 7])));</span>
+0010 
+0011 which_pcs = [7];
+0012 <span class="comment">%c = icp.ica.A(3, :) + icp.ica.A(5,:);</span>
+0013 c = icp.data(icp.gui.current_trial).ica.A(3,:);
+0014 c(c&lt;0) = 0;
+0015 colors = <a href="norm_range.html" class="code" title="function nmat = norm_range(mat, rmin, rmax)">norm_range</a>(c)';
+0016 <span class="comment">%colors = [norm_range(max(icp.ica.A(5,:), 0)); norm_range(max(-icp.ica.A(5,:), 0)); norm_range(max(icp.ica.A(7,:),0))]';</span>
+0017 <span class="comment">%colors(:, 4) = sqrt(sum(icp.ica.A(which_pcs,:).^2));</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

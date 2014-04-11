@@ -1,0 +1,339 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of DoubleScroll</title>
+  <meta name="keywords" content="DoubleScroll">
+  <meta name="description" content="class DoubleScroll: gui object that makes a double scroll bar.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; DoubleScroll.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>DoubleScroll
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>class DoubleScroll: gui object that makes a double scroll bar.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>classdef DoubleScroll < hgsetget </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> class DoubleScroll: gui object that makes a double scroll bar.
+    A double scroll bar is a gui tool for selecting a range between a
+    minimum and a maximum - for instance it can be used to set the
+    minimum and maximum color limits for an image.
+
+ @file: DoubleScroll.m
+ @brief: gui object that creates a double scroll bar.
+ @author: Paxon Frady
+ @created: 6/14/11</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FigureEventNotifier.html" class="code" title="classdef FigureEventNotifier < handle">FigureEventNotifier</a>	class FigureEventNotifier: sends out event notifications during</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function self = DoubleScroll(parent)</a></li><li><a href="#_sub2" class="code">function self = init_state(self)</a></li><li><a href="#_sub3" class="code">function self = init_gui(self, parent)</a></li><li><a href="#_sub4" class="code">function rect_button_down_cb(self, source_h, eventdata)</a></li><li><a href="#_sub5" class="code">function left_dec_cb(self, source_h, eventdata)</a></li><li><a href="#_sub6" class="code">function left_inc_cb(self, source_h, eventdata)</a></li><li><a href="#_sub7" class="code">function right_dec_cb(self, source_h, eventdata)</a></li><li><a href="#_sub8" class="code">function right_inc_cb(self, source_h, eventdata)</a></li><li><a href="#_sub9" class="code">function update(self)</a></li><li><a href="#_sub10" class="code">function set.Min(self, value)</a></li><li><a href="#_sub11" class="code">function set.Max(self, value)</a></li><li><a href="#_sub12" class="code">function set.BgColor(self, value)</a></li><li><a href="#_sub13" class="code">function set.Color(self, value)</a></li><li><a href="#_sub14" class="code">function set.Position(self, value)</a></li><li><a href="#_sub15" class="code">function set.Value(self, value)</a></li></ul>
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="DoubleScroll.m">DoubleScroll.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 classdef <a href="#_sub1" class="code" title="subfunction self = DoubleScroll(parent)">DoubleScroll</a> &lt; hgsetget
+0002     <span class="comment">% class DoubleScroll: gui object that makes a double scroll bar.</span>
+0003     <span class="comment">%    A double scroll bar is a gui tool for selecting a range between a</span>
+0004     <span class="comment">%    minimum and a maximum - for instance it can be used to set the</span>
+0005     <span class="comment">%    minimum and maximum color limits for an image.</span>
+0006     <span class="comment">%</span>
+0007     <span class="comment">% @file: DoubleScroll.m</span>
+0008     <span class="comment">% @brief: gui object that creates a double scroll bar.</span>
+0009     <span class="comment">% @author: Paxon Frady</span>
+0010     <span class="comment">% @created: 6/14/11</span>
+0011     
+0012     properties (AbortSet)
+0013         h; <span class="comment">% graphic object handles.</span>
+0014         gui; <span class="comment">% settings for the gui.</span>
+0015         
+0016         BgColor; <span class="comment">% Background color.</span>
+0017         Color; <span class="comment">% Color of the rectangle.</span>
+0018         Position; <span class="comment">% Position of the axes.</span>
+0019         
+0020         MinStep; <span class="comment">% Minimum amount difference between</span>
+0021         Value; <span class="comment">% The low (Value(1)) and high (Value(2)) values.</span>
+0022         Min = 0; <span class="comment">% The minimum</span>
+0023         Max = 1; <span class="comment">% The maximum</span>
+0024         
+0025         fen; <span class="comment">% The figure event notifier.</span>
+0026     <span class="keyword">end</span>
+0027     
+0028     events
+0029         SelectionChanged; <span class="comment">% Whenever the range selected changes.</span>
+0030     <span class="keyword">end</span>
+0031     
+0032     methods
+0033         <span class="comment">%%%%%%%%%% Initialization %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0034         <a name="_sub0" href="#_subfunctions" class="code">function self = DoubleScroll(parent)</a>
+0035             <span class="comment">% constructor: creates a new DoubleScroll object.</span>
+0036             <span class="comment">%</span>
+0037             <span class="comment">% @param: parent the handle of the parent of this object. If no</span>
+0038             <span class="comment">% parent is given, gcf will be used.</span>
+0039             <span class="comment">% @return: self handle to the gui object.</span>
+0040             
+0041             <span class="keyword">if</span> nargin &lt; 1
+0042                 parent = [];
+0043             <span class="keyword">end</span>
+0044             
+0045             self = self.init_state();
+0046             self = self.init_gui(parent);
+0047             
+0048             self.update();
+0049         <span class="keyword">end</span>
+0050         
+0051         <a name="_sub1" href="#_subfunctions" class="code">function self = init_state(self)</a>
+0052             <span class="comment">% init_state: initializes the state variables used. This sets</span>
+0053             <span class="comment">% the defaults.</span>
+0054             
+0055             self.BgColor = [0.95 0.95 0.95];
+0056             self.Color = [0 0 0];
+0057             self.Position = [50 100 300 40];
+0058             
+0059             self.MinStep = 0.01;
+0060             
+0061             self.Value(1) = self.Min;
+0062             self.Value(2) = self.Max;
+0063         <span class="keyword">end</span>
+0064         
+0065         <a name="_sub2" href="#_subfunctions" class="code">function self = init_gui(self, parent)</a>
+0066             <span class="comment">% init_gui: initializes the gui. Creates all of the gui</span>
+0067             <span class="comment">% components.</span>
+0068             <span class="comment">%</span>
+0069             <span class="comment">% @param: parent the parent figure. If none is given, then gcf</span>
+0070             <span class="comment">% will be used as the parent.</span>
+0071             
+0072             <span class="keyword">if</span> nargin &lt; 2 || isempty(parent)
+0073                 <span class="comment">% No parent given, use gcf.</span>
+0074                 parent = gcf;
+0075             <span class="keyword">end</span>
+0076             
+0077             self.h.parent = parent;
+0078             <span class="comment">% Get the parent figure and set it as an event notifier.</span>
+0079             fh = parent;
+0080             <span class="keyword">while</span> ~strcmp(get(fh, <span class="string">'Type'</span>), <span class="string">'figure'</span>)
+0081                 <span class="comment">% The last object is not a figure go up.</span>
+0082                 fh = get(fh, <span class="string">'Parent'</span>);
+0083             <span class="keyword">end</span>
+0084             self.h.fh = fh;
+0085             
+0086             self.fen = <a href="FigureEventNotifier.html" class="code" title="classdef FigureEventNotifier < handle">FigureEventNotifier</a>(self.h.fh);
+0087             
+0088             self.h.panel = uipanel(self.h.parent, <span class="string">'Units'</span>, <span class="string">'pixels'</span>, <span class="keyword">...</span>
+0089                 <span class="string">'Position'</span>, self.Position, <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0090                 <span class="string">'BackgroundColor'</span>, self.BgColor);
+0091             
+0092             self.h.ds_axes = axes(<span class="string">'Parent'</span>, self.h.panel);
+0093             set(self.h.ds_axes, <span class="string">'Box'</span>, <span class="string">'off'</span>, <span class="string">'XTick'</span>, [], <span class="string">'YTick'</span>, [], <span class="keyword">...</span>
+0094                 <span class="string">'Color'</span>, self.BgColor, <span class="string">'XColor'</span>, self.BgColor, <span class="keyword">...</span>
+0095                 <span class="string">'YColor'</span>, self.BgColor, <span class="string">'Units'</span>, <span class="string">'pixels'</span>, <span class="keyword">...</span>
+0096                 <span class="string">'Position'</span>, [40 5 self.Position(3) - 80 self.Position(4) - 5]);
+0097             xlim(self.h.ds_axes, [self.Min self.Max]);
+0098             ylim(self.h.ds_axes, [0 1]);
+0099             
+0100             self.h.rect = rectangle(<span class="string">'Parent'</span>, self.h.ds_axes, <span class="keyword">...</span>
+0101                 <span class="string">'EdgeColor'</span>, self.Color, <span class="string">'FaceColor'</span>, self.Color, <span class="keyword">...</span>
+0102                 <span class="string">'Position'</span>, [self.Min 0 self.Max 1]);
+0103             set(self.h.rect, <span class="string">'ButtonDownFcn'</span>, @self.rect_button_down_cb);
+0104             
+0105             self.h.left_dec_h = uicontrol(self.h.panel, <span class="string">'Units'</span>, <span class="string">'pixels'</span>, <span class="keyword">...</span>
+0106                 <span class="string">'Position'</span>, [0 0 20 self.Position(4)], <span class="string">'String'</span>, <span class="string">'&lt;'</span>, <span class="string">'Callback'</span>, @self.left_dec_cb);
+0107             self.h.left_inc_h = uicontrol(self.h.panel, <span class="string">'Units'</span>, <span class="string">'pixels'</span>, <span class="keyword">...</span>
+0108                 <span class="string">'Position'</span>, [20 0 20 self.Position(4)], <span class="string">'String'</span>, <span class="string">'&gt;'</span>, <span class="string">'Callback'</span>, @self.left_inc_cb);
+0109             self.h.right_dec_h = uicontrol(self.h.panel, <span class="string">'Units'</span>, <span class="string">'pixels'</span>, <span class="keyword">...</span>
+0110                 <span class="string">'Position'</span>, [self.Position(3) - 40 0 20 self.Position(4)], <span class="string">'String'</span>, <span class="string">'&lt;'</span>, <span class="string">'Callback'</span>, @self.right_dec_cb);
+0111             self.h.right_inc_h = uicontrol(self.h.panel, <span class="string">'Units'</span>, <span class="string">'pixels'</span>, <span class="keyword">...</span>
+0112                 <span class="string">'Position'</span>, [self.Position(3) - 20 0 20 self.Position(4)], <span class="string">'String'</span>, <span class="string">'&gt;'</span>, <span class="string">'Callback'</span>, @self.right_inc_cb);
+0113             
+0114             self.update();
+0115         <span class="keyword">end</span>
+0116         
+0117         <span class="comment">%%%%%%%%%% Callbacks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0118         <a name="_sub3" href="#_subfunctions" class="code">function rect_button_down_cb(self, source_h, eventdata)</a>
+0119             <span class="comment">% rect_button_down_cb: handles when the mouse is pressed on the</span>
+0120             <span class="comment">% rectangle.</span>
+0121             
+0122             <span class="keyword">if</span> self.fen.button_down == 4
+0123                 <span class="comment">% Then the rectangle was double clicked. Make it maximum.</span>
+0124                 set(self.h.rect, <span class="string">'Position'</span>, [self.Min 0 self.Max 1]);
+0125             <span class="keyword">end</span>
+0126             
+0127             point1 = get(self.h.ds_axes, <span class="string">'CurrentPoint'</span>);
+0128             
+0129             px1 = point1(1);
+0130             rpos = get(self.h.rect, <span class="string">'Position'</span>);
+0131             
+0132             <span class="keyword">if</span> (px1 - rpos(1)) &lt; 0.2 * rpos(3)
+0133                 <span class="comment">% Then we are doing a left drag</span>
+0134                 set(self.h.fh, <span class="string">'Pointer'</span>, <span class="string">'left'</span>);
+0135                 pos_change = 1; <span class="comment">% 1 for left</span>
+0136             <span class="keyword">elseif</span> (px1 - rpos(1)) &gt; 0.8 * rpos(3)
+0137                 <span class="comment">% Then we are doing a right drag</span>
+0138                 set(self.h.fh, <span class="string">'Pointer'</span>, <span class="string">'right'</span>);
+0139                 pos_change = -1; <span class="comment">% -1 for right</span>
+0140             <span class="keyword">else</span>
+0141                 <span class="comment">% Then we are doing a shift</span>
+0142                 set(self.h.fh, <span class="string">'Pointer'</span>, <span class="string">'hand'</span>);
+0143                 pos_change = 0; <span class="comment">% 0 for shift</span>
+0144             <span class="keyword">end</span>
+0145             
+0146             new_pos = rpos;
+0147             <span class="keyword">while</span> self.fen.button_down
+0148                 point2 = get(self.h.ds_axes, <span class="string">'CurrentPoint'</span>);
+0149                 px2 = point2(1);
+0150                 dx1 = (px2 - px1);
+0151                 <span class="keyword">if</span> pos_change == 1
+0152                     <span class="comment">% then we are moving left.</span>
+0153                     new_pos(1) = min(max(rpos(1) + dx1, self.Min), self.Value(2) - self.MinStep);
+0154                     dx2 = rpos(1) - new_pos(1);
+0155                     new_pos(3) = max(min(rpos(3) + dx2, self.Max - new_pos(1)), self.MinStep);
+0156                 <span class="keyword">end</span>
+0157                 <span class="keyword">if</span> pos_change == -1
+0158                     <span class="comment">% then we are moving right.</span>
+0159                     new_pos(3) = max(min(rpos(3) + dx1, self.Max), rpos(1) + self.MinStep);
+0160                 <span class="keyword">end</span>
+0161                 <span class="keyword">if</span> pos_change == 0
+0162                     <span class="comment">% then shift.</span>
+0163                     new_pos(1) = min(max(rpos(1) + dx1, self.Min), self.Max - rpos(3));
+0164                 <span class="keyword">end</span>
+0165                 
+0166                 set(self.h.rect, <span class="string">'Position'</span>, new_pos);
+0167                 drawnow;
+0168             <span class="keyword">end</span>
+0169             
+0170             self.Value = [new_pos(1), new_pos(1) + new_pos(3)];            
+0171             set(self.h.fh, <span class="string">'Pointer'</span>, <span class="string">'arrow'</span>);
+0172         <span class="keyword">end</span>
+0173         
+0174         <a name="_sub4" href="#_subfunctions" class="code">function left_dec_cb(self, source_h, eventdata)</a>
+0175             self.Value(1) = self.Value(1) - self.MinStep;
+0176         <span class="keyword">end</span>
+0177         
+0178         <a name="_sub5" href="#_subfunctions" class="code">function left_inc_cb(self, source_h, eventdata)</a>
+0179             self.Value(1) = self.Value(1) + self.MinStep;
+0180         <span class="keyword">end</span>
+0181         
+0182         <a name="_sub6" href="#_subfunctions" class="code">function right_dec_cb(self, source_h, eventdata)</a>
+0183             self.Value(2) = self.Value(2) - self.MinStep;
+0184         <span class="keyword">end</span>
+0185         
+0186         <a name="_sub7" href="#_subfunctions" class="code">function right_inc_cb(self, source_h, eventdata)</a>
+0187             self.Value(2) = self.Value(2) + self.MinStep;  
+0188         <span class="keyword">end</span>
+0189         
+0190         <span class="comment">%%%%%%%%%% Main Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0191         <a name="_sub8" href="#_subfunctions" class="code">function update(self)</a>
+0192             <span class="comment">% Updates the gui to make sure it matches with the internal</span>
+0193             <span class="comment">% state.</span>
+0194             <span class="comment">% First round to the nearest MinStep value</span>
+0195             v = self.Value;
+0196             <span class="comment">%v = round(v ./ self.MinStep) .* self.MinStep;</span>
+0197             
+0198             <span class="comment">% Make sure the limits are correct</span>
+0199             v(1) = min(max(v(1), self.Min), self.Max - self.MinStep);
+0200             v(2) = min(max(v(2), v(1) + self.MinStep), self.Max);
+0201             
+0202             <span class="comment">%self.Value = v;</span>
+0203             
+0204             set(self.h.rect, <span class="string">'Position'</span>, [v(1), 0, v(2) - v(1), 1]);
+0205         <span class="keyword">end</span>
+0206         
+0207         <a name="_sub9" href="#_subfunctions" class="code">function set.Min(self, value)</a>
+0208             <span class="keyword">if</span> value &gt;= self.Max
+0209                 self.Max = value + self.MinStep;
+0210             <span class="keyword">end</span>
+0211             <span class="comment">%self.Value = (self.Max - value) .* (self.Value - self.Min) ./ (self.Max - self.Min) + value;</span>
+0212             
+0213             self.Min = value;
+0214             <span class="keyword">if</span> ~isempty(self.h)
+0215                 xlim(self.h.ds_axes, [self.Min self.Max]);
+0216                 self.update();
+0217             <span class="keyword">end</span>
+0218         <span class="keyword">end</span>
+0219         
+0220         <a name="_sub10" href="#_subfunctions" class="code">function set.Max(self, value)</a>
+0221             <span class="keyword">if</span> value &lt;= self.Min
+0222                 self.Min = value - self.MinStep;
+0223             <span class="keyword">end</span>
+0224             
+0225             <span class="comment">%self.Value = value - (value - self.Min).*(self.Max - self.Value) ./ (self.Max - self.Min);</span>
+0226             self.Max = value;
+0227             <span class="keyword">if</span> ~isempty(self.h)
+0228                 xlim(self.h.ds_axes, [self.Min self.Max]);
+0229                 self.update();
+0230             <span class="keyword">end</span>
+0231         <span class="keyword">end</span>
+0232         
+0233         <a name="_sub11" href="#_subfunctions" class="code">function set.BgColor(self, value)</a>
+0234             self.BgColor = value;
+0235             
+0236             <span class="keyword">if</span> isfield(self.h, <span class="string">'ds_axes'</span>)
+0237                 set(self.h.ds_axes, <span class="string">'Color'</span>, self.BgColor, <span class="keyword">...</span>
+0238                     <span class="string">'XColor'</span>, self.BgColor, <span class="string">'YColor'</span>, self.BgColor);
+0239             <span class="keyword">end</span>
+0240             <span class="keyword">if</span> isfield(self.h, <span class="string">'panel'</span>)
+0241                 set(self.h.panel, <span class="string">'BackgroundColor'</span>, self.BgColor);
+0242             <span class="keyword">end</span>
+0243         <span class="keyword">end</span>
+0244         
+0245         <a name="_sub12" href="#_subfunctions" class="code">function set.Color(self, value)</a>
+0246             self.Color = value;
+0247             <span class="keyword">if</span> isfield(self.h, <span class="string">'rect'</span>)
+0248                 set(self.h.rect, <span class="string">'Color'</span>, self.Color);
+0249             <span class="keyword">end</span>
+0250         <span class="keyword">end</span>
+0251         
+0252         <a name="_sub13" href="#_subfunctions" class="code">function set.Position(self, value)</a>
+0253             self.Position = value;
+0254             <span class="keyword">if</span> isfield(self.h, <span class="string">'panel'</span>)
+0255                 set(self.h.panel, <span class="string">'Position'</span>, self.Position);
+0256                 
+0257                 set(self.h.ds_axes, <span class="string">'Position'</span>, [40 5 self.Position(3) - 80 self.Position(4) - 5])                
+0258                 set(self.h.left_dec_h, <span class="string">'Position'</span>, [0 0 20 self.Position(4)]);
+0259                 set(self.h.left_inc_h, <span class="string">'Position'</span>, [20 0 20 self.Position(4)]);
+0260                 set(self.h.right_dec_h, <span class="string">'Position'</span>, [self.Position(3) - 40 0 20 self.Position(4)]);
+0261                 set(self.h.right_inc_h, <span class="string">'Position'</span>, [self.Position(3) - 20 0 20 self.Position(4)]);
+0262             <span class="keyword">end</span>
+0263         <span class="keyword">end</span>
+0264         
+0265         <a name="_sub14" href="#_subfunctions" class="code">function set.Value(self, value)</a>
+0266             <span class="keyword">if</span> isequal(self.Value, value)
+0267                 <span class="comment">% Then there's nothing to change</span>
+0268                 <span class="keyword">return</span>;
+0269             <span class="keyword">end</span>
+0270             v = min(max(value, self.Min), self.Max);
+0271             
+0272             self.Value = v;
+0273             
+0274             <span class="keyword">if</span> ~isempty(self.h)
+0275                 self.update();
+0276             <span class="keyword">end</span>
+0277             
+0278             notify(self, <span class="string">'SelectionChanged'</span>);
+0279         <span class="keyword">end</span>
+0280     <span class="keyword">end</span>
+0281 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

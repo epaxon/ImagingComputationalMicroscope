@@ -1,0 +1,489 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gui_adv</title>
+  <meta name="keywords" content="gui_adv">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FastICA_25</a> &gt; gui_adv.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FastICA_25&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gui_adv
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function gui_adv(x, y) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ This file is needed by FASTICAG</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function gui_adv(x, y)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% This file is needed by FASTICAG</span>
+0004 
+0005 <span class="comment">% This is the advanced options -dialog</span>
+0006 
+0007 <span class="comment">% @(#)$Id: gui_adv.m,v 1.4 2004/07/27 13:09:26 jarmo Exp $</span>
+0008 
+0009 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0010 <span class="comment">% Global variables</span>
+0011 
+0012 <span class="comment">% Handle to the window</span>
+0013 <span class="keyword">global</span> hf_FastICA_AdvOpt;
+0014 
+0015 <span class="comment">% Handles to some of the controls in window</span>
+0016 <span class="keyword">global</span> hpm_FastICA_finetune;
+0017 <span class="keyword">global</span> he_FastICA_a1;
+0018 <span class="keyword">global</span> he_FastICA_a2;
+0019 <span class="keyword">global</span> he_FastICA_myy;
+0020 <span class="keyword">global</span> he_FastICA_epsilon;
+0021 <span class="keyword">global</span> he_FastICA_maxIterations;
+0022 <span class="keyword">global</span> he_FastICA_maxFinetune;
+0023 <span class="keyword">global</span> he_FastICA_sampleSize
+0024 <span class="keyword">global</span> hpm_FastICA_initState;
+0025 <span class="keyword">global</span> hb_FastICA_initGuess;
+0026 <span class="keyword">global</span> ht_FastICA_initGuess;
+0027 <span class="keyword">global</span> hpm_FastICA_displayMode;
+0028 <span class="keyword">global</span> he_FastICA_displayInterval;
+0029 <span class="keyword">global</span> hpm_FastICA_verbose;
+0030 
+0031 <span class="comment">% Some of the main variables needed</span>
+0032 <span class="keyword">global</span> g_FastICA_initGuess;
+0033 <span class="keyword">global</span> g_FastICA_finetune;
+0034 <span class="keyword">global</span> g_FastICA_a1;
+0035 <span class="keyword">global</span> g_FastICA_a2;
+0036 <span class="keyword">global</span> g_FastICA_myy;
+0037 <span class="keyword">global</span> g_FastICA_epsilon;
+0038 <span class="keyword">global</span> g_FastICA_maxNumIte;
+0039 <span class="keyword">global</span> g_FastICA_maxFinetune;
+0040 <span class="keyword">global</span> g_FastICA_initState;
+0041 <span class="keyword">global</span> g_FastICA_sampleSize;
+0042 <span class="keyword">global</span> g_FastICA_displayMo;
+0043 <span class="keyword">global</span> g_FastICA_displayIn;
+0044 <span class="keyword">global</span> g_FastICA_verbose;
+0045 
+0046 <span class="keyword">global</span> c_FastICA_appr_strD;
+0047 <span class="keyword">global</span> c_FastICA_appr_strV;
+0048 <span class="keyword">global</span> c_FastICA_finetune_strD;
+0049 <span class="keyword">global</span> c_FastICA_finetune_strV;
+0050 <span class="keyword">global</span> c_FastICA_iSta_strD;
+0051 <span class="keyword">global</span> c_FastICA_iSta_strV;
+0052 <span class="keyword">global</span> c_FastICA_dMod_strD;
+0053 <span class="keyword">global</span> c_FastICA_dMod_strV;
+0054 <span class="keyword">global</span> c_FastICA_verb_strD;
+0055 <span class="keyword">global</span> c_FastICA_verb_strV;
+0056 
+0057 
+0058 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0059 <span class="comment">% Configuration options</span>
+0060 FIGURENAME = <span class="string">'FastICA: advanced options'</span>;
+0061 FIGURETAG = <span class="string">'f_FastICAAdvOpt'</span>;
+0062 FIGURESIZE = [x y 450 280];
+0063 
+0064 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0065 <span class="comment">% Check to see if this figure is already open - it should not!</span>
+0066 <span class="comment">% Can't have more than one copy - otherwise the global</span>
+0067 <span class="comment">% variables and handles can get mixed up.</span>
+0068 <span class="keyword">if</span> ~isempty(findobj(<span class="string">'Tag'</span>,FIGURETAG))
+0069   error(<span class="string">'Error: advanced options dialog already open!'</span>);
+0070 <span class="keyword">end</span>
+0071 
+0072 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0073 <span class="comment">% Initialize some of the controls' values</span>
+0074 
+0075 <span class="comment">% Did we already load some initial guess</span>
+0076 pm_initState_Value = g_FastICA_initState;
+0077 <span class="keyword">if</span> isempty(g_FastICA_initGuess) | (g_FastICA_initGuess == 1)
+0078   t_initGuess_String = <span class="string">'Not loaded'</span>;
+0079 <span class="keyword">else</span>
+0080   t_initGuess_String = <span class="string">'Loaded'</span>;
+0081 <span class="keyword">end</span>
+0082 
+0083 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0084 <span class="comment">% Create the figure</span>
+0085 a = figure(<span class="string">'Color'</span>,[0.8 0.8 0.8], <span class="keyword">...</span>
+0086        <span class="string">'PaperType'</span>,<span class="string">'a4letter'</span>, <span class="keyword">...</span>
+0087        <span class="string">'Name'</span>, FIGURENAME, <span class="keyword">...</span>
+0088        <span class="string">'NumberTitle'</span>, <span class="string">'off'</span>, <span class="keyword">...</span>
+0089        <span class="string">'Tag'</span>, FIGURETAG, <span class="keyword">...</span>
+0090        <span class="string">'Position'</span>, FIGURESIZE, <span class="keyword">...</span>
+0091        <span class="string">'MenuBar'</span>, <span class="string">'none'</span>);
+0092 set (a, <span class="string">'Resize'</span>, <span class="string">'off'</span>);
+0093 
+0094 hf_FastICA_AdvOpt = a;
+0095 
+0096 set(hf_FastICA_AdvOpt, <span class="string">'HandleVisibility'</span>, <span class="string">'callback'</span>);
+0097 
+0098 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0099 <span class="comment">% From here on it get's ugly as I have not had time to clean it up</span>
+0100 
+0101 
+0102 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0103 <span class="comment">% Create the frames</span>
+0104 pos_l=2;
+0105 pos_w=FIGURESIZE(3)-4;
+0106 pos_h=FIGURESIZE(4)-4;
+0107 pos_t=2;
+0108 h_f_adv_background = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0109   <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0110   <span class="string">'Position'</span>,[pos_l pos_t pos_w pos_h], <span class="keyword">...</span>
+0111   <span class="string">'Style'</span>,<span class="string">'frame'</span>, <span class="keyword">...</span>
+0112   <span class="string">'Tag'</span>,<span class="string">'f_adv_background'</span>);
+0113 
+0114 pos_w=120;
+0115 pos_l=FIGURESIZE(3)-(pos_w+2+2);
+0116 pos_h=FIGURESIZE(4)-2*4;
+0117 pos_t=4;
+0118 h_f_adv_side = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0119   <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0120   <span class="string">'Position'</span>,[pos_l pos_t pos_w pos_h], <span class="keyword">...</span>
+0121   <span class="string">'Style'</span>,<span class="string">'frame'</span>, <span class="keyword">...</span>
+0122   <span class="string">'Tag'</span>,<span class="string">'f_adv_side'</span>);
+0123 
+0124 pos_l=4;
+0125 pos_w=FIGURESIZE(3)-8-pos_w-2;
+0126 pos_h=FIGURESIZE(4)-8;
+0127 pos_t=4;
+0128 h_f_advopt = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0129   <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0130   <span class="string">'Position'</span>,[pos_l pos_t pos_w pos_h], <span class="keyword">...</span>
+0131   <span class="string">'Style'</span>,<span class="string">'frame'</span>, <span class="keyword">...</span>
+0132   <span class="string">'Tag'</span>,<span class="string">'f_advopt'</span>);
+0133 
+0134 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0135 <span class="comment">% Controls in f_advopt</span>
+0136 bgc = get(h_f_advopt, <span class="string">'BackgroundColor'</span>);
+0137 
+0138 pos_w1=230;
+0139 pos_w2=70;
+0140 
+0141 pos_frame=get(h_f_advopt, <span class="string">'Position'</span>);
+0142 pos_h = 20;
+0143 pos_t = pos_frame(2) + pos_frame(4) - pos_h - 6;
+0144 pos_l = pos_frame(1) + 6;
+0145 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0146   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0147   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0148   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0149   <span class="string">'String'</span>,<span class="string">'Fine-tune (g)'</span>, <span class="keyword">...</span>
+0150   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0151   <span class="string">'Tag'</span>,<span class="string">'t_727'</span>);
+0152 
+0153 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0154 hpm_FastICA_finetune = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0155   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0156   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0157   <span class="string">'String'</span>,c_FastICA_finetune_strD, <span class="keyword">...</span>
+0158   <span class="string">'Style'</span>,<span class="string">'popupmenu'</span>, <span class="keyword">...</span>
+0159   <span class="string">'Tag'</span>,<span class="string">'pm_finetune'</span>, <span class="keyword">...</span>
+0160   <span class="string">'Value'</span>,g_FastICA_finetune);
+0161 
+0162 pos_t = pos_t - pos_h;
+0163 pos_l = pos_frame(1) + 6;
+0164 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0165   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0166   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0167   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0168   <span class="string">'String'</span>,<span class="string">'Parameter a1 (g = ''tanh'')'</span>, <span class="keyword">...</span>
+0169   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0170   <span class="string">'Tag'</span>,<span class="string">'t_22'</span>);
+0171 
+0172 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0173 he_FastICA_a1 = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0174   <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0175   <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0176   <span class="string">'Callback'</span>,<span class="string">'gui_advc Checka1'</span>, <span class="keyword">...</span>
+0177   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0178   <span class="string">'String'</span>,num2str(g_FastICA_a1), <span class="keyword">...</span>
+0179   <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0180   <span class="string">'Tag'</span>,<span class="string">'e_a1'</span>);
+0181 
+0182 pos_t = pos_t - pos_h;
+0183 pos_l = pos_frame(1) + 6;
+0184 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0185   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0186   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0187   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0188   <span class="string">'String'</span>,<span class="string">'Parameter a2 (g = ''gauss'')'</span>, <span class="keyword">...</span>
+0189   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0190   <span class="string">'Tag'</span>,<span class="string">'t_222'</span>);
+0191 
+0192 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0193 he_FastICA_a2 = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0194   <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0195   <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0196   <span class="string">'Callback'</span>,<span class="string">'gui_advc Checka2'</span>, <span class="keyword">...</span>
+0197   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0198   <span class="string">'String'</span>,num2str(g_FastICA_a2), <span class="keyword">...</span>
+0199   <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0200   <span class="string">'Tag'</span>,<span class="string">'e_a2'</span>);
+0201 
+0202 pos_t = pos_t - pos_h;
+0203 pos_l = pos_frame(1) + 6;
+0204 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0205   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0206   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0207   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0208   <span class="string">'String'</span>,<span class="string">'mu (step size)'</span>, <span class="keyword">...</span>
+0209   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0210   <span class="string">'Tag'</span>,<span class="string">'t_223'</span>);
+0211 
+0212 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0213 he_FastICA_myy = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0214   <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0215   <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0216   <span class="string">'Callback'</span>,<span class="string">'gui_advc CheckMyy'</span>, <span class="keyword">...</span>
+0217   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0218   <span class="string">'String'</span>,num2str(g_FastICA_myy), <span class="keyword">...</span>
+0219   <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0220   <span class="string">'Tag'</span>,<span class="string">'e_myy'</span>);
+0221 
+0222 pos_t = pos_t - pos_h;
+0223 pos_l = pos_frame(1) + 6;
+0224 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0225   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0226   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0227   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0228   <span class="string">'String'</span>,<span class="string">'epsilon (stopping criterion)'</span>, <span class="keyword">...</span>
+0229   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0230   <span class="string">'Tag'</span>,<span class="string">'t_23'</span>);
+0231 
+0232 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0233 he_FastICA_epsilon = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0234   <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0235   <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0236   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0237   <span class="string">'String'</span>,num2str(g_FastICA_epsilon), <span class="keyword">...</span>
+0238   <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0239   <span class="string">'Tag'</span>,<span class="string">'e_epsilon'</span>);
+0240 
+0241 pos_t = pos_t - pos_h;
+0242 pos_l = pos_frame(1) + 6;
+0243 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0244   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0245   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0246   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0247   <span class="string">'String'</span>,<span class="string">'Maximum number of iterations'</span>, <span class="keyword">...</span>
+0248   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0249   <span class="string">'Tag'</span>,<span class="string">'t_24'</span>);
+0250 
+0251 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0252 he_FastICA_maxIterations = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0253   <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0254   <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0255   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0256   <span class="string">'String'</span>,num2str(g_FastICA_maxNumIte), <span class="keyword">...</span>
+0257   <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0258   <span class="string">'Tag'</span>,<span class="string">'e_maxIterations'</span>);
+0259 
+0260 pos_t = pos_t - pos_h;
+0261 pos_l = pos_frame(1) + 6;
+0262 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0263   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0264   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0265   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0266   <span class="string">'String'</span>,<span class="string">'Maximum iterations in fine-tuning'</span>, <span class="keyword">...</span>
+0267   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0268   <span class="string">'Tag'</span>,<span class="string">'t_2412'</span>);
+0269 
+0270 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0271 he_FastICA_maxFinetune = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0272   <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0273   <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0274   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0275   <span class="string">'String'</span>,num2str(g_FastICA_maxFinetune), <span class="keyword">...</span>
+0276   <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0277   <span class="string">'Tag'</span>,<span class="string">'e_maxFinetune'</span>);
+0278 
+0279 pos_t = pos_t - pos_h;
+0280 pos_l = pos_frame(1) + 6;
+0281 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0282   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0283   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0284   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0285   <span class="string">'String'</span>,<span class="string">'Sample size (proportion)'</span>, <span class="keyword">...</span>
+0286   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0287   <span class="string">'Tag'</span>,<span class="string">'t_224'</span>);
+0288 
+0289 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0290 he_FastICA_sampleSize = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0291   <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0292   <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0293   <span class="string">'Callback'</span>,<span class="string">'gui_advc CheckSampleSize'</span>, <span class="keyword">...</span>
+0294   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0295   <span class="string">'String'</span>,num2str(g_FastICA_sampleSize), <span class="keyword">...</span>
+0296   <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0297   <span class="string">'Tag'</span>,<span class="string">'e_sampleSize'</span>);
+0298 
+0299 pos_t = pos_t - pos_h;
+0300 pos_l = pos_frame(1) + 6;
+0301 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0302   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0303   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0304   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0305   <span class="string">'String'</span>,<span class="string">'Initial state'</span>, <span class="keyword">...</span>
+0306   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0307   <span class="string">'Tag'</span>,<span class="string">'t_25'</span>);
+0308 
+0309 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0310 hpm_FastICA_initState = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0311   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0312   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0313   <span class="string">'String'</span>,c_FastICA_iSta_strD, <span class="keyword">...</span>
+0314   <span class="string">'Style'</span>,<span class="string">'popupmenu'</span>, <span class="keyword">...</span>
+0315   <span class="string">'Tag'</span>,<span class="string">'pm_initState'</span>, <span class="keyword">...</span>
+0316   <span class="string">'Value'</span>,pm_initState_Value);
+0317 
+0318 pos_t = pos_t - pos_h;
+0319 pos_l = pos_frame(1) + 6;
+0320 hb_FastICA_initGuess = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0321   <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0322   <span class="string">'Callback'</span>,<span class="string">'gui_advc loadGuess'</span>, <span class="keyword">...</span>
+0323   <span class="string">'Position'</span>,[pos_l pos_t (pos_w1-60) pos_h], <span class="keyword">...</span>
+0324   <span class="string">'String'</span>,<span class="string">'Load initial guess'</span>, <span class="keyword">...</span>
+0325   <span class="string">'UserData'</span>, g_FastICA_initGuess, <span class="keyword">...</span>
+0326   <span class="string">'Tag'</span>,<span class="string">'b_LoadGuess'</span>);
+0327 
+0328 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0329 ht_FastICA_initGuess = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0330   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0331   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0332   <span class="string">'Position'</span>,[(pos_l) pos_t (pos_w2) pos_h], <span class="keyword">...</span>
+0333   <span class="string">'String'</span>,t_initGuess_String, <span class="keyword">...</span>
+0334   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0335   <span class="string">'Tag'</span>,<span class="string">'t_initGuess'</span>);
+0336 
+0337 pos_t = pos_t - pos_h;
+0338 pos_l = pos_frame(1) + 6;
+0339 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0340   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0341   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0342   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0343   <span class="string">'String'</span>,<span class="string">'Display mode'</span>, <span class="keyword">...</span>
+0344   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0345   <span class="string">'Tag'</span>,<span class="string">'t_27'</span>);
+0346 
+0347 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0348 hpm_FastICA_displayMode = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0349   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0350   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0351   <span class="string">'String'</span>,c_FastICA_dMod_strD, <span class="keyword">...</span>
+0352   <span class="string">'Style'</span>,<span class="string">'popupmenu'</span>, <span class="keyword">...</span>
+0353   <span class="string">'Tag'</span>,<span class="string">'pm_displayMode'</span>, <span class="keyword">...</span>
+0354   <span class="string">'Value'</span>,g_FastICA_displayMo);
+0355 
+0356 pos_t = pos_t - pos_h;
+0357 pos_l = pos_frame(1) + 6;
+0358 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0359   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0360   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0361   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0362   <span class="string">'String'</span>,<span class="string">'Iterations between displays'</span>, <span class="keyword">...</span>
+0363   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0364   <span class="string">'Tag'</span>,<span class="string">'t_28'</span>);
+0365 
+0366 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0367 he_FastICA_displayInterval = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0368   <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0369   <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0370   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0371   <span class="string">'String'</span>,num2str(g_FastICA_displayIn), <span class="keyword">...</span>
+0372   <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0373   <span class="string">'Tag'</span>,<span class="string">'e_displayInterval'</span>);
+0374 
+0375 pos_t = pos_t - pos_h;
+0376 pos_l = pos_frame(1) + 6;
+0377 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0378   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0379   <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0380   <span class="string">'Position'</span>,[pos_l pos_t pos_w1 pos_h], <span class="keyword">...</span>
+0381   <span class="string">'String'</span>,<span class="string">'Verbose'</span>, <span class="keyword">...</span>
+0382   <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0383   <span class="string">'Tag'</span>,<span class="string">'t_29'</span>);
+0384 
+0385 pos_l = pos_frame(1) + pos_frame(3) - 6 - pos_w2;
+0386 hpm_FastICA_verbose = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0387   <span class="string">'BackgroundColor'</span>,bgc, <span class="keyword">...</span>
+0388   <span class="string">'Position'</span>,[pos_l pos_t pos_w2 pos_h], <span class="keyword">...</span>
+0389   <span class="string">'String'</span>,c_FastICA_verb_strD, <span class="keyword">...</span>
+0390   <span class="string">'Style'</span>,<span class="string">'popupmenu'</span>, <span class="keyword">...</span>
+0391   <span class="string">'Tag'</span>,<span class="string">'pm_verbose'</span>, <span class="keyword">...</span>
+0392   <span class="string">'Value'</span>,g_FastICA_verbose);
+0393 
+0394 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0395 <span class="comment">% Controls in f_adv_side</span>
+0396 pos_vspace = 6;
+0397 pos_hspace = 10;
+0398 pos_frame = get(h_f_adv_side, <span class="string">'Position'</span>);
+0399 pos_w = 100;
+0400 pos_h = 30;
+0401 pos_l = pos_frame(1) + pos_hspace;
+0402 pos_t = pos_frame(2) + pos_frame(4) - pos_h - pos_vspace;
+0403 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0404   <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0405   <span class="string">'Callback'</span>,<span class="string">'gui_advc OK'</span>, <span class="keyword">...</span>
+0406   <span class="string">'Position'</span>,[pos_l pos_t pos_w pos_h], <span class="keyword">...</span>
+0407   <span class="string">'String'</span>,<span class="string">'OK'</span>, <span class="keyword">...</span>
+0408   <span class="string">'Tag'</span>,<span class="string">'b_advOK'</span>);
+0409 
+0410 pos_t=pos_t-pos_h-pos_vspace;
+0411 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0412   <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0413   <span class="string">'Callback'</span>,<span class="string">'gui_advc Cancel'</span>, <span class="keyword">...</span>
+0414   <span class="string">'Position'</span>,[pos_l pos_t pos_w pos_h], <span class="keyword">...</span>
+0415   <span class="string">'String'</span>,<span class="string">'Cancel'</span>, <span class="keyword">...</span>
+0416   <span class="string">'Tag'</span>,<span class="string">'b_advCancel'</span>);
+0417 
+0418 pos_t=pos_t-pos_h-pos_vspace;
+0419 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0420   <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0421   <span class="string">'Callback'</span>,<span class="string">'gui_advc Default'</span>, <span class="keyword">...</span>
+0422   <span class="string">'Position'</span>,[pos_l pos_t pos_w pos_h], <span class="keyword">...</span>
+0423   <span class="string">'String'</span>,<span class="string">'Default'</span>, <span class="keyword">...</span>
+0424   <span class="string">'Tag'</span>,<span class="string">'b_advDefault'</span>);
+0425 
+0426 pos_t=pos_t-pos_h-pos_vspace;
+0427 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0428   <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0429   <span class="string">'Callback'</span>,<span class="string">'gui_advc Apply'</span>, <span class="keyword">...</span>
+0430   <span class="string">'Position'</span>,[pos_l pos_t pos_w pos_h], <span class="keyword">...</span>
+0431   <span class="string">'String'</span>,<span class="string">'Apply'</span>, <span class="keyword">...</span>
+0432   <span class="string">'Tag'</span>,<span class="string">'b_advApply'</span>);
+0433 
+0434 pos_t = pos_frame(2) + pos_vspace;
+0435 b = uicontrol(<span class="string">'Parent'</span>,a, <span class="keyword">...</span>
+0436   <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0437   <span class="string">'Callback'</span>,<span class="string">'gui_advc Help'</span>, <span class="keyword">...</span>
+0438   <span class="string">'Position'</span>,[pos_l pos_t pos_w pos_h], <span class="keyword">...</span>
+0439   <span class="string">'String'</span>,<span class="string">'Help'</span>, <span class="keyword">...</span>
+0440   <span class="string">'Tag'</span>,<span class="string">'b_advHelp'</span>);
+0441</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

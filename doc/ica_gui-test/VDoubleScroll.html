@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of VDoubleScroll</title>
+  <meta name="keywords" content="VDoubleScroll">
+  <meta name="description" content="class VDoubleScroll: gui object that makes a vertical double scroll bar.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">ica_gui-test</a> &gt; VDoubleScroll.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for ica_gui-test&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>VDoubleScroll
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>class VDoubleScroll: gui object that makes a vertical double scroll bar.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>classdef VDoubleScroll < hgsetget </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> class VDoubleScroll: gui object that makes a vertical double scroll bar.
+    A double scroll bar is a gui tool for selecting a range between a
+    minimum and a maximum - for instance it can be used to set the
+    minimum and maximum color limits for an image.
+
+ @file: VDoubleScroll.m
+ @brief: gui object that creates a double scroll bar.
+ @author: Paxon Frady
+ @created: 6/14/11</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="AxesEventNotifier.html" class="code" title="classdef AxesEventNotifier < handle">AxesEventNotifier</a>	class AxesEventNotifier: sends out notifications during axes events.</li><li><a href="FigureEventNotifier.html" class="code" title="classdef FigureEventNotifier < handle">FigureEventNotifier</a>	class FigureEventNotifier: sends out event notifications during</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="RoiEditor.html" class="code" title="classdef RoiEditor < hgsetget">RoiEditor</a>	class RoiEditor: interactive gui to edit rois for image processing</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function self = VDoubleScroll(parent)</a></li><li><a href="#_sub2" class="code">function self = init_state(self)</a></li><li><a href="#_sub3" class="code">function self = init_gui(self, parent)</a></li><li><a href="#_sub4" class="code">function self = uiextras_layout(self)</a></li><li><a href="#_sub5" class="code">function rect_button_down_cb(self, source_h, eventdata)</a></li><li><a href="#_sub6" class="code">function min_dec_cb(self, source_h, eventdata)</a></li><li><a href="#_sub7" class="code">function min_inc_cb(self, source_h, eventdata)</a></li><li><a href="#_sub8" class="code">function max_dec_cb(self, source_h, eventdata)</a></li><li><a href="#_sub9" class="code">function max_inc_cb(self, source_h, eventdata)</a></li><li><a href="#_sub10" class="code">function min_edit_cb(self, source_h, eventdata)</a></li><li><a href="#_sub11" class="code">function max_edit_cb(self, source_h, eventdata)</a></li><li><a href="#_sub12" class="code">function update(self)</a></li><li><a href="#_sub13" class="code">function set_max_range(self)</a></li><li><a href="#_sub14" class="code">function set.Min(self, value)</a></li><li><a href="#_sub15" class="code">function set.Max(self, value)</a></li><li><a href="#_sub16" class="code">function set.BgColor(self, value)</a></li><li><a href="#_sub17" class="code">function set.Color(self, value)</a></li><li><a href="#_sub18" class="code">function set.Position(self, value)</a></li><li><a href="#_sub19" class="code">function set.Value(self, value)</a></li><li><a href="#_sub20" class="code">function self = set.Parent(self, val)</a></li><li><a href="#_sub21" class="code">function val = get.Parent(self)</a></li><li><a href="#_sub22" class="code">function set.Visible(self, value)</a></li><li><a href="#_sub23" class="code">function animate_scroll_drag(self)</a></li></ul>
+<h2><a name="_download"></a>DOWNLOAD <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<p><a href="VDoubleScroll.m">VDoubleScroll.m</a></p>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 classdef <a href="#_sub1" class="code" title="subfunction self = VDoubleScroll(parent)">VDoubleScroll</a> &lt; hgsetget
+0002     <span class="comment">% class VDoubleScroll: gui object that makes a vertical double scroll bar.</span>
+0003     <span class="comment">%    A double scroll bar is a gui tool for selecting a range between a</span>
+0004     <span class="comment">%    minimum and a maximum - for instance it can be used to set the</span>
+0005     <span class="comment">%    minimum and maximum color limits for an image.</span>
+0006     <span class="comment">%</span>
+0007     <span class="comment">% @file: VDoubleScroll.m</span>
+0008     <span class="comment">% @brief: gui object that creates a double scroll bar.</span>
+0009     <span class="comment">% @author: Paxon Frady</span>
+0010     <span class="comment">% @created: 6/14/11</span>
+0011     
+0012     properties (AbortSet)
+0013         h; <span class="comment">% graphic object handles.</span>
+0014         gui; <span class="comment">% settings for the gui.</span>
+0015         
+0016         BgColor; <span class="comment">% Background color.</span>
+0017         Color; <span class="comment">% Color of the rectangle.</span>
+0018         Position; <span class="comment">% Position of the axes.</span>
+0019         Parent;
+0020         Visible; 
+0021         
+0022         MinStep; <span class="comment">% Minimum amount difference between</span>
+0023         Value; <span class="comment">% The low (Value(1)) and high (Value(2)) values.</span>
+0024         Min = 0; <span class="comment">% The minimum</span>
+0025         Max = 1; <span class="comment">% The maximum</span>
+0026     <span class="keyword">end</span>
+0027     
+0028     events
+0029         SelectionChanged; <span class="comment">% Whenever the range selected changes.</span>
+0030     <span class="keyword">end</span>
+0031     
+0032     methods
+0033         <span class="comment">%%%%%%%%%% Initialization %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0034         <a name="_sub0" href="#_subfunctions" class="code">function self = VDoubleScroll(parent)</a>
+0035             <span class="comment">% constructor: creates a new DoubleScroll object.</span>
+0036             <span class="comment">%</span>
+0037             <span class="comment">% @param: parent the handle of the parent of this object. If no</span>
+0038             <span class="comment">% parent is given, gcf will be used.</span>
+0039             <span class="comment">% @return: self handle to the gui object.</span>
+0040             
+0041             <span class="keyword">if</span> nargin &lt; 1
+0042                 parent = [];
+0043             <span class="keyword">end</span>
+0044             
+0045             self = self.init_state();
+0046             self = self.init_gui(parent);
+0047             
+0048             self.update();
+0049         <span class="keyword">end</span>
+0050         
+0051         <a name="_sub1" href="#_subfunctions" class="code">function self = init_state(self)</a>
+0052             <span class="comment">% init_state: initializes the state variables used. This sets</span>
+0053             <span class="comment">% the defaults.</span>
+0054             
+0055             self.BgColor = [0.95 0.95 0.95];
+0056             self.Color = [0 0 0];
+0057             self.Position = [50 100 20 300];
+0058             
+0059             self.MinStep = 0.01;
+0060             
+0061             self.Value(1) = self.Min;
+0062             self.Value(2) = self.Max;
+0063             
+0064             self.gui.BUTTON_H = 40;
+0065             self.gui.drag_size = 0.05;
+0066         <span class="keyword">end</span>
+0067         
+0068         <a name="_sub2" href="#_subfunctions" class="code">function self = init_gui(self, parent)</a>
+0069             <span class="comment">% init_gui: initializes the gui. Creates all of the gui</span>
+0070             <span class="comment">% components.</span>
+0071             <span class="comment">%</span>
+0072             <span class="comment">% @param: parent the parent figure. If none is given, then gcf</span>
+0073             <span class="comment">% will be used as the parent.</span>
+0074             
+0075             <span class="keyword">if</span> nargin &lt; 2 || isempty(parent)
+0076                 <span class="comment">% No parent given, use gcf.</span>
+0077                 parent = gcf;
+0078             <span class="keyword">end</span>
+0079             
+0080             self.h.parent = parent;
+0081             <span class="comment">% Get the parent figure and set it as an event notifier.</span>
+0082             fh = parent;
+0083             <span class="keyword">while</span> ~strcmp(get(fh, <span class="string">'Type'</span>), <span class="string">'figure'</span>)
+0084                 <span class="comment">% The last object is not a figure go up.</span>
+0085                 fh = get(fh, <span class="string">'Parent'</span>);
+0086             <span class="keyword">end</span>
+0087             self.h.fh = fh;
+0088             
+0089             self.h.fen = <a href="FigureEventNotifier.html" class="code" title="classdef FigureEventNotifier < handle">FigureEventNotifier</a>(self.h.fh);
+0090             
+0091             self.h.panel = uipanel(self.h.parent, <span class="string">'Units'</span>, <span class="string">'pixels'</span>, <span class="keyword">...</span>
+0092                 <span class="string">'Position'</span>, self.Position, <span class="string">'BorderType'</span>, <span class="string">'none'</span>, <span class="keyword">...</span>
+0093                 <span class="string">'BackgroundColor'</span>, self.BgColor);
+0094             
+0095             self.h.ds_axes = axes(<span class="string">'Box'</span>, <span class="string">'off'</span>, <span class="string">'XTick'</span>, [], <span class="string">'YTick'</span>, [], <span class="keyword">...</span>
+0096                 <span class="string">'Color'</span>, self.BgColor, <span class="string">'XColor'</span>, self.BgColor, <span class="string">'NextPlot'</span>, <span class="string">'add'</span>, <span class="keyword">...</span>
+0097                 <span class="string">'YColor'</span>, self.BgColor, <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="string">'Position'</span>, [0 0 1 1]);
+0098             ylim(self.h.ds_axes, [self.Min self.Max]);
+0099             xlim(self.h.ds_axes, [0 1]);
+0100             self.h.ds_ax_aen = <a href="AxesEventNotifier.html" class="code" title="classdef AxesEventNotifier < handle">AxesEventNotifier</a>(self.h.ds_axes);
+0101             addlistener(self.h.ds_ax_aen, <span class="string">'ButtonDown'</span>, @self.rect_button_down_cb);
+0102             
+0103             self.h.rect = rectangle(<span class="string">'Parent'</span>, self.h.ds_axes, <span class="keyword">...</span>
+0104                 <span class="string">'EdgeColor'</span>, self.Color, <span class="string">'FaceColor'</span>, self.Color, <span class="keyword">...</span>
+0105                 <span class="string">'Position'</span>, [0 self.Min 1 self.Max]);
+0106             set(self.h.rect, <span class="string">'ButtonDownFcn'</span>, @self.rect_button_down_cb);
+0107             
+0108             self.h.min_drag_line = plot(self.h.ds_axes, [0 1], <span class="keyword">...</span>
+0109                 [self.gui.drag_size * (self.Max - self.Min), self.gui.drag_size * (self.Max - self.Min)], <span class="keyword">...</span>
+0110                 <span class="string">'Color'</span>, [0.5 0.5 0.5]);
+0111             self.h.max_drag_line = plot(self.h.ds_axes, [0 1], <span class="keyword">...</span>
+0112                 [(1 - self.gui.drag_size) * (self.Max - self.Min), (1 - self.gui.drag_size) * (self.Max - self.Min)], <span class="keyword">...</span>
+0113                 <span class="string">'Color'</span>, [0.5 0.5 0.5]);
+0114             
+0115             self.h.min_dec_button = uicontrol(<span class="string">'Style'</span>, <span class="string">'pushbutton'</span>, <span class="string">'String'</span>, <span class="string">'&lt;'</span>, <span class="string">'Callback'</span>, @self.min_dec_cb);
+0116             self.h.min_inc_button = uicontrol(<span class="string">'Style'</span>, <span class="string">'pushbutton'</span>, <span class="string">'String'</span>, <span class="string">'&gt;'</span>, <span class="string">'Callback'</span>, @self.min_inc_cb);
+0117             self.h.max_dec_button = uicontrol(<span class="string">'Style'</span>, <span class="string">'pushbutton'</span>, <span class="string">'String'</span>, <span class="string">'&lt;'</span>, <span class="string">'Callback'</span>, @self.max_dec_cb);
+0118             self.h.max_inc_button = uicontrol(<span class="string">'Style'</span>, <span class="string">'pushbutton'</span>, <span class="string">'String'</span>, <span class="string">'&gt;'</span>, <span class="string">'Callback'</span>, @self.max_inc_cb);
+0119             
+0120             self.h.min_edit = uicontrol(<span class="string">'Style'</span>, <span class="string">'edit'</span>, <span class="string">'Callback'</span>, @self.min_edit_cb);
+0121             self.h.max_edit = uicontrol(<span class="string">'Style'</span>, <span class="string">'edit'</span>, <span class="string">'Callback'</span>, @self.max_edit_cb);
+0122             
+0123             self = self.uiextras_layout();
+0124             self.update();
+0125         <span class="keyword">end</span>
+0126         
+0127         <a name="_sub3" href="#_subfunctions" class="code">function self = uiextras_layout(self)</a>
+0128             
+0129             self.h.main_vbox = uiextras.VBox();
+0130             
+0131             self.h.max_control_vbox = uiextras.VBox();
+0132             self.h.max_button_hbox = uiextras.HBox();
+0133             
+0134             self.h.min_control_vbox = uiextras.VBox();
+0135             self.h.min_button_hbox = uiextras.HBox();
+0136             
+0137             <span class="comment">% Top hierarchy</span>
+0138             set(self.h.main_vbox, <span class="string">'Parent'</span>, self.h.panel);
+0139             set(self.h.max_control_vbox, <span class="string">'Parent'</span>, self.h.main_vbox);
+0140             set(self.h.ds_axes, <span class="string">'Parent'</span>, self.h.main_vbox.double());
+0141             set(self.h.min_control_vbox, <span class="string">'Parent'</span>, self.h.main_vbox);
+0142             
+0143             <span class="comment">% Max controls</span>
+0144             set(self.h.max_edit, <span class="string">'Parent'</span>, self.h.max_control_vbox.double());
+0145             set(self.h.max_button_hbox, <span class="string">'Parent'</span>, self.h.max_control_vbox);
+0146             set(self.h.max_dec_button, <span class="string">'Parent'</span>, self.h.max_button_hbox.double());
+0147             set(self.h.max_inc_button, <span class="string">'Parent'</span>, self.h.max_button_hbox.double());
+0148             
+0149             <span class="comment">% Min Controls</span>
+0150             set(self.h.min_button_hbox, <span class="string">'Parent'</span>, self.h.min_control_vbox);
+0151             set(self.h.min_dec_button, <span class="string">'Parent'</span>, self.h.min_button_hbox.double());
+0152             set(self.h.min_inc_button, <span class="string">'Parent'</span>, self.h.min_button_hbox.double());
+0153             set(self.h.min_edit, <span class="string">'Parent'</span>, self.h.min_control_vbox.double());
+0154             
+0155             set(self.h.main_vbox, <span class="string">'Sizes'</span>, [self.gui.BUTTON_H, -1, self.gui.BUTTON_H]);
+0156         <span class="keyword">end</span>
+0157         
+0158         <span class="comment">%%%%%%%%%% Callbacks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0159         <a name="_sub4" href="#_subfunctions" class="code">function rect_button_down_cb(self, source_h, eventdata)</a>
+0160             <span class="comment">% rect_button_down_cb: handles when the mouse is pressed on the</span>
+0161             <span class="comment">% rectangle.</span>
+0162             
+0163             <span class="keyword">if</span> self.h.fen.button_down == 4
+0164                 <span class="comment">% Then the rectangle was double clicked. Make it maximum.</span>
+0165                 self.set_max_range();
+0166             <span class="keyword">else</span>
+0167                 self.animate_scroll_drag();
+0168             <span class="keyword">end</span>
+0169         <span class="keyword">end</span>
+0170         
+0171         <a name="_sub5" href="#_subfunctions" class="code">function min_dec_cb(self, source_h, eventdata)</a>
+0172             self.Value(1) = self.Value(1) - self.MinStep;
+0173         <span class="keyword">end</span>
+0174         
+0175         <a name="_sub6" href="#_subfunctions" class="code">function min_inc_cb(self, source_h, eventdata)</a>
+0176             self.Value(1) = self.Value(1) + self.MinStep;
+0177         <span class="keyword">end</span>
+0178         
+0179         <a name="_sub7" href="#_subfunctions" class="code">function max_dec_cb(self, source_h, eventdata)</a>
+0180             self.Value(2) = self.Value(2) - self.MinStep;
+0181         <span class="keyword">end</span>
+0182         
+0183         <a name="_sub8" href="#_subfunctions" class="code">function max_inc_cb(self, source_h, eventdata)</a>
+0184             self.Value(2) = self.Value(2) + self.MinStep;  
+0185         <span class="keyword">end</span>
+0186         
+0187         <a name="_sub9" href="#_subfunctions" class="code">function min_edit_cb(self, source_h, eventdata)</a>
+0188             cf = str2num(get(self.h.min_edit, <span class="string">'String'</span>));
+0189             <span class="keyword">if</span> ~isempty(cf) &amp;&amp; length(cf) == 1
+0190                 <span class="comment">% Otherwise the input is invalid</span>
+0191                 self.Value(1) = cf;
+0192             <span class="keyword">else</span>
+0193                 self.update();
+0194             <span class="keyword">end</span>
+0195         <span class="keyword">end</span>
+0196         
+0197         <a name="_sub10" href="#_subfunctions" class="code">function max_edit_cb(self, source_h, eventdata)</a>
+0198             cf = str2num(get(self.h.max_edit, <span class="string">'String'</span>));
+0199             <span class="keyword">if</span> ~isempty(cf) &amp;&amp; length(cf) == 1
+0200                 <span class="comment">% Otherwise the input is invalid</span>
+0201                 self.Value(2) = cf;
+0202             <span class="keyword">else</span>
+0203                 self.update();
+0204             <span class="keyword">end</span>
+0205         <span class="keyword">end</span>
+0206         
+0207         <span class="comment">%%%%%%%%%% Main Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0208         <a name="_sub11" href="#_subfunctions" class="code">function update(self)</a>
+0209             <span class="comment">% Updates the gui to make sure it matches with the internal</span>
+0210             <span class="comment">% state.</span>
+0211             <span class="comment">% First round to the nearest MinStep value</span>
+0212             v = self.Value;
+0213             <span class="comment">%v = round(v ./ self.MinStep) .* self.MinStep;</span>
+0214             
+0215             <span class="comment">% Make sure the limits are correct</span>
+0216             v(1) = min(max(v(1), self.Min), self.Max - self.MinStep);
+0217             v(2) = min(max(v(2), v(1) + self.MinStep), self.Max);
+0218             
+0219             <span class="comment">%self.Value = v;</span>
+0220             pos = [0, v(1), 1, v(2) - v(1)];
+0221             set(self.h.rect, <span class="string">'Position'</span>, pos); 
+0222             
+0223             min_drag_line_y = pos(2) + self.gui.drag_size * (self.Max - self.Min);
+0224             max_drag_line_y = pos(2) + pos(4) - self.gui.drag_size * (self.Max - self.Min);
+0225             
+0226             <span class="keyword">if</span> min_drag_line_y &gt; max_drag_line_y
+0227                 <span class="comment">% Then just do something</span>
+0228                 mean_drag_line_y = mean([min_drag_line_y, max_drag_line_y]);
+0229                 min_drag_line_y = mean_drag_line_y;
+0230                 max_drag_line_y = mean_drag_line_y;
+0231             <span class="keyword">end</span>
+0232             
+0233             set(self.h.min_drag_line, <span class="string">'YData'</span>, [min_drag_line_y, min_drag_line_y]);
+0234             set(self.h.max_drag_line, <span class="string">'YData'</span>, [max_drag_line_y, max_drag_line_y]);
+0235             
+0236             set(self.h.min_edit, <span class="string">'String'</span>, num2str(self.Value(1), 2));
+0237             set(self.h.max_edit, <span class="string">'String'</span>, num2str(self.Value(2), 2));
+0238             drawnow;
+0239         <span class="keyword">end</span>
+0240         
+0241         <a name="_sub12" href="#_subfunctions" class="code">function set_max_range(self)</a>
+0242             self.Value = [self.Min, self.Max];
+0243             <span class="comment">%self.update();</span>
+0244         <span class="keyword">end</span>
+0245         
+0246         <a name="_sub13" href="#_subfunctions" class="code">function set.Min(self, value)</a>
+0247             <span class="keyword">if</span> value &gt;= self.Max
+0248                 self.Max = value + self.MinStep;
+0249             <span class="keyword">end</span>
+0250             <span class="comment">%self.Value = (self.Max - value) .* (self.Value - self.Min) ./ (self.Max - self.Min) + value;</span>
+0251             
+0252             self.Min = double(value);
+0253             <span class="comment">%self.Value(1) = self.Min;</span>
+0254             <span class="keyword">if</span> ~isempty(self.h)
+0255                 ylim(self.h.ds_axes, [self.Min self.Max]);
+0256                 self.update();
+0257             <span class="keyword">end</span>
+0258         <span class="keyword">end</span>
+0259         
+0260         <a name="_sub14" href="#_subfunctions" class="code">function set.Max(self, value)</a>
+0261             <span class="keyword">if</span> value &lt;= self.Min
+0262                 self.Min = value - self.MinStep;
+0263             <span class="keyword">end</span>
+0264             
+0265             <span class="comment">%self.Value = value - (value - self.Min).*(self.Max - self.Value) ./ (self.Max - self.Min);</span>
+0266             self.Max = double(value);
+0267             <span class="comment">%self.Value(2) = self.Max;</span>
+0268             <span class="keyword">if</span> ~isempty(self.h)
+0269                 ylim(self.h.ds_axes, [self.Min self.Max]);
+0270                 self.update();
+0271             <span class="keyword">end</span>
+0272         <span class="keyword">end</span>
+0273         
+0274         <a name="_sub15" href="#_subfunctions" class="code">function set.BgColor(self, value)</a>
+0275             self.BgColor = value;
+0276             
+0277             <span class="keyword">if</span> isfield(self.h, <span class="string">'ds_axes'</span>)
+0278                 set(self.h.ds_axes, <span class="string">'Color'</span>, self.BgColor, <span class="keyword">...</span>
+0279                     <span class="string">'XColor'</span>, self.BgColor, <span class="string">'YColor'</span>, self.BgColor);
+0280             <span class="keyword">end</span>
+0281             <span class="keyword">if</span> isfield(self.h, <span class="string">'panel'</span>)
+0282                 set(self.h.panel, <span class="string">'BackgroundColor'</span>, self.BgColor);
+0283             <span class="keyword">end</span>
+0284         <span class="keyword">end</span>
+0285         
+0286         <a name="_sub16" href="#_subfunctions" class="code">function set.Color(self, value)</a>
+0287             <span class="keyword">if</span> isfield(self.h, <span class="string">'rect'</span>)
+0288                 set(self.h.rect, <span class="string">'FaceColor'</span>, value);
+0289                 set(self.h.rect, <span class="string">'EdgeColor'</span>, value);
+0290                 self.Color = get(self.h.rect, <span class="string">'FaceColor'</span>);
+0291             <span class="keyword">else</span>
+0292                 <span class="comment">% hmm... I guess do this.</span>
+0293                 self.Color = value;
+0294             <span class="keyword">end</span>
+0295         <span class="keyword">end</span>
+0296         
+0297         <a name="_sub17" href="#_subfunctions" class="code">function set.Position(self, value)</a>
+0298             self.Position = value;
+0299             <span class="keyword">if</span> isfield(self.h, <span class="string">'panel'</span>)
+0300                 set(self.h.panel, <span class="string">'Position'</span>, self.Position);
+0301                 
+0302                 set(self.h.ds_axes, <span class="string">'Position'</span>, [40 5 self.Position(3) - 80 self.Position(4) - 5])                
+0303                 set(self.h.left_dec_h, <span class="string">'Position'</span>, [0 0 20 self.Position(4)]);
+0304                 set(self.h.left_inc_h, <span class="string">'Position'</span>, [20 0 20 self.Position(4)]);
+0305                 set(self.h.right_dec_h, <span class="string">'Position'</span>, [self.Position(3) - 40 0 20 self.Position(4)]);
+0306                 set(self.h.right_inc_h, <span class="string">'Position'</span>, [self.Position(3) - 20 0 20 self.Position(4)]);
+0307             <span class="keyword">end</span>
+0308         <span class="keyword">end</span>
+0309         
+0310         <a name="_sub18" href="#_subfunctions" class="code">function set.Value(self, value)</a>
+0311             <span class="comment">%disp(value);</span>
+0312             <span class="keyword">if</span> isequal(self.Value, value)
+0313                 <span class="comment">% Then there's nothing to change</span>
+0314                 <span class="keyword">return</span>;
+0315             <span class="keyword">end</span>
+0316             
+0317             v = min(max(double(value), self.Min), self.Max);
+0318             
+0319             <span class="keyword">if</span> length(v) == 2
+0320                 v(2) = max(v(2), v(1) + self.MinStep);
+0321             <span class="keyword">end</span>
+0322             
+0323             self.Value = v;
+0324             
+0325             <span class="keyword">if</span> ~isempty(self.h)
+0326                 self.update();
+0327             <span class="keyword">end</span>
+0328             
+0329             notify(self, <span class="string">'SelectionChanged'</span>);
+0330         <span class="keyword">end</span>
+0331         
+0332         <a name="_sub19" href="#_subfunctions" class="code">function self = set.Parent(self, val)</a>
+0333             set(self.h.panel, <span class="string">'Parent'</span>, double(val));
+0334         <span class="keyword">end</span>
+0335         
+0336         <a name="_sub20" href="#_subfunctions" class="code">function val = get.Parent(self)</a>
+0337             val = get(self.h.panel, <span class="string">'Parent'</span>);
+0338         <span class="keyword">end</span>
+0339         
+0340         <a name="_sub21" href="#_subfunctions" class="code">function set.Visible(self, value)</a>
+0341             <span class="keyword">if</span> isfield(self.h, <span class="string">'panel'</span>)
+0342                 set(self.h.panel, <span class="string">'Visible'</span>, value);
+0343                 self.Visible = get(self.h.panel, <span class="string">'Visible'</span>);
+0344             <span class="keyword">end</span>
+0345         <span class="keyword">end</span>
+0346         
+0347         <span class="comment">%%%%%%%%%% Utility functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0348         
+0349         <a name="_sub22" href="#_subfunctions" class="code">function animate_scroll_drag(self)</a>
+0350             point1 = get(self.h.ds_axes, <span class="string">'CurrentPoint'</span>);
+0351             
+0352             py1 = point1(1,2);
+0353             rpos = get(self.h.rect, <span class="string">'Position'</span>);
+0354             
+0355             <span class="keyword">if</span> (py1 - rpos(2)) &lt; self.gui.drag_size * (self.Max - self.Min)
+0356                 <span class="comment">% Then we are doing a minimum drag</span>
+0357                 set(self.h.fh, <span class="string">'Pointer'</span>, <span class="string">'bottom'</span>);
+0358                 pos_change = 1; <span class="comment">% 1 for minimum</span>
+0359             <span class="keyword">elseif</span> (py1 - rpos(2)) &gt; rpos(4) - self.gui.drag_size * (self.Max - self.Min)
+0360                 <span class="comment">% Then we are doing a maximum drag</span>
+0361                 set(self.h.fh, <span class="string">'Pointer'</span>, <span class="string">'top'</span>);
+0362                 pos_change = -1; <span class="comment">% -1 for maximum</span>
+0363             <span class="keyword">else</span>
+0364                 <span class="comment">% Then we are doing a shift</span>
+0365                 set(self.h.fh, <span class="string">'Pointer'</span>, <span class="string">'hand'</span>);
+0366                 pos_change = 0; <span class="comment">% 0 for shift</span>
+0367             <span class="keyword">end</span>
+0368                         
+0369             new_pos = rpos;
+0370             <span class="keyword">while</span> self.h.fen.button_down
+0371                 point2 = get(self.h.ds_axes, <span class="string">'CurrentPoint'</span>);
+0372                 py2 = point2(1,2);
+0373                 dy1 = (py2 - py1);
+0374                 <span class="keyword">if</span> pos_change == 1
+0375                     <span class="comment">% then we are moving the min</span>
+0376                     new_pos(2) = min(max(rpos(2) + dy1, self.Min), self.Value(2) - self.MinStep);
+0377                     dy2 = rpos(2) - new_pos(2);
+0378                     new_pos(4) = max(min(rpos(4) + dy2, self.Max - new_pos(2)), self.MinStep);
+0379                 <span class="keyword">end</span>
+0380                 <span class="keyword">if</span> pos_change == -1
+0381                     <span class="comment">% then we are moving the max.</span>
+0382                     new_pos(4) = max(min(rpos(4) + dy1, self.Max - rpos(2)), self.MinStep);
+0383                 <span class="keyword">end</span>
+0384                 <span class="keyword">if</span> pos_change == 0
+0385                     <span class="comment">% then shift.</span>
+0386                     new_pos(2) = min(max(rpos(2) + dy1, self.Min), self.Max - rpos(4));
+0387                 <span class="keyword">end</span>
+0388                 
+0389                 set(self.h.rect, <span class="string">'Position'</span>, new_pos);
+0390                 min_drag_line_y = new_pos(2) + self.gui.drag_size * (self.Max - self.Min);
+0391                 max_drag_line_y = new_pos(2) + new_pos(4) - self.gui.drag_size * (self.Max - self.Min);
+0392                 
+0393                 <span class="keyword">if</span> min_drag_line_y &gt; max_drag_line_y
+0394                     <span class="comment">% Then just do something</span>
+0395                     mean_drag_line_y = mean([min_drag_line_y, max_drag_line_y]);
+0396                     min_drag_line_y = mean_drag_line_y;
+0397                     max_drag_line_y = mean_drag_line_y;
+0398                 <span class="keyword">end</span>
+0399                 
+0400                 set(self.h.min_drag_line, <span class="string">'YData'</span>, [min_drag_line_y, min_drag_line_y]);
+0401                 set(self.h.max_drag_line, <span class="string">'YData'</span>, [max_drag_line_y, max_drag_line_y]);
+0402                 
+0403                 set(self.h.min_edit, <span class="string">'String'</span>, num2str(new_pos(2), 2));
+0404                 set(self.h.max_edit, <span class="string">'String'</span>, num2str(new_pos(2) + new_pos(4), 2));
+0405                 drawnow;
+0406             <span class="keyword">end</span>
+0407             
+0408             self.Value = [new_pos(2), new_pos(2) + new_pos(4)];            
+0409             set(self.h.fh, <span class="string">'Pointer'</span>, <span class="string">'arrow'</span>);
+0410             self.update();
+0411         <span class="keyword">end</span>
+0412     <span class="keyword">end</span>
+0413 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:58:14 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

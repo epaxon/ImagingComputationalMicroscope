@@ -1,0 +1,440 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pcamat</title>
+  <meta name="keywords" content="pcamat">
+  <meta name="description" content="PCAMAT - Calculates the pca for data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FastICA_25</a> &gt; pcamat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FastICA_25&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>pcamat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>PCAMAT - Calculates the pca for data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [E, D] = pcamat(vectors, firstEig, lastEig, s_interactive,s_verbose); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">PCAMAT - Calculates the pca for data
+
+ [E, D] = pcamat(vectors, firstEig, lastEig, ... 
+                 interactive, verbose);
+
+ Calculates the PCA matrices for given data (row) vectors. Returns
+ the eigenvector (E) and diagonal eigenvalue (D) matrices containing the
+ selected subspaces. Dimensionality reduction is controlled with
+ the parameters 'firstEig' and 'lastEig' - but it can also be done
+ interactively by setting parameter 'interactive' to 'on' or 'gui'.
+
+ ARGUMENTS
+
+ vectors       Data in row vectors.
+ firstEig      Index of the largest eigenvalue to keep.
+               Default is 1.
+ lastEig       Index of the smallest eigenvalue to keep.
+               Default is equal to dimension of vectors.
+ interactive   Specify eigenvalues to keep interactively. Note that if
+               you set 'interactive' to 'on' or 'gui' then the values
+               for 'firstEig' and 'lastEig' will be ignored, but they
+               still have to be entered. If the value is 'gui' then the
+               same graphical user interface as in FASTICAG will be
+               used. Default is 'off'.
+ verbose       Default is 'on'.
+
+
+ EXAMPLE
+       [E, D] = pcamat(vectors);
+
+ Note 
+       The eigenvalues and eigenvectors returned by PCAMAT are not sorted.
+
+ This function is needed by FASTICA and FASTICAG</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="fastica.html" class="code" title="function [Out1, Out2, Out3] = fastica(mixedsig, varargin)">fastica</a>	FASTICA - Fast Independent Component Analysis</li><li><a href="gui_cb.html" class="code" title="function gui_cb(action)">gui_cb</a>	</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function newMatrix = selcol(oldMatrix, maskVector);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [E, D] = pcamat(vectors, firstEig, lastEig, s_interactive, </a><span class="keyword">...</span>
+0002     s_verbose);
+0003 <span class="comment">%PCAMAT - Calculates the pca for data</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% [E, D] = pcamat(vectors, firstEig, lastEig, ...</span>
+0006 <span class="comment">%                 interactive, verbose);</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Calculates the PCA matrices for given data (row) vectors. Returns</span>
+0009 <span class="comment">% the eigenvector (E) and diagonal eigenvalue (D) matrices containing the</span>
+0010 <span class="comment">% selected subspaces. Dimensionality reduction is controlled with</span>
+0011 <span class="comment">% the parameters 'firstEig' and 'lastEig' - but it can also be done</span>
+0012 <span class="comment">% interactively by setting parameter 'interactive' to 'on' or 'gui'.</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% ARGUMENTS</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% vectors       Data in row vectors.</span>
+0017 <span class="comment">% firstEig      Index of the largest eigenvalue to keep.</span>
+0018 <span class="comment">%               Default is 1.</span>
+0019 <span class="comment">% lastEig       Index of the smallest eigenvalue to keep.</span>
+0020 <span class="comment">%               Default is equal to dimension of vectors.</span>
+0021 <span class="comment">% interactive   Specify eigenvalues to keep interactively. Note that if</span>
+0022 <span class="comment">%               you set 'interactive' to 'on' or 'gui' then the values</span>
+0023 <span class="comment">%               for 'firstEig' and 'lastEig' will be ignored, but they</span>
+0024 <span class="comment">%               still have to be entered. If the value is 'gui' then the</span>
+0025 <span class="comment">%               same graphical user interface as in FASTICAG will be</span>
+0026 <span class="comment">%               used. Default is 'off'.</span>
+0027 <span class="comment">% verbose       Default is 'on'.</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% EXAMPLE</span>
+0031 <span class="comment">%       [E, D] = pcamat(vectors);</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">% Note</span>
+0034 <span class="comment">%       The eigenvalues and eigenvectors returned by PCAMAT are not sorted.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% This function is needed by FASTICA and FASTICAG</span>
+0037 
+0038 <span class="comment">% For historical reasons this version does not sort the eigenvalues or</span>
+0039 <span class="comment">% the eigen vectors in any ways. Therefore neither does the FASTICA or</span>
+0040 <span class="comment">% FASTICAG. Generally it seams that the components returned from</span>
+0041 <span class="comment">% whitening is almost in reversed order. (That means, they usually are,</span>
+0042 <span class="comment">% but sometime they are not - depends on the EIG-command of matlab.)</span>
+0043 
+0044 <span class="comment">% @(#)$Id: pcamat.m,v 1.5 2003/12/15 18:24:32 jarmo Exp $</span>
+0045 
+0046 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0047 <span class="comment">% Default values:</span>
+0048 <span class="keyword">if</span> nargin &lt; 5, s_verbose = <span class="string">'on'</span>; <span class="keyword">end</span>
+0049 <span class="keyword">if</span> nargin &lt; 4, s_interactive = <span class="string">'off'</span>; <span class="keyword">end</span>
+0050 <span class="keyword">if</span> nargin &lt; 3, lastEig = size(vectors, 1); <span class="keyword">end</span>
+0051 <span class="keyword">if</span> nargin &lt; 2, firstEig = 1; <span class="keyword">end</span>
+0052 
+0053 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0054 <span class="comment">% Check the optional parameters;</span>
+0055 <span class="keyword">switch</span> lower(s_verbose)
+0056  <span class="keyword">case</span> <span class="string">'on'</span>
+0057   b_verbose = 1;
+0058  <span class="keyword">case</span> <span class="string">'off'</span>
+0059   b_verbose = 0;
+0060  <span class="keyword">otherwise</span>
+0061   error(sprintf(<span class="string">'Illegal value [ %s ] for parameter: ''verbose''\n'</span>, s_verbose));
+0062 <span class="keyword">end</span>
+0063 
+0064 <span class="keyword">switch</span> lower(s_interactive)
+0065  <span class="keyword">case</span> <span class="string">'on'</span>
+0066   b_interactive = 1;
+0067  <span class="keyword">case</span> <span class="string">'off'</span>
+0068   b_interactive = 0;
+0069  <span class="keyword">case</span> <span class="string">'gui'</span>
+0070   b_interactive = 2;
+0071  <span class="keyword">otherwise</span>
+0072   error(sprintf(<span class="string">'Illegal value [ %s ] for parameter: ''interactive''\n'</span>, <span class="keyword">...</span>
+0073         s_interactive));
+0074 <span class="keyword">end</span>
+0075 
+0076 oldDimension = size (vectors, 1);
+0077 <span class="keyword">if</span> ~(b_interactive)
+0078   <span class="keyword">if</span> lastEig &lt; 1 | lastEig &gt; oldDimension
+0079     error(sprintf(<span class="string">'Illegal value [ %d ] for parameter: ''lastEig''\n'</span>, lastEig));
+0080   <span class="keyword">end</span>
+0081   <span class="keyword">if</span> firstEig &lt; 1 | firstEig &gt; lastEig
+0082     error(sprintf(<span class="string">'Illegal value [ %d ] for parameter: ''firstEig''\n'</span>, firstEig));
+0083   <span class="keyword">end</span>
+0084 <span class="keyword">end</span>
+0085 
+0086 
+0087 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0088 <span class="comment">% Calculate PCA</span>
+0089 
+0090 <span class="comment">% Calculate the covariance matrix.</span>
+0091 <span class="keyword">if</span> b_verbose, fprintf (<span class="string">'Calculating covariance...\n'</span>); <span class="keyword">end</span>
+0092 covarianceMatrix = cov(vectors', 1);
+0093 
+0094 <span class="comment">% Calculate the eigenvalues and eigenvectors of covariance</span>
+0095 <span class="comment">% matrix.</span>
+0096 [E, D] = eig (covarianceMatrix);
+0097 
+0098 <span class="comment">% The rank is determined from the eigenvalues - and not directly by</span>
+0099 <span class="comment">% using the function rank - because function rank uses svd, which</span>
+0100 <span class="comment">% in some cases gives a higher dimensionality than what can be used</span>
+0101 <span class="comment">% with eig later on (eig then gives negative eigenvalues).</span>
+0102 rankTolerance = 1e-7;
+0103 maxLastEig = sum (diag (D) &gt; rankTolerance);
+0104 <span class="keyword">if</span> maxLastEig == 0,
+0105   fprintf ([<span class="string">'Eigenvalues of the covariance matrix are'</span> <span class="keyword">...</span>
+0106         <span class="string">' all smaller than tolerance [ %g ].\n'</span> <span class="keyword">...</span>
+0107         <span class="string">'Please make sure that your data matrix contains'</span> <span class="keyword">...</span>
+0108         <span class="string">' nonzero values.\nIf the values are very small,'</span> <span class="keyword">...</span>
+0109         <span class="string">' try rescaling the data matrix.\n'</span>], rankTolerance);
+0110   error (<span class="string">'Unable to continue, aborting.'</span>);
+0111 <span class="keyword">end</span>
+0112 
+0113 <span class="comment">% Sort the eigenvalues - decending.</span>
+0114 eigenvalues = flipud(sort(diag(D)));
+0115 
+0116 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0117 <span class="comment">% Interactive part - command-line</span>
+0118 <span class="keyword">if</span> b_interactive == 1
+0119 
+0120   <span class="comment">% Show the eigenvalues to the user</span>
+0121   hndl_win=figure;
+0122   bar(eigenvalues);
+0123   title(<span class="string">'Eigenvalues'</span>);
+0124 
+0125   <span class="comment">% ask the range from the user...</span>
+0126   <span class="comment">% ... and keep on asking until the range is valid :-)</span>
+0127   areValuesOK=0;
+0128   <span class="keyword">while</span> areValuesOK == 0
+0129     firstEig = input(<span class="string">'The index of the largest eigenvalue to keep? (1) '</span>);
+0130     lastEig = input([<span class="string">'The index of the smallest eigenvalue to keep? ('</span> <span class="keyword">...</span>
+0131                     int2str(oldDimension) <span class="string">') '</span>]);
+0132     <span class="comment">% Check the new values...</span>
+0133     <span class="comment">% if they are empty then use default values</span>
+0134     <span class="keyword">if</span> isempty(firstEig), firstEig = 1;<span class="keyword">end</span>
+0135     <span class="keyword">if</span> isempty(lastEig), lastEig = oldDimension;<span class="keyword">end</span>
+0136     <span class="comment">% Check that the entered values are within the range</span>
+0137     areValuesOK = 1;
+0138     <span class="keyword">if</span> lastEig &lt; 1 | lastEig &gt; oldDimension
+0139       fprintf(<span class="string">'Illegal number for the last eigenvalue.\n'</span>);
+0140       areValuesOK = 0;
+0141     <span class="keyword">end</span>
+0142     <span class="keyword">if</span> firstEig &lt; 1 | firstEig &gt; lastEig
+0143       fprintf(<span class="string">'Illegal number for the first eigenvalue.\n'</span>);
+0144       areValuesOK = 0;
+0145     <span class="keyword">end</span>
+0146   <span class="keyword">end</span>
+0147   <span class="comment">% close the window</span>
+0148   close(hndl_win);
+0149 <span class="keyword">end</span>
+0150 
+0151 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0152 <span class="comment">% Interactive part - GUI</span>
+0153 <span class="keyword">if</span> b_interactive == 2
+0154 
+0155   <span class="comment">% Show the eigenvalues to the user</span>
+0156   hndl_win = figure(<span class="string">'Color'</span>,[0.8 0.8 0.8], <span class="keyword">...</span>
+0157     <span class="string">'PaperType'</span>,<span class="string">'a4letter'</span>, <span class="keyword">...</span>
+0158     <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0159     <span class="string">'Name'</span>, <span class="string">'FastICA: Reduce dimension'</span>, <span class="keyword">...</span>
+0160     <span class="string">'NumberTitle'</span>,<span class="string">'off'</span>, <span class="keyword">...</span>
+0161     <span class="string">'Tag'</span>, <span class="string">'f_eig'</span>);
+0162   h_frame = uicontrol(<span class="string">'Parent'</span>, hndl_win, <span class="keyword">...</span>
+0163     <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0164     <span class="string">'Units'</span>, <span class="string">'normalized'</span>, <span class="keyword">...</span>
+0165     <span class="string">'Position'</span>,[0.13 0.05 0.775 0.17], <span class="keyword">...</span>
+0166     <span class="string">'Style'</span>,<span class="string">'frame'</span>, <span class="keyword">...</span>
+0167     <span class="string">'Tag'</span>,<span class="string">'f_frame'</span>);
+0168 
+0169 b = uicontrol(<span class="string">'Parent'</span>,hndl_win, <span class="keyword">...</span>
+0170     <span class="string">'Units'</span>,<span class="string">'normalized'</span>, <span class="keyword">...</span>
+0171     <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0172     <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0173     <span class="string">'Position'</span>,[0.142415 0.0949436 0.712077 0.108507], <span class="keyword">...</span>
+0174     <span class="string">'String'</span>,<span class="string">'Give the indices of the largest and smallest eigenvalues of the covariance matrix to be included in the reduced data.'</span>, <span class="keyword">...</span>
+0175     <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0176     <span class="string">'Tag'</span>,<span class="string">'StaticText1'</span>);
+0177 e_first = uicontrol(<span class="string">'Parent'</span>,hndl_win, <span class="keyword">...</span>
+0178     <span class="string">'Units'</span>,<span class="string">'normalized'</span>, <span class="keyword">...</span>
+0179     <span class="string">'Callback'</span>,[ <span class="keyword">...</span>
+0180           <span class="string">'f=round(str2num(get(gcbo, ''String'')));'</span> <span class="keyword">...</span>
+0181           <span class="string">'if (f &lt; 1), f=1; end;'</span> <span class="keyword">...</span>
+0182           <span class="string">'l=str2num(get(findobj(''Tag'',''e_last''), ''String''));'</span> <span class="keyword">...</span>
+0183           <span class="string">'if (f &gt; l), f=l; end;'</span> <span class="keyword">...</span>
+0184           <span class="string">'set(gcbo, ''String'', int2str(f));'</span> <span class="keyword">...</span>
+0185           ], <span class="keyword">...</span>
+0186     <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0187     <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0188     <span class="string">'Position'</span>,[0.284831 0.0678168 0.12207 0.0542535], <span class="keyword">...</span>
+0189     <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0190         <span class="string">'String'</span>, <span class="string">'1'</span>, <span class="keyword">...</span>
+0191     <span class="string">'Tag'</span>,<span class="string">'e_first'</span>);
+0192 b = uicontrol(<span class="string">'Parent'</span>,hndl_win, <span class="keyword">...</span>
+0193     <span class="string">'Units'</span>,<span class="string">'normalized'</span>, <span class="keyword">...</span>
+0194     <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0195     <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0196     <span class="string">'Position'</span>,[0.142415 0.0678168 0.12207 0.0542535], <span class="keyword">...</span>
+0197     <span class="string">'String'</span>,<span class="string">'Range from'</span>, <span class="keyword">...</span>
+0198     <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0199     <span class="string">'Tag'</span>,<span class="string">'StaticText2'</span>);
+0200 e_last = uicontrol(<span class="string">'Parent'</span>,hndl_win, <span class="keyword">...</span>
+0201     <span class="string">'Units'</span>,<span class="string">'normalized'</span>, <span class="keyword">...</span>
+0202     <span class="string">'Callback'</span>,[ <span class="keyword">...</span>
+0203           <span class="string">'l=round(str2num(get(gcbo, ''String'')));'</span> <span class="keyword">...</span>
+0204           <span class="string">'lmax = get(gcbo, ''UserData'');'</span> <span class="keyword">...</span>
+0205           <span class="string">'if (l &gt; lmax), l=lmax; fprintf([''The selected value was too large, or the selected eigenvalues were close to zero\n'']); end;'</span> <span class="keyword">...</span>
+0206           <span class="string">'f=str2num(get(findobj(''Tag'',''e_first''), ''String''));'</span> <span class="keyword">...</span>
+0207           <span class="string">'if (l &lt; f), l=f; end;'</span> <span class="keyword">...</span>
+0208           <span class="string">'set(gcbo, ''String'', int2str(l));'</span> <span class="keyword">...</span>
+0209           ], <span class="keyword">...</span>
+0210     <span class="string">'BackgroundColor'</span>,[1 1 1], <span class="keyword">...</span>
+0211     <span class="string">'HorizontalAlignment'</span>,<span class="string">'right'</span>, <span class="keyword">...</span>
+0212     <span class="string">'Position'</span>,[0.467936 0.0678168 0.12207 0.0542535], <span class="keyword">...</span>
+0213     <span class="string">'Style'</span>,<span class="string">'edit'</span>, <span class="keyword">...</span>
+0214         <span class="string">'String'</span>, int2str(maxLastEig), <span class="keyword">...</span>
+0215         <span class="string">'UserData'</span>, maxLastEig, <span class="keyword">...</span>
+0216     <span class="string">'Tag'</span>,<span class="string">'e_last'</span>);
+0217 <span class="comment">% in the first version oldDimension was used instead of</span>
+0218 <span class="comment">% maxLastEig, but since the program would automatically</span>
+0219 <span class="comment">% drop the eigenvalues afte maxLastEig...</span>
+0220 b = uicontrol(<span class="string">'Parent'</span>,hndl_win, <span class="keyword">...</span>
+0221     <span class="string">'Units'</span>,<span class="string">'normalized'</span>, <span class="keyword">...</span>
+0222     <span class="string">'BackgroundColor'</span>,[0.701961 0.701961 0.701961], <span class="keyword">...</span>
+0223     <span class="string">'HorizontalAlignment'</span>,<span class="string">'left'</span>, <span class="keyword">...</span>
+0224     <span class="string">'Position'</span>,[0.427246 0.0678168 0.0406901 0.0542535], <span class="keyword">...</span>
+0225     <span class="string">'String'</span>,<span class="string">'to'</span>, <span class="keyword">...</span>
+0226     <span class="string">'Style'</span>,<span class="string">'text'</span>, <span class="keyword">...</span>
+0227     <span class="string">'Tag'</span>,<span class="string">'StaticText3'</span>);
+0228 b = uicontrol(<span class="string">'Parent'</span>,hndl_win, <span class="keyword">...</span>
+0229     <span class="string">'Units'</span>,<span class="string">'normalized'</span>, <span class="keyword">...</span>
+0230     <span class="string">'Callback'</span>,<span class="string">'uiresume(gcbf)'</span>, <span class="keyword">...</span>
+0231     <span class="string">'Position'</span>,[0.630697 0.0678168 0.12207 0.0542535], <span class="keyword">...</span>
+0232     <span class="string">'String'</span>,<span class="string">'OK'</span>, <span class="keyword">...</span>
+0233     <span class="string">'Tag'</span>,<span class="string">'Pushbutton1'</span>);
+0234 b = uicontrol(<span class="string">'Parent'</span>,hndl_win, <span class="keyword">...</span>
+0235     <span class="string">'Units'</span>,<span class="string">'normalized'</span>, <span class="keyword">...</span>
+0236     <span class="string">'Callback'</span>,[ <span class="keyword">...</span>
+0237           <span class="string">'gui_help(''pcamat'');'</span> <span class="keyword">...</span>
+0238           ], <span class="keyword">...</span>
+0239     <span class="string">'Position'</span>,[0.767008 0.0678168 0.12207 0.0542535], <span class="keyword">...</span>
+0240     <span class="string">'String'</span>,<span class="string">'Help'</span>, <span class="keyword">...</span>
+0241     <span class="string">'Tag'</span>,<span class="string">'Pushbutton2'</span>);
+0242 
+0243   h_axes = axes(<span class="string">'Position'</span> ,[0.13 0.3 0.775 0.6]);
+0244   set(hndl_win, <span class="string">'currentaxes'</span>,h_axes);
+0245   bar(eigenvalues);
+0246   title(<span class="string">'Eigenvalues'</span>);
+0247 
+0248   uiwait(hndl_win);
+0249   firstEig = str2num(get(e_first, <span class="string">'String'</span>));
+0250   lastEig = str2num(get(e_last, <span class="string">'String'</span>));
+0251 
+0252   <span class="comment">% close the window</span>
+0253   close(hndl_win);
+0254 <span class="keyword">end</span>
+0255 
+0256 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0257 <span class="comment">% See if the user has reduced the dimension enought</span>
+0258 
+0259 <span class="keyword">if</span> lastEig &gt; maxLastEig
+0260   lastEig = maxLastEig;
+0261   <span class="keyword">if</span> b_verbose
+0262     fprintf(<span class="string">'Dimension reduced to %d due to the singularity of covariance matrix\n'</span>,<span class="keyword">...</span>
+0263            lastEig-firstEig+1);
+0264   <span class="keyword">end</span>
+0265 <span class="keyword">else</span>
+0266   <span class="comment">% Reduce the dimensionality of the problem.</span>
+0267   <span class="keyword">if</span> b_verbose
+0268     <span class="keyword">if</span> oldDimension == (lastEig - firstEig + 1)
+0269       fprintf (<span class="string">'Dimension not reduced.\n'</span>);
+0270     <span class="keyword">else</span>
+0271       fprintf (<span class="string">'Reducing dimension...\n'</span>);
+0272     <span class="keyword">end</span>
+0273   <span class="keyword">end</span>
+0274 <span class="keyword">end</span>
+0275 
+0276 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0277 <span class="comment">% Drop the smaller eigenvalues</span>
+0278 <span class="keyword">if</span> lastEig &lt; oldDimension
+0279   lowerLimitValue = (eigenvalues(lastEig) + eigenvalues(lastEig + 1)) / 2;
+0280 <span class="keyword">else</span>
+0281   lowerLimitValue = eigenvalues(oldDimension) - 1;
+0282 <span class="keyword">end</span>
+0283 
+0284 lowerColumns = diag(D) &gt; lowerLimitValue;
+0285 
+0286 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0287 <span class="comment">% Drop the larger eigenvalues</span>
+0288 <span class="keyword">if</span> firstEig &gt; 1
+0289   higherLimitValue = (eigenvalues(firstEig - 1) + eigenvalues(firstEig)) / 2;
+0290 <span class="keyword">else</span>
+0291   higherLimitValue = eigenvalues(1) + 1;
+0292 <span class="keyword">end</span>
+0293 higherColumns = diag(D) &lt; higherLimitValue;
+0294 
+0295 <span class="comment">% Combine the results from above</span>
+0296 selectedColumns = lowerColumns &amp; higherColumns;
+0297 
+0298 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0299 <span class="comment">% print some info for the user</span>
+0300 <span class="keyword">if</span> b_verbose
+0301   fprintf (<span class="string">'Selected [ %d ] dimensions.\n'</span>, sum (selectedColumns));
+0302 <span class="keyword">end</span>
+0303 <span class="keyword">if</span> sum (selectedColumns) ~= (lastEig - firstEig + 1),
+0304   error (<span class="string">'Selected a wrong number of dimensions.'</span>);
+0305 <span class="keyword">end</span>
+0306 
+0307 <span class="keyword">if</span> b_verbose
+0308   fprintf (<span class="string">'Smallest remaining (non-zero) eigenvalue [ %g ]\n'</span>, eigenvalues(lastEig));
+0309   fprintf (<span class="string">'Largest remaining (non-zero) eigenvalue [ %g ]\n'</span>, eigenvalues(firstEig));
+0310   fprintf (<span class="string">'Sum of removed eigenvalues [ %g ]\n'</span>, sum(diag(D) .* <span class="keyword">...</span>
+0311     (~selectedColumns)));
+0312 <span class="keyword">end</span>
+0313 
+0314 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0315 <span class="comment">% Select the colums which correspond to the desired range</span>
+0316 <span class="comment">% of eigenvalues.</span>
+0317 E = <a href="#_sub1" class="code" title="subfunction newMatrix = selcol(oldMatrix, maskVector);">selcol</a>(E, selectedColumns);
+0318 D = <a href="#_sub1" class="code" title="subfunction newMatrix = selcol(oldMatrix, maskVector);">selcol</a>(<a href="#_sub1" class="code" title="subfunction newMatrix = selcol(oldMatrix, maskVector);">selcol</a>(D, selectedColumns)', selectedColumns);
+0319 
+0320 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0321 <span class="comment">% Some more information</span>
+0322 <span class="keyword">if</span> b_verbose
+0323   sumAll=sum(eigenvalues);
+0324   sumUsed=sum(diag(D));
+0325   retained = (sumUsed / sumAll) * 100;
+0326   fprintf(<span class="string">'[ %g ] %% of (non-zero) eigenvalues retained.\n'</span>, retained);
+0327 <span class="keyword">end</span>
+0328 
+0329 
+0330 
+0331 
+0332 
+0333 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0334 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0335 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0336 <a name="_sub1" href="#_subfunctions" class="code">function newMatrix = selcol(oldMatrix, maskVector);</a>
+0337 
+0338 <span class="comment">% newMatrix = selcol(oldMatrix, maskVector);</span>
+0339 <span class="comment">%</span>
+0340 <span class="comment">% Selects the columns of the matrix that marked by one in the given vector.</span>
+0341 <span class="comment">% The maskVector is a column vector.</span>
+0342 
+0343 <span class="comment">% 15.3.1998</span>
+0344 
+0345 <span class="keyword">if</span> size(maskVector, 1) ~= size(oldMatrix, 2),
+0346   error (<span class="string">'The mask vector and matrix are of uncompatible size.'</span>);
+0347 <span class="keyword">end</span>
+0348 
+0349 numTaken = 0;
+0350 
+0351 <span class="keyword">for</span> i = 1 : size (maskVector, 1),
+0352   <span class="keyword">if</span> maskVector(i, 1) == 1,
+0353     takingMask(1, numTaken + 1) = i;
+0354     numTaken = numTaken + 1;
+0355   <span class="keyword">end</span>
+0356 <span class="keyword">end</span>
+0357 
+0358 newMatrix = oldMatrix(:, takingMask);</pre></div>
+<hr><address>Generated on Tue 18-Feb-2014 14:57:44 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
