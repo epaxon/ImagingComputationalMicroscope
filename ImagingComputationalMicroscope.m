@@ -2399,7 +2399,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             if nargin < 2 || isempty(filename)
                 % Then ask the user for a file with the prompt
-                [file_name, path_name] = uigetfile({'*.mat;*.tif;', 'Image Files'}, 'Load Data File');
+                [file_name, path_name] = uigetfile({'*.mat;*.tif;*.tiff', 'Image Files'}, 'Load Data File');
                 %[file_name, path_name] = uigetfile();
                 
                 if file_name == 0
@@ -2412,8 +2412,11 @@ classdef ImagingComputationalMicroscope < hgsetget
             set(self.h.stage_status, 'String', 'Loading Data...');
             drawnow;
             
-            ext = filename((end-2):end);
-            if strcmp(ext, 'tif')
+            ext_idx = strfind(filename, '.');
+            
+            ext = filename((ext_idx(end)+1):end);
+            
+            if strcmp(ext, 'tif') || strcmp(ext, 'tiff')
                 % Ok we should be able to just load a file using tifread
                 data = tifread(filename);
                 self.add_trial(data);
@@ -2451,7 +2454,7 @@ classdef ImagingComputationalMicroscope < hgsetget
                 end
             else
                 % Then something is weird...
-                disp('Invalid File.');
+                disp('ICM: Invalid File.');
             end
             
             % @todo: set the trial name to be the filename here.
