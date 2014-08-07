@@ -59,6 +59,6 @@ end
 xy_prime = xy_prime(1:2,:);
 
 % Subpixel interpolation
-out = interp2(in, xy_prime(1,:), xy_prime(2,:), str);
+out = interp2(xx, yy, in, xy_prime(1,:), xy_prime(2,:), str);
 out(isnan(out))=0;%replace Nan
 out=reshape(out,length(ny),length(nx));

@@ -62,7 +62,7 @@ classdef RoiEditor < hgsetget
             if nargin < 1
                 parent = [];
             end
-            if nargin < 2
+            if nargin < 2 || isempty(im_data)
                 im_data = rand(128, 128, 10);
             end
             
@@ -272,6 +272,7 @@ classdef RoiEditor < hgsetget
                     self.enable_roi_editing();
                 end
             end
+
         end
         
         function image_button_down_cb(self, source_h, eventdata)

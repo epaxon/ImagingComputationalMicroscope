@@ -38,6 +38,7 @@ icm = ImagingComputationalMicroscope();
 % Programatically:
 icm.load_data('sample_data.mat');
 
+%%
 % Alternatively data can be entered from a matlab variable:
 load('sample_data.mat'); % produces data
 icm.set_data(data);
