@@ -150,7 +150,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             %self.h.panel = uipanel(self.Parent, 'Units', 'pixels');
             self.h.panel = uiextras.BoxPanel('Parent', self.h.parent, ...
-                'Title', 'Image Component Parser');
+                'Title', 'Imaging Computational Microscope');
             
             % RoiEditor
             self.h.roi_editor = RoiEditor(self.h.fh, self.data(self.gui.current_trial).im_data);
@@ -229,12 +229,14 @@ classdef ImagingComputationalMicroscope < hgsetget
                 'String', 'Run ICA', 'Callback', @self.runica_button_cb);
             self.h.which_pcs_label = uicontrol('Style', 'text', 'String', 'PCs:');
             self.h.which_pcs_edit = uicontrol('Style', 'edit', 'Callback', @self.which_pcs_edit_cb);
-            self.h.calc_rois_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Calc ROIs', 'Callback', @self.calc_rois_cb);
+            %self.h.calc_rois_button = uicontrol('Style', 'pushbutton', ...
+            %    'String', 'Calc ROIs', 'Callback', @self.calc_rois_cb);
             
-            % Visualization tab
-            self.h.viz_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Visualize', 'Callback', @self.viz_button_cb);
+            % Visualization/Cluster tab
+            self.h.update_viz_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Update Viz', 'Callback', @self.update_viz_button_cb);
+            self.h.clear_viz_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Clear Viz', 'Callback', @self.clear_viz_button_cb);
             
             self.h.map_pow_label = uicontrol('Style', 'text', 'String', 'Map^:');
             self.h.map_pow_slider = uicontrol('Style', 'slider', 'Callback', @self.viz_settings_cb, ...
@@ -249,8 +251,17 @@ classdef ImagingComputationalMicroscope < hgsetget
                 'Min', 0, 'Max', 1, 'SliderStep', [0.02, 0.1]);
             self.h.alpha_indicator = uicontrol('Style', 'text', 'String', '0');
             
+            % These are buttons for clustering -- this is typically done
+            % using the visualizations, so this goes in viz tab
+            self.h.estimate_clusters_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Estimate Clusters', 'Callback', @self.estimate_clusters_cb);
+            self.h.set_cluster_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Set Cluster', 'Callback', @self.set_cluster_button_cb);
+            self.h.uncluster_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Uncluster', 'Callback', @self.uncluster_button_cb);
             
-            % Segment/Cluster tab
+            
+            % Segment tab
             self.h.segment_ics_button = uicontrol('Style', 'pushbutton', ...
                 'String', 'Segment ICs', 'Callback', @self.segment_ics_cb);
             self.h.down_size_label = uicontrol('Style', 'text', 'String', 'Down:');
@@ -264,49 +275,44 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.h.max_corr_thresh_button = uicontrol('Style', 'pushbutton', ...
                 'String', 'Max Corr Thresh', 'Callback', @self.max_corr_thresh_button_cb);
             
-            self.h.estimate_clusters_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Estimate Clusters', 'Callback', @self.estimate_clusters_cb);
-            self.h.set_cluster_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Set Cluster', 'Callback', @self.set_cluster_button_cb);
-            self.h.uncluster_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Uncluster', 'Callback', @self.uncluster_button_cb);
-            
-            
             set(self.h.down_size_slider, 'Min', -4, 'Max', 4);
             set(self.h.down_size_indicator, 'String', '0');
             set(self.h.thresh_slider, 'Min', 0, 'Max', 10);
             set(self.h.thresh_indicator, 'String', '0');
             
-            % Axes to display three PCs
-            self.h.pc3_axes = axes('Units', 'pixels');
-            % Popups for the plot.
-            self.h.x_popup = uicontrol('Style', 'popupmenu', ...
-                'Units', 'pixels', 'String', {'None'});
-            self.h.y_popup = uicontrol('Style', 'popupmenu', ...
-                'Units', 'pixels', 'String', {'None'});
-            self.h.z_popup = uicontrol('Style', 'popupmenu', ...
-                'Units', 'pixels', 'String', {'None'});
-            set(self.h.x_popup, 'Callback', @self.x_popup_cb);
-            set(self.h.y_popup, 'Callback', @self.y_popup_cb);
-            set(self.h.z_popup, 'Callback', @self.z_popup_cb);
-            % Buttons to auto-rotate to the 2-d plots.
-            self.h.xy_button = uicontrol('Style', 'pushbutton', ...
-                'Units', 'pixels', 'String', 'xy', 'Callback', @self.xy_button_cb);
-            self.h.yz_button = uicontrol('Style', 'pushbutton', ...
-                'Units', 'pixels', 'String', 'yz', 'Callback', @self.yz_button_cb);
-            self.h.zx_button = uicontrol('Style', 'pushbutton', ...
-                'Units', 'pixels', 'String', 'xz', 'Callback', @self.zx_button_cb);
-            % Labels for the plot controls. Even though these are labels,
-            % strange things were happening when I didn't keep the handles.
-            self.h.xl = uicontrol('Style', 'text', 'String', 'X:');
-            self.h.yl = uicontrol('Style', 'text', 'String', 'Y:');
-            self.h.zl = uicontrol('Style', 'text', 'String', 'Z:');
-            % Toggle button to turn continuous rotation on and off.
-            self.h.rotate_toggle = uicontrol('Style', 'togglebutton', ...
-                'Units', 'pixels', 'String', 'Rotate', 'Callback', @self.rotate_toggle_cb);
+            % Viewers and visualization tools
+            self.h.pc_pixel_viewer = HighDViewer(self.h.fh);
+            self.h.pc_ica_viewer = HighDViewer(self.h.fh);
+            self.h.pc_ica_viewer.gui.fast_mode = 0; % We want colors on this one
+            self.h.ica_coherence = CoherenceGui(self.h.fh);
+            
+            self.h.pc_pixel_viewer.gui.fast_mode = 1;
+            self.h.pc_pixel_viewer.gui.text_mode = 0;
+            
+            self.h.pc_ica_viewer.gui.fast_mode = 0;
+            self.h.pc_ica_viewer.gui.text_mode = 1;
+            
+            self.h.ica_coherence.gui.fast_mode = 0;
+            self.h.ica_coherence.gui.text_mode = 1;
+            
+            addlistener(self.h.pc_ica_viewer, 'DataClicked', @self.data_clicked_cb);
+            addlistener(self.h.ica_coherence, 'DataClicked', @self.data_clicked_cb);
+            
+            addlistener(self.h.pc_ica_viewer, 'DimensionsChanged', @self.update_viz_button_cb);
+            addlistener(self.h.ica_coherence, 'BaseChanged', @self.update_viz_button_cb);
+            addlistener(self.h.ica_coherence, 'SigLevelChanged', @self.update_viz_button_cb);
+            addlistener(self.h.ica_coherence, 'FreqChanged', @self.update_viz_button_cb);
+            
+            self.h.viewer_tab_panel = uiextras.TabPanel('Callback', @self.viewer_tab_panel_cb);
+            self.h.viewer_pixel_tab = uiextras.Panel('Parent', self.h.viewer_tab_panel);
+            self.h.viewer_pca_tab = uiextras.Panel('Parent', self.h.viewer_tab_panel);
+            self.h.viewer_coherence_tab = uiextras.Panel('Parent', self.h.viewer_tab_panel);
+            
+            self.h.viewer_tab_panel.TabNames = {'Pixels', 'PCA', 'Coherence'};
+            self.h.viewer_tab_panel.SelectedChild = 1;
             
             % Menu
-            self.h.main_menu = uimenu(self.h.fh, 'Label', 'ICP');
+            self.h.main_menu = uimenu(self.h.fh, 'Label', 'ICM');
             self.h.load_image_item = uimenu('Parent', self.h.main_menu, ...
                 'Label', 'Load Data', 'Callback', @self.load_image_cb);
             
@@ -347,12 +353,6 @@ classdef ImagingComputationalMicroscope < hgsetget
             % Ok, I'm going to do this with the layouts, and reset the
             % parents here.
             disp('uiextras_layout');
-            % 3D plot Layout elements
-            self.h.pc3_main_panel = uiextras.BoxPanel('Title', '3D Plot');
-            self.h.pc3_main_hbox = uiextras.HBox();
-            self.h.pc3_control_rotate_vbox = uiextras.VBox();
-            self.h.pc3_control_panel = uiextras.BoxPanel('Title', '3D Plot Controls');
-            self.h.pc3_control_grid = uiextras.Grid();
             
             % Component axes elements
             self.h.component_panel = uiextras.BoxPanel('Title', 'Component Plot');
@@ -375,16 +375,25 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             % Tab layout elements
             self.h.pp_button_hbox = uiextras.HButtonBox();
+            
             self.h.pca_button_hbox = uiextras.HButtonBox();
+            
             self.h.ica_main_hbox = uiextras.HBox();
             self.h.ica_settings_panel = uiextras.BoxPanel('Title', 'ICA Settings');
+            self.h.ica_postprocessing_panel = uiextras.BoxPanel('Title', 'ICA Post-Processing');
             self.h.ica_settings_vbox = uiextras.VButtonBox('ButtonSize', [150 40]);
             self.h.ica_which_pcs_hbox = uiextras.HBox('Padding', 10, 'Spacing', 5);
             self.h.ica_button_vbox = uiextras.VButtonBox();
+            
             self.h.viz_main_hbox = uiextras.HBox();
-            self.h.viz_button_hbox = uiextras.HButtonBox();
-            self.h.viz_settings_box = uiextras.BoxPanel('Title', 'Visualization Settings');
+            %self.h.viz_button_hbox = uiextras.HButtonBox();
+            self.h.viz_settings_panel = uiextras.BoxPanel('Title', 'Visualization Settings');
+            self.h.viz_settings_vbox = uiextras.VBox();
             self.h.viz_settings_grid = uiextras.Grid('Padding', 10, 'Spacing', 5);
+            self.h.viz_button_vbox = uiextras.VButtonBox();
+            self.h.viz_cluster_panel = uiextras.BoxPanel('Title', 'Cluster');
+            self.h.viz_cluster_vbox = uiextras.VButtonBox();
+            
             self.h.sc_main_hbox = uiextras.HBox();
             self.h.sc_segment_panel = uiextras.BoxPanel('Title', 'Segmentation');
             self.h.sc_segment_vbox = uiextras.VBox();
@@ -392,8 +401,6 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.h.sc_segment_button_hbox = uiextras.HButtonBox();
             %self.h.sc_down_size_hbox = uiextras.HBox('Padding', 10, 'Spacing', 5);
             %self.h.sc_thresh_hbox = uiextras.HBox('Padding', 10, 'Spacing', 5);
-            self.h.sc_cluster_panel = uiextras.BoxPanel('Title', 'Cluster');
-            self.h.sc_cluster_vbox = uiextras.VButtonBox();
             
             self.h.data_button_hbox = uiextras.HButtonBox();
             
@@ -443,22 +450,25 @@ classdef ImagingComputationalMicroscope < hgsetget
             % ICA tab
             set(self.h.ica_main_hbox, 'Parent', self.h.ica_tab);
             set(self.h.ica_settings_panel, 'Parent', self.h.ica_main_hbox);
-            set(self.h.ica_button_vbox, 'Parent', self.h.ica_main_hbox);
+            set(self.h.ica_postprocessing_panel, 'Parent', self.h.ica_main_hbox);
+            %set(self.h.ica_button_vbox, 'Parent', self.h.ica_main_hbox);
             set(self.h.ica_settings_vbox, 'Parent', self.h.ica_settings_panel);
             set(self.h.ica_which_pcs_hbox, 'Parent', self.h.ica_settings_vbox);
+            set(self.h.ica_button_vbox, 'Parent', self.h.ica_settings_vbox);
             set(self.h.which_pcs_label, 'Parent', self.h.ica_which_pcs_hbox.double());
-            set(self.h.which_pcs_edit, 'Parent', self.h.ica_which_pcs_hbox.double());
+            set(self.h.which_pcs_edit, 'Parent', self.h.ica_which_pcs_hbox.double());            
             set(self.h.runica_button, 'Parent', self.h.ica_button_vbox.double());
-            set(self.h.calc_rois_button, 'Parent', self.h.ica_button_vbox.double());
+            %set(self.h.calc_rois_button, 'Parent', self.h.ica_button_vbox.double());
             
             % Viz tab
             set(self.h.viz_main_hbox, 'Parent', self.h.viz_tab);
-            set(self.h.viz_button_hbox, 'Parent', self.h.viz_main_hbox);
-            set(self.h.viz_settings_box, 'Parent', self.h.viz_main_hbox);
-            set(self.h.viz_settings_grid, 'Parent', self.h.viz_settings_box);
-            
-            set(self.h.viz_button, 'Parent', self.h.viz_button_hbox.double());
-            
+            set(self.h.viz_settings_panel, 'Parent', self.h.viz_main_hbox);
+            set(self.h.viz_settings_vbox, 'Parent', self.h.viz_settings_panel)
+            set(self.h.viz_settings_grid, 'Parent', self.h.viz_settings_vbox);
+            set(self.h.viz_button_vbox, 'Parent', self.h.viz_settings_vbox);
+            set(self.h.viz_cluster_panel, 'Parent', self.h.viz_main_hbox);
+            set(self.h.viz_cluster_vbox, 'Parent', self.h.viz_cluster_panel);
+
             set(self.h.map_pow_label, 'Parent', self.h.viz_settings_grid.double());
             set(self.h.color_pow_label, 'Parent', self.h.viz_settings_grid.double());
             set(self.h.alpha_label, 'Parent', self.h.viz_settings_grid.double());
@@ -469,12 +479,17 @@ classdef ImagingComputationalMicroscope < hgsetget
             set(self.h.color_pow_indicator, 'Parent', self.h.viz_settings_grid.double());
             set(self.h.alpha_indicator, 'Parent', self.h.viz_settings_grid.double());
             
-            % Segment/Cluster tab
+            set(self.h.update_viz_button, 'Parent', self.h.viz_button_vbox.double());
+            set(self.h.clear_viz_button, 'Parent', self.h.viz_button_vbox.double());
+            
+            set(self.h.set_cluster_button, 'Parent', self.h.viz_cluster_vbox.double());
+            set(self.h.uncluster_button, 'Parent', self.h.viz_cluster_vbox.double());
+            set(self.h.estimate_clusters_button, 'Parent', self.h.viz_cluster_vbox.double());
+            
+            % Segment tab
             set(self.h.sc_main_hbox, 'Parent', self.h.sc_tab);
             set(self.h.sc_segment_panel, 'Parent', self.h.sc_main_hbox);
-            set(self.h.sc_cluster_panel, 'Parent', self.h.sc_main_hbox);
             set(self.h.sc_segment_vbox, 'Parent', self.h.sc_segment_panel);
-            set(self.h.sc_cluster_vbox, 'Parent', self.h.sc_cluster_panel);
             
             set(self.h.sc_segment_grid, 'Parent', self.h.sc_segment_vbox);
             set(self.h.sc_segment_button_hbox, 'Parent', self.h.sc_segment_vbox);
@@ -489,15 +504,11 @@ classdef ImagingComputationalMicroscope < hgsetget
             set(self.h.max_corr_thresh_button, 'Parent', self.h.sc_segment_button_hbox.double());
             set(self.h.segment_ics_button, 'Parent', self.h.sc_segment_button_hbox.double());
             
-            
-            set(self.h.set_cluster_button, 'Parent', self.h.sc_cluster_vbox.double());
-            set(self.h.uncluster_button, 'Parent', self.h.sc_cluster_vbox.double());
-            set(self.h.estimate_clusters_button, 'Parent', self.h.sc_cluster_vbox.double());
-            
             % Component axis hierarchy
             set(self.h.data_panel, 'Parent', self.h.component_pc3_vbox);
             set(self.h.component_panel, 'Parent', self.h.component_pc3_vbox);
-            set(self.h.pc3_main_panel, 'Parent', self.h.component_pc3_vbox);
+            set(self.h.viewer_tab_panel, 'Parent', self.h.component_pc3_vbox);
+            %set(self.h.pc3_main_panel, 'Parent', self.h.component_pc3_vbox);
             
             set(self.h.component_lock_vbox, 'Parent', self.h.component_panel);
             set(self.h.component_axes, 'Parent', self.h.component_lock_vbox.double());
@@ -507,34 +518,12 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             set(self.h.data_axes, 'Parent', self.h.data_panel.double());
             
-            % 3D plot hierarchy
-            set(self.h.pc3_main_hbox, 'Parent', self.h.pc3_main_panel);
+            % 3D plot tabs
+            set(self.h.pc_pixel_viewer, 'Parent', self.h.viewer_pixel_tab);
+            set(self.h.pc_ica_viewer, 'Parent', self.h.viewer_pca_tab);
+            set(self.h.ica_coherence, 'Parent', self.h.viewer_coherence_tab);
             
-            set(self.h.pc3_axes, 'Parent', self.h.pc3_main_hbox.double());
-            set(self.h.pc3_control_rotate_vbox, 'Parent', self.h.pc3_main_hbox);
-            
-            set(self.h.pc3_control_panel, 'Parent', self.h.pc3_control_rotate_vbox);
-            set(self.h.rotate_toggle, 'Parent', self.h.pc3_control_rotate_vbox.double());
-            
-            set(self.h.pc3_control_grid, 'Parent', self.h.pc3_control_panel);
-            
-            set(self.h.xl, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.yl, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.zl, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.x_popup, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.y_popup, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.z_popup, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.xy_button, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.yz_button, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.zx_button, 'Parent', self.h.pc3_control_grid.double());
-            
-            % Layout structure.
-            set(self.h.pc3_control_grid,...
-                'ColumnSizes', [self.gui.PC_PANEL_ITEM_W, -1, self.gui.PC_PANEL_ITEM_W],...
-                'RowSizes', [self.gui.BUTTON_H, self.gui.BUTTON_H, self.gui.BUTTON_H]);
-            set(self.h.pc3_control_rotate_vbox, 'Sizes', [-1, self.gui.BUTTON_H]);
-            set(self.h.pc3_main_hbox, 'Sizes', [-4, -1]);
-            
+             
             set(self.h.component_pc3_vbox, 'Sizes', [-1, -1, -1]);
             
             set(self.h.component_lock_vbox, 'Sizes', [-1, self.gui.BUTTON_H]);
@@ -601,8 +590,14 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.run_segmentation();
         end
         
-        function viz_button_cb(self, source_h, eventdata)
+        function update_viz_button_cb(self, source_h, eventdata)
             self.run_visualization();
+        end
+        
+        function clear_viz_button_cb(self, source_h, eventdata)
+            disp('clear_viz_button_cb');
+            self.clear_visualization();
+            self.update();
         end
         
         function estimate_clusters_cb(self, source_h, eventdata)
@@ -626,6 +621,10 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             self.gui.d(self.gui.current_trial).display = eventdata.SelectedChild;
             self.update();
+        end
+        
+        function viewer_tab_panel_cb(self, source_h, eventdata)
+            disp('viewer_tab_panel_cb');
         end
         
         function x_popup_cb(self, sh, ed)
@@ -978,6 +977,16 @@ classdef ImagingComputationalMicroscope < hgsetget
             disp('max_corr_thresh_button_cb');
         end
         
+        function data_clicked_cb(self, source_h, eventdata)
+            disp(eventdata);
+            idx = eventdata.ClickedIndex;
+            
+            if isfield(self.data(self.gui.current_trial).segment, 'segment_info')
+                roi_idx = find(self.data(self.gui.current_trial).segment.segment_info.ic_ids == idx);
+                self.h.roi_editor.set_selected_rois(roi_idx);
+            end
+        end
+        
         %%%%%%%%%% Main Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function update(self)
             % update(self): main update function
@@ -1202,9 +1211,25 @@ classdef ImagingComputationalMicroscope < hgsetget
             set(self.h.thresh_slider, 'Value', self.data(self.gui.current_trial).settings.segment.thresh);
             set(self.h.thresh_indicator, 'String', num2str(self.data(self.gui.current_trial).settings.segment.thresh));
             
+            % set the HighDViewers
+            if self.data(self.gui.current_trial).stage >= self.PcaStage
+                self.h.pc_pixel_viewer.set_scores(self.data(self.gui.current_trial).pca.scores);
+            else
+                self.h.pc_pixel_viewer.set_scores([]);
+            end
+            
+            
+            if self.data(self.gui.current_trial).stage >= self.IcaStage
+                % Then can use the viewer and coherence
+                self.h.pc_ica_viewer.set_scores(self.data(self.gui.current_trial).ica.A');
+                self.h.ica_coherence.set_data(1:size(self.data(self.gui.current_trial).ica.ics, 1), self.data(self.gui.current_trial).ica.ics');
+            else
+                self.h.pc_ica_viewer.set_scores([]);
+                self.h.ica_coherence.set_data([]);
+            end
             
             self.plot_locked_components();
-            self.plot_3d();
+            %self.plot_3d();
             
             self.build_roi_listbox();
             self.build_trial_listbox();
@@ -1733,7 +1758,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.update();
         end
         
-        function run_visualization(self)
+        function run_visualization(self, pc_viz)
             % run_visualization(self): computes ica visualizations.
             
             disp('run_visualization');
@@ -1743,8 +1768,39 @@ classdef ImagingComputationalMicroscope < hgsetget
                 return;
             end
             
-            colors = viz_function(self);
+            if nargin < 2 || isempty(pc_viz)
+                % Then want to pick which ever one is currently being shown
+                selected_tab = self.h.viewer_tab_panel.SelectedChild;
+                
+                if selected_tab == 2
+                    % Then looking at the PCs
+                    pc_viz = 1;
+                elseif selected_tab == 3
+                    % Then looking at the coherence
+                    pc_viz = 0;
+                else
+                    % Then we're looking at pixels, so don't do anything.
+                    return;
+                end
+            end
+            
+            %colors = viz_function(self);
+            
+            if pc_viz
+                colors = self.h.pc_ica_viewer.gui.colors;
+            else
+                colors = self.h.ica_coherence.get_colors();
+            end
+            
             self.set_viz_colors(colors);
+        end
+        
+        function clear_visualization(self)
+            disp('clear_visualization');
+            
+            self.data(self.gui.current_trial).viz.im_data = [];
+            self.data(self.gui.current_trial).viz.component_color_map = [];
+            self.data(self.gui.current_trial).viz.component_colors = [];
         end
         
         function set_viz_colors(self, colors)
@@ -2480,6 +2536,18 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.update();
         end
         
+        function set_frame_times(self, frame_times, trial_idx)
+           
+            if nargin < 3 || isempty(trial_idx)
+                trial_idx = self.gui.current_trial;
+            end
+            
+            % @todo: checks on frame_times
+            
+            self.data(trial_idx).im_z = frame_times;
+            
+        end
+        
         function add_trial(self, im_data)
             % add_trial(self, im_data): adds a trial to the ICP
             
@@ -2874,59 +2942,59 @@ classdef ImagingComputationalMicroscope < hgsetget
             % 3-space.
             disp('plot_3d');
             
-            if self.gui.d(self.gui.current_trial).display == 4 && self.data(self.gui.current_trial).stage == self.IcaStage
-                % Then view the ICs
-                sc = reshape(self.data(self.gui.current_trial).ica.im_data, [], size(self.data(self.gui.current_trial).ica.im_data, 3));
-                self.build_3d_gui_components(self.IcaStage)
-            elseif self.gui.d(self.gui.current_trial).display == 3 && self.data(self.gui.current_trial).stage >= self.PcaStage
-                % Then view the PCs
-                sc = self.data(self.gui.current_trial).pca.scores;
-                self.build_3d_gui_components(self.PcaStage);
-                
-            elseif self.data(self.gui.current_trial).stage == self.PcaStage
-                % Then view the PCs
-                sc = self.data(self.gui.current_trial).pca.scores;
-                self.build_3d_gui_components(self.PcaStage);
-            elseif self.data(self.gui.current_trial).stage == self.IcaStage
-                % Then view the ICs
-                sc = reshape(self.data(self.gui.current_trial).ica.im_data, [], size(self.data(self.gui.current_trial).ica.im_data, 3));
-                self.build_3d_gui_components(self.IcaStage);
-            else
-                cla(self.h.pc3_axes);
-                self.build_3d_gui_components(self.data(self.gui.current_trial).stage);
-                return;
-            end
-            
-            if isempty(sc)
-                % Then there's nothing to plot
-                return;
-            end
-            
-            % Make sure everything is in range
-            if self.gui.d(self.gui.current_trial).x_pc < 1 || self.gui.d(self.gui.current_trial).x_pc > size(sc, 2)
-                % Just set to 1 for now.
-                self.gui.d(self.gui.current_trial).x_pc = 1;
-            end
-            if self.gui.d(self.gui.current_trial).y_pc < 1 || self.gui.d(self.gui.current_trial).y_pc > size(sc, 2)
-                self.gui.d(self.gui.current_trial).y_pc = 1;
-            end
-            if self.gui.d(self.gui.current_trial).z_pc < 1 || self.gui.d(self.gui.current_trial).z_pc > size(sc, 2)
-                self.gui.d(self.gui.current_trial).z_pc = 1;
-            end
-            
-            xv = sc(:, self.gui.d(self.gui.current_trial).x_pc);
-            yv = sc(:, self.gui.d(self.gui.current_trial).y_pc);
-            zv = sc(:, self.gui.d(self.gui.current_trial).z_pc);
-            
-            [az, el] = view(self.h.pc3_axes);
-            plot3(self.h.pc3_axes, xv, yv, zv, '.k');
-            axis(self.h.pc3_axes, 'vis3d');
-            view(self.h.pc3_axes, az, el);
-            
-            popup_str = get(self.h.x_popup, 'String');
-            xlabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).x_pc});
-            ylabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).y_pc});
-            zlabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).z_pc});
+%             if self.gui.d(self.gui.current_trial).display == 4 && self.data(self.gui.current_trial).stage == self.IcaStage
+%                 % Then view the ICs
+%                 sc = reshape(self.data(self.gui.current_trial).ica.im_data, [], size(self.data(self.gui.current_trial).ica.im_data, 3));
+%                 self.build_3d_gui_components(self.IcaStage)
+%             elseif self.gui.d(self.gui.current_trial).display == 3 && self.data(self.gui.current_trial).stage >= self.PcaStage
+%                 % Then view the PCs
+%                 sc = self.data(self.gui.current_trial).pca.scores;
+%                 self.build_3d_gui_components(self.PcaStage);
+%                 
+%             elseif self.data(self.gui.current_trial).stage == self.PcaStage
+%                 % Then view the PCs
+%                 sc = self.data(self.gui.current_trial).pca.scores;
+%                 self.build_3d_gui_components(self.PcaStage);
+%             elseif self.data(self.gui.current_trial).stage == self.IcaStage
+%                 % Then view the ICs
+%                 sc = reshape(self.data(self.gui.current_trial).ica.im_data, [], size(self.data(self.gui.current_trial).ica.im_data, 3));
+%                 self.build_3d_gui_components(self.IcaStage);
+%             else
+%                 cla(self.h.pc3_axes);
+%                 self.build_3d_gui_components(self.data(self.gui.current_trial).stage);
+%                 return;
+%             end
+%             
+%             if isempty(sc)
+%                 % Then there's nothing to plot
+%                 return;
+%             end
+%             
+%             % Make sure everything is in range
+%             if self.gui.d(self.gui.current_trial).x_pc < 1 || self.gui.d(self.gui.current_trial).x_pc > size(sc, 2)
+%                 % Just set to 1 for now.
+%                 self.gui.d(self.gui.current_trial).x_pc = 1;
+%             end
+%             if self.gui.d(self.gui.current_trial).y_pc < 1 || self.gui.d(self.gui.current_trial).y_pc > size(sc, 2)
+%                 self.gui.d(self.gui.current_trial).y_pc = 1;
+%             end
+%             if self.gui.d(self.gui.current_trial).z_pc < 1 || self.gui.d(self.gui.current_trial).z_pc > size(sc, 2)
+%                 self.gui.d(self.gui.current_trial).z_pc = 1;
+%             end
+%             
+%             xv = sc(:, self.gui.d(self.gui.current_trial).x_pc);
+%             yv = sc(:, self.gui.d(self.gui.current_trial).y_pc);
+%             zv = sc(:, self.gui.d(self.gui.current_trial).z_pc);
+%             
+%             [az, el] = view(self.h.pc3_axes);
+%             plot3(self.h.pc3_axes, xv, yv, zv, '.k');
+%             axis(self.h.pc3_axes, 'vis3d');
+%             view(self.h.pc3_axes, az, el);
+%             
+%             popup_str = get(self.h.x_popup, 'String');
+%             xlabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).x_pc});
+%             ylabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).y_pc});
+%             zlabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).z_pc});
         end
         
         function build_3d_gui_components(self, stage)

@@ -7,6 +7,7 @@ classdef CoherenceGui < hgsetget
         % hgsetget properties
         Position; % The size and position of the object.
         Parent; % The parent of the object.
+        Visible; 
         
         % object properties.
         data_t; % Vector of data timestamps.
@@ -29,6 +30,7 @@ classdef CoherenceGui < hgsetget
         BaseChanged;
         SigLevelChanged;
         FreqChanged;
+        DataClicked;
     end
     
     methods
@@ -76,14 +78,17 @@ classdef CoherenceGui < hgsetget
             self.significance_level = 0.8;
             self.zero_phase = 0;
             
-            self.Position = [0 0 400 300];
+            self.h.Position = [0 0 400 300];
             
             self.gui.MENU_H = 20;
             self.gui.MARGIN = 2;
             
             self.gui.angle_cmap = hsv(360); % Color map for different phases.
             self.gui.angle_shift = 0; % Rotation value for phases.
-            self.gui.default_color = [0.5 0.5 0.5];
+            self.gui.default_color = [0 0 0]; %[0.5 0.5 0.5];
+            
+            self.gui.text_mode = 0;
+            self.gui.fast_mode = 0;
         end
         
         function self = init_gui(self, parent)
@@ -94,13 +99,13 @@ classdef CoherenceGui < hgsetget
             
             if nargin < 2 || isempty(parent)
                 parent = figure;
-                set(parent, 'Position', [100 100 self.Position(3), self.Position(4)]);
+                set(parent, 'Position', [100 100 self.h.Position(3), self.h.Position(4)]);
             end
             
-            self.Parent = parent;
+            self.h.parent = parent;
             % We must use a figure event notifier, which is attached to the
             % top-most figure. Go up until we get the figure.
-            self.h.fh = self.Parent;
+            self.h.fh = self.h.parent;
             while ~strcmp(get(self.h.fh, 'Type'), 'figure')
                 % Then the fh object is not a figure, so go up.
                 self.h.fh = get(self.h.fh, 'Parent');
@@ -110,12 +115,12 @@ classdef CoherenceGui < hgsetget
             self.gui.fen = FigureEventNotifier(self.h.fh);
             
             % Create the main panel
-            self.h.panel = uipanel(self.Parent, 'Units', 'pixels');
-            set(self.h.panel, 'BorderType', 'none');
+            self.h.panel = uiextras.BoxPanel('Parent', self.h.parent, 'Title', 'Coherence');
             
             % The coherence axes
-            self.h.coherence_ax = axes('Parent', self.h.panel, 'Units', 'pixels');
+            self.h.coherence_ax = axes('Units', 'pixels');
             self.draw_coherence_axes();
+            self.h.data = [];
             
             self.h.zero_phase_marker = plot(self.h.coherence_ax, 1.1, 0, 's', ...
                 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k', 'MarkerSize', 10, ...
@@ -124,16 +129,16 @@ classdef CoherenceGui < hgsetget
             
             
             % Popup menu to choose the base.
-            self.h.base_popup = uicontrol(self.h.panel, 'Style', 'popupmenu', ...
+            self.h.base_popup = uicontrol('Style', 'popupmenu', ...
                 'Units', 'pixels', 'String', {'None'});
             set(self.h.base_popup, 'Callback', @self.base_popup_cb);
             
             % Slider to choose the frequency.
-            self.h.frequency_slider = uicontrol(self.h.panel, 'Style', 'slider');
+            self.h.frequency_slider = uicontrol('Style', 'slider');
             set(self.h.frequency_slider, 'Callback', @self.frequency_slider_cb);
             
             % Text box showing the frequency value.
-            self.h.frequency_text = uicontrol(self.h.panel, 'Style', 'text');
+            self.h.frequency_text = uicontrol('Style', 'text');
             
             % Line showing the significance level.
             ph = 0:pi/20:2*pi;
@@ -142,7 +147,25 @@ classdef CoherenceGui < hgsetget
                 ':r', 'LineWidth', 2, 'HandleVisibility', 'off');
             set(self.h.sig_level_line, 'ButtonDownFcn', @self.sig_level_line_cb);
             
-            self.reset_layout();
+            self = self.uiextras_layout();
+        end
+        
+        function self = uiextras_layout(self)
+            
+            self.h.main_vbox = uiextras.VBox();
+            self.h.control_button_hbox = uiextras.HBox();
+            
+            set(self.h.main_vbox, 'Parent', self.h.panel);
+            
+            set(self.h.coherence_ax, 'Parent', self.h.main_vbox.double());
+            set(self.h.control_button_hbox, 'Parent', self.h.main_vbox);
+            
+            set(self.h.base_popup, 'Parent', self.h.control_button_hbox.double());
+            set(self.h.frequency_slider, 'Parent', self.h.control_button_hbox.double());
+            set(self.h.frequency_text, 'Parent', self.h.control_button_hbox.double());
+            
+            set(self.h.main_vbox, 'Sizes', [-1 self.gui.MENU_H]);
+            set(self.h.control_button_hbox, 'Sizes', [-1 -4 -1]);
         end
         
         function reset_layout(self)
@@ -191,12 +214,23 @@ classdef CoherenceGui < hgsetget
             self.animate_sig_level_change();
             
             self.update();
+            
+            self.notify('SigLevelChanged');
         end
         
         function zero_phase_marker_cb(self, sh, ed)
             self.animate_zero_phase_change();
             
             self.update();
+        end
+        
+        function data_clicked_cb(self, sh, ed)
+            disp('data_clicked_cb');
+            
+            idx = find(sh == self.h.data);
+            disp(idx);
+            
+            notify(self, 'DataClicked', DataClickedEvent(idx));
         end
         
         %%%%%%%%%% Main Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -447,6 +481,31 @@ classdef CoherenceGui < hgsetget
         end
         
         
+        %%%%%%%%%% hgsetget functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function set.Parent(self, val)
+            set(self.h.panel, 'Parent', double(val))
+        end
+        
+        function val = get.Parent(self)
+            val = double(self.h.panel);
+        end
+        
+        function set.Position(self, val)
+            set(self.h.panel, 'Position', val);
+        end
+        
+        function val = get.Position(self)
+            val = get(self.h.panel, 'Position');
+        end
+        
+        function set.Visible(self, val)
+            set(self.h.panel, 'Visible');
+        end
+        
+        function val = get.Visible(self)
+            val = get(self.h.panel, 'Visible');
+        end
+        
         %%%%%%%%%% Utility Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function draw_coherence_axes(self)
             % draw_coherence_axes: creates the borders and markings for the
@@ -456,8 +515,8 @@ classdef CoherenceGui < hgsetget
             hold(self.h.coherence_ax, 'on');
             
             set(self.h.coherence_ax, 'XTick', [], 'YTick', [], 'Box', 'off', ...
-                'Color', 'w', 'XColor', 'w', 'YColor', 'w');
-            
+                'Color', 'w', 'XColor', 'w', 'YColor', 'w', 'Position', [0 0 1 1]);
+            axis(self.h.coherence_ax, 'equal');
             
             ph = 0:pi/20:2*pi;
             
@@ -527,15 +586,34 @@ classdef CoherenceGui < hgsetget
         
         function update_coherence_data(self)
             cla(self.h.coherence_ax);
-            if ~isempty(self.cmag) && ~isempty(self.cphase)
+            if ~isempty(self.data) && ~isempty(self.cmag) && ~isempty(self.cphase)
                 cmag = self.cmag(self.freq_idx, :);
                 cphase = self.cphase(self.freq_idx, :) + self.zero_phase;
                 xd = cmag .* cos(cphase);
                 yd = cmag .* sin(cphase);
                 
-                self.h.data = scatter(self.h.coherence_ax, xd, yd, '.');
-
-                set(self.h.data, 'CData', self.get_colors());
+                cols = self.get_colors();
+                
+                delete(self.h.data(ishandle(self.h.data)));
+                self.h.data = zeros(1, length(xd));
+                
+                if self.gui.fast_mode
+                    self.h.data = plot(xd, yd, '.');
+                else
+                    for i = 1:length(xd)
+                        if self.gui.text_mode
+                            self.h.data(i) = text(xd(i), yd(i), num2str(i), ...
+                                'Color', cols(i,:), 'Parent', self.h.coherence_ax, 'HorizontalAlignment', 'center');
+                        else
+                            self.h.data(i) = plot(self.h.coherence_ax, xd(i), yd(i),...
+                                'o', 'MarkerFaceColor', cols(i,:), 'MarkerEdgeColor', cols(i,:));
+                        end
+                    end
+                    set(self.h.data, 'ButtonDownFcn', @self.data_clicked_cb);
+                end
+                %self.h.data = scatter(self.h.coherence_ax, xd, yd, '.');
+                
+                %set(self.h.data, 'CData', self.get_colors());
             end
         end
         
@@ -553,7 +631,6 @@ classdef CoherenceGui < hgsetget
                 self.update_sig_level();
                 drawnow;
             end
-            self.notify('SigLevelChanged');
         end
         
         function animate_zero_phase_change(self)
