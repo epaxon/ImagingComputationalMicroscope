@@ -40,4 +40,4 @@ else
     nmat = (mat - min(mat(:))) ./ (max(mat(:)) - min(mat(:)));
 end
 
-nmat = nmat * rmax + rmin;
+nmat = nmat * (rmax - rmin) + rmin;

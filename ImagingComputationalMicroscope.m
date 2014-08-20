@@ -150,7 +150,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             %self.h.panel = uipanel(self.Parent, 'Units', 'pixels');
             self.h.panel = uiextras.BoxPanel('Parent', self.h.parent, ...
-                'Title', 'Image Component Parser');
+                'Title', 'Imaging Computational Microscope');
             
             % RoiEditor
             self.h.roi_editor = RoiEditor(self.h.fh, self.data(self.gui.current_trial).im_data);
@@ -198,9 +198,9 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.h.pp_tab = uiextras.Panel('Parent', self.h.stage_tab_panel);
             self.h.pca_tab = uiextras.Panel('Parent', self.h.stage_tab_panel);
             self.h.ica_tab = uiextras.Panel('Parent', self.h.stage_tab_panel);
-            self.h.viz_tab = uiextras.Panel('Parent', self.h.stage_tab_panel);
             self.h.sc_tab = uiextras.Panel('Parent', self.h.stage_tab_panel);
-            self.h.stage_tab_panel.TabNames = {'Data', 'Pre-Processing', 'PCA', 'ICA', 'Visualize', 'Segment'};
+            self.h.viz_tab = uiextras.Panel('Parent', self.h.stage_tab_panel);
+            self.h.stage_tab_panel.TabNames = {'Data', 'Pre-Processing', 'PCA', 'ICA', 'Segment', 'Visualize'};
             self.h.stage_tab_panel.SelectedChild = self.gui.d(1).display;
             
             self.h.stage_status = uicontrol('Style', 'text', 'String', '...');
@@ -220,6 +220,26 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.h.wavelets_check = uicontrol('Style', 'checkbox', 'Value', 0, ...
                 'String', 'Use Wavelets', 'Callback', @self.wavelets_check_cb);
             
+            self.h.pp_smooth_label = uicontrol('Style', 'text', 'String', 'Smooth Window:', 'TooltipString', ...
+                'Sets dimensions of smooth window - MxNxT', ...
+                'HorizontalAlignment', 'left');
+            self.h.pp_down_label = uicontrol('Style', 'text', 'String', 'Down Sampling:', 'TooltipString', ...
+                'Sets the down sampling in each dimensoin - MxNxT', ...
+                'HorizontalAlignment', 'left');
+            
+            self.h.pp_M_label = uicontrol('Style', 'text', 'String', 'M', 'TooltipString', ...
+                'M corresponds to the rows of the image (vertical)');
+            self.h.pp_smooth_M = uicontrol('Style', 'edit', 'String','1', 'Callback', @self.pp_settings_cb);
+            self.h.pp_down_M = uicontrol('Style', 'edit', 'String','1', 'Callback', @self.pp_settings_cb);             
+            self.h.pp_N_label = uicontrol('Style', 'text', 'String', 'N', 'TooltipString', ...
+                'N corresponds to the columns of th eimage (horizontal)');
+            self.h.pp_smooth_N = uicontrol('Style', 'edit', 'String', '1', 'Callback', @self.pp_settings_cb);
+            self.h.pp_down_N = uicontrol('Style', 'edit', 'String', '1', 'Callback', @self.pp_settings_cb);            
+            self.h.pp_T_label = uicontrol('Style', 'text', 'String', 'T', 'TooltipString', ...
+                'T corresponds to the frames (depth)');
+            self.h.pp_smooth_T = uicontrol('Style', 'edit', 'String', '1', 'Callback', @self.pp_settings_cb); 
+            self.h.pp_down_T = uicontrol('Style', 'edit', 'String', '1', 'Callback', @self.pp_settings_cb);            
+            
             % PCA tab
             self.h.runpca_button = uicontrol('Style', 'pushbutton', ...
                 'String', 'Run PCA', 'Callback', @self.runpca_button_cb);
@@ -229,12 +249,30 @@ classdef ImagingComputationalMicroscope < hgsetget
                 'String', 'Run ICA', 'Callback', @self.runica_button_cb);
             self.h.which_pcs_label = uicontrol('Style', 'text', 'String', 'PCs:');
             self.h.which_pcs_edit = uicontrol('Style', 'edit', 'Callback', @self.which_pcs_edit_cb);
-            self.h.calc_rois_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Calc ROIs', 'Callback', @self.calc_rois_cb);
+            self.h.ic_show_viz_check = uicontrol('Style', 'checkbox', 'Value', 1, ...
+                'String', 'Show Viz', 'Callback', @self.ic_show_viz_check_cb);
             
-            % Visualization tab
-            self.h.viz_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Visualize', 'Callback', @self.viz_button_cb);
+            self.h.post_poly_label = uicontrol('Style', 'text', 'String', 'Poly:');
+            self.h.post_poly_slider = uicontrol('Style', 'slider', 'Callback', @self.post_poly_slider_cb, ...
+                'Min', 0, 'Max', 20, 'SliderStep', [0.05, 0.2], 'Value', 0);
+            self.h.post_poly_edit = uicontrol('Style', 'edit', 'Callback', @self.post_poly_edit_cb);
+            self.h.post_smooth_label = uicontrol('Style', 'text', 'String', 'Smooth:');
+            self.h.post_smooth_slider = uicontrol('Style', 'slider', 'Callback', @self.post_smooth_slider_cb,...
+                'Min', 0, 'Max', 20, 'SliderStep', [0.05, 0.2], 'Value', 0);
+            self.h.post_smooth_edit = uicontrol('Style', 'edit', 'Callback', @self.post_smooth_edit_cb);
+            self.h.post_remove_label = uicontrol('Style', 'text', 'String', 'Remove:');
+            self.h.post_remove_edit = uicontrol('Style', 'edit', 'Callback', @self.pp_remove_edit_cb);
+            
+            self.h.post_run_pp_button = uicontrol('Style', 'pushbutton', 'String', 'Run Post', ...
+                'Callback', @self.pp_run_pp_button_cb);
+            self.h.post_clear_pp_button = uicontrol('Style', 'pushbutton', 'String', 'Clear Post', ...
+                'Callback', @self.pp_clear_pp_button_cb);
+            
+            % Visualization/Cluster tab
+            self.h.update_viz_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Update Viz', 'Callback', @self.update_viz_button_cb);
+            self.h.clear_viz_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Clear Viz', 'Callback', @self.clear_viz_button_cb);
             
             self.h.map_pow_label = uicontrol('Style', 'text', 'String', 'Map^:');
             self.h.map_pow_slider = uicontrol('Style', 'slider', 'Callback', @self.viz_settings_cb, ...
@@ -249,8 +287,17 @@ classdef ImagingComputationalMicroscope < hgsetget
                 'Min', 0, 'Max', 1, 'SliderStep', [0.02, 0.1]);
             self.h.alpha_indicator = uicontrol('Style', 'text', 'String', '0');
             
+            % These are buttons for clustering -- this is typically done
+            % using the visualizations, so this goes in viz tab
+            self.h.estimate_clusters_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Estimate Clusters', 'Callback', @self.estimate_clusters_cb);
+            self.h.set_cluster_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Set Cluster', 'Callback', @self.set_cluster_button_cb);
+            self.h.uncluster_button = uicontrol('Style', 'pushbutton', ...
+                'String', 'Uncluster', 'Callback', @self.uncluster_button_cb);
             
-            % Segment/Cluster tab
+            
+            % Segment tab
             self.h.segment_ics_button = uicontrol('Style', 'pushbutton', ...
                 'String', 'Segment ICs', 'Callback', @self.segment_ics_cb);
             self.h.down_size_label = uicontrol('Style', 'text', 'String', 'Down:');
@@ -264,49 +311,44 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.h.max_corr_thresh_button = uicontrol('Style', 'pushbutton', ...
                 'String', 'Max Corr Thresh', 'Callback', @self.max_corr_thresh_button_cb);
             
-            self.h.estimate_clusters_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Estimate Clusters', 'Callback', @self.estimate_clusters_cb);
-            self.h.set_cluster_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Set Cluster', 'Callback', @self.set_cluster_button_cb);
-            self.h.uncluster_button = uicontrol('Style', 'pushbutton', ...
-                'String', 'Uncluster', 'Callback', @self.uncluster_button_cb);
-            
-            
             set(self.h.down_size_slider, 'Min', -4, 'Max', 4);
             set(self.h.down_size_indicator, 'String', '0');
-            set(self.h.thresh_slider, 'Min', 0, 'Max', 10);
+            set(self.h.thresh_slider, 'Min', 0, 'Max', 10, 'SliderStep', [0.01, 0.1]);
             set(self.h.thresh_indicator, 'String', '0');
             
-            % Axes to display three PCs
-            self.h.pc3_axes = axes('Units', 'pixels');
-            % Popups for the plot.
-            self.h.x_popup = uicontrol('Style', 'popupmenu', ...
-                'Units', 'pixels', 'String', {'None'});
-            self.h.y_popup = uicontrol('Style', 'popupmenu', ...
-                'Units', 'pixels', 'String', {'None'});
-            self.h.z_popup = uicontrol('Style', 'popupmenu', ...
-                'Units', 'pixels', 'String', {'None'});
-            set(self.h.x_popup, 'Callback', @self.x_popup_cb);
-            set(self.h.y_popup, 'Callback', @self.y_popup_cb);
-            set(self.h.z_popup, 'Callback', @self.z_popup_cb);
-            % Buttons to auto-rotate to the 2-d plots.
-            self.h.xy_button = uicontrol('Style', 'pushbutton', ...
-                'Units', 'pixels', 'String', 'xy', 'Callback', @self.xy_button_cb);
-            self.h.yz_button = uicontrol('Style', 'pushbutton', ...
-                'Units', 'pixels', 'String', 'yz', 'Callback', @self.yz_button_cb);
-            self.h.zx_button = uicontrol('Style', 'pushbutton', ...
-                'Units', 'pixels', 'String', 'xz', 'Callback', @self.zx_button_cb);
-            % Labels for the plot controls. Even though these are labels,
-            % strange things were happening when I didn't keep the handles.
-            self.h.xl = uicontrol('Style', 'text', 'String', 'X:');
-            self.h.yl = uicontrol('Style', 'text', 'String', 'Y:');
-            self.h.zl = uicontrol('Style', 'text', 'String', 'Z:');
-            % Toggle button to turn continuous rotation on and off.
-            self.h.rotate_toggle = uicontrol('Style', 'togglebutton', ...
-                'Units', 'pixels', 'String', 'Rotate', 'Callback', @self.rotate_toggle_cb);
+            % Viewers and visualization tools
+            self.h.pc_pixel_viewer = HighDViewer(self.h.fh);
+            self.h.pc_ica_viewer = HighDViewer(self.h.fh);
+            self.h.pc_ica_viewer.gui.fast_mode = 0; % We want colors on this one
+            self.h.ica_coherence = CoherenceGui(self.h.fh);
+            
+            self.h.pc_pixel_viewer.gui.fast_mode = 1;
+            self.h.pc_pixel_viewer.gui.text_mode = 0;
+            
+            self.h.pc_ica_viewer.gui.fast_mode = 0;
+            self.h.pc_ica_viewer.gui.text_mode = 1;
+            
+            self.h.ica_coherence.gui.fast_mode = 0;
+            self.h.ica_coherence.gui.text_mode = 1;
+            
+            addlistener(self.h.pc_ica_viewer, 'DataClicked', @self.data_clicked_cb);
+            addlistener(self.h.ica_coherence, 'DataClicked', @self.data_clicked_cb);
+            
+            addlistener(self.h.pc_ica_viewer, 'DimensionsChanged', @self.update_viz_button_cb);
+            addlistener(self.h.ica_coherence, 'BaseChanged', @self.update_viz_button_cb);
+            addlistener(self.h.ica_coherence, 'SigLevelChanged', @self.update_viz_button_cb);
+            addlistener(self.h.ica_coherence, 'FreqChanged', @self.update_viz_button_cb);
+            
+            self.h.viewer_tab_panel = uiextras.TabPanel('Callback', @self.viewer_tab_panel_cb);
+            self.h.viewer_pixel_tab = uiextras.Panel('Parent', self.h.viewer_tab_panel);
+            self.h.viewer_pca_tab = uiextras.Panel('Parent', self.h.viewer_tab_panel);
+            self.h.viewer_coherence_tab = uiextras.Panel('Parent', self.h.viewer_tab_panel);
+            
+            self.h.viewer_tab_panel.TabNames = {'Pixels', 'PCA', 'Coherence'};
+            self.h.viewer_tab_panel.SelectedChild = 1;
             
             % Menu
-            self.h.main_menu = uimenu(self.h.fh, 'Label', 'ICP');
+            self.h.main_menu = uimenu(self.h.fh, 'Label', 'ICM');
             self.h.load_image_item = uimenu('Parent', self.h.main_menu, ...
                 'Label', 'Load Data', 'Callback', @self.load_image_cb);
             
@@ -347,12 +389,6 @@ classdef ImagingComputationalMicroscope < hgsetget
             % Ok, I'm going to do this with the layouts, and reset the
             % parents here.
             disp('uiextras_layout');
-            % 3D plot Layout elements
-            self.h.pc3_main_panel = uiextras.BoxPanel('Title', '3D Plot');
-            self.h.pc3_main_hbox = uiextras.HBox();
-            self.h.pc3_control_rotate_vbox = uiextras.VBox();
-            self.h.pc3_control_panel = uiextras.BoxPanel('Title', '3D Plot Controls');
-            self.h.pc3_control_grid = uiextras.Grid();
             
             % Component axes elements
             self.h.component_panel = uiextras.BoxPanel('Title', 'Component Plot');
@@ -374,17 +410,33 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.h.trial_button_hbox = uiextras.HButtonBox();
             
             % Tab layout elements
+            self.h.pp_settings_panel = uiextras.BoxPanel('Title', 'Pre-Processing Settings');
+            self.h.pp_main_vbox = uiextras.VBox();
+            self.h.pp_settings_grid = uiextras.Grid('Padding', 10, 'Spacing', 5);
             self.h.pp_button_hbox = uiextras.HButtonBox();
+            
             self.h.pca_button_hbox = uiextras.HButtonBox();
+            
             self.h.ica_main_hbox = uiextras.HBox();
             self.h.ica_settings_panel = uiextras.BoxPanel('Title', 'ICA Settings');
+            self.h.ica_postprocessing_panel = uiextras.BoxPanel('Title', 'ICA Post-Processing');
             self.h.ica_settings_vbox = uiextras.VButtonBox('ButtonSize', [150 40]);
             self.h.ica_which_pcs_hbox = uiextras.HBox('Padding', 10, 'Spacing', 5);
             self.h.ica_button_vbox = uiextras.VButtonBox();
+            self.h.ica_pp_vbox = uiextras.VBox();
+            self.h.ica_pp_remove_hbox = uiextras.HBox('Padding', 10, 'Spacing', 5);
+            self.h.ica_pp_filter_grid = uiextras.Grid('Padding', 10, 'Spacing', 5);
+            self.h.ica_pp_control_vbox = uiextras.VButtonBox();
+            
             self.h.viz_main_hbox = uiextras.HBox();
-            self.h.viz_button_hbox = uiextras.HButtonBox();
-            self.h.viz_settings_box = uiextras.BoxPanel('Title', 'Visualization Settings');
+            %self.h.viz_button_hbox = uiextras.HButtonBox();
+            self.h.viz_settings_panel = uiextras.BoxPanel('Title', 'Visualization Settings');
+            self.h.viz_settings_vbox = uiextras.VBox();
             self.h.viz_settings_grid = uiextras.Grid('Padding', 10, 'Spacing', 5);
+            self.h.viz_button_vbox = uiextras.VButtonBox();
+            self.h.viz_cluster_panel = uiextras.BoxPanel('Title', 'Cluster');
+            self.h.viz_cluster_vbox = uiextras.VButtonBox();
+            
             self.h.sc_main_hbox = uiextras.HBox();
             self.h.sc_segment_panel = uiextras.BoxPanel('Title', 'Segmentation');
             self.h.sc_segment_vbox = uiextras.VBox();
@@ -392,8 +444,6 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.h.sc_segment_button_hbox = uiextras.HButtonBox();
             %self.h.sc_down_size_hbox = uiextras.HBox('Padding', 10, 'Spacing', 5);
             %self.h.sc_thresh_hbox = uiextras.HBox('Padding', 10, 'Spacing', 5);
-            self.h.sc_cluster_panel = uiextras.BoxPanel('Title', 'Cluster');
-            self.h.sc_cluster_vbox = uiextras.VButtonBox();
             
             self.h.data_button_hbox = uiextras.HButtonBox();
             
@@ -428,11 +478,28 @@ classdef ImagingComputationalMicroscope < hgsetget
             % Data tab
             set(self.h.data_button_hbox, 'Parent', self.h.data_tab);
             set(self.h.reset_button, 'Parent', self.h.data_button_hbox.double());
+            set(self.h.motion_correct_button, 'Parent', self.h.data_button_hbox.double());
             set(self.h.concat_trials_toggle, 'Parent', self.h.data_button_hbox.double());
             
             % PP tab
-            set(self.h.pp_button_hbox, 'Parent', self.h.pp_tab);
-            set(self.h.motion_correct_button, 'Parent', self.h.pp_button_hbox.double());
+            set(self.h.pp_settings_panel, 'Parent', self.h.pp_tab);
+            set(self.h.pp_main_vbox, 'Parent', self.h.pp_settings_panel);
+            set(self.h.pp_settings_grid, 'Parent', self.h.pp_main_vbox);
+            set(self.h.pp_button_hbox, 'Parent', self.h.pp_main_vbox);
+            
+            self.h.pp_empty = uiextras.Empty('Parent', self.h.pp_settings_grid);
+            set(self.h.pp_smooth_label, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_down_label, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_M_label, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_smooth_M, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_down_M, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_N_label, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_smooth_N, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_down_N, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_T_label, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_smooth_T, 'Parent', self.h.pp_settings_grid.double());
+            set(self.h.pp_down_T, 'Parent', self.h.pp_settings_grid.double());
+            
             set(self.h.wavelets_check, 'Parent', self.h.pp_button_hbox.double());
             set(self.h.preprocess_button, 'Parent', self.h.pp_button_hbox.double());
             
@@ -443,22 +510,44 @@ classdef ImagingComputationalMicroscope < hgsetget
             % ICA tab
             set(self.h.ica_main_hbox, 'Parent', self.h.ica_tab);
             set(self.h.ica_settings_panel, 'Parent', self.h.ica_main_hbox);
-            set(self.h.ica_button_vbox, 'Parent', self.h.ica_main_hbox);
+            set(self.h.ica_postprocessing_panel, 'Parent', self.h.ica_main_hbox);
+            %set(self.h.ica_button_vbox, 'Parent', self.h.ica_main_hbox);
             set(self.h.ica_settings_vbox, 'Parent', self.h.ica_settings_panel);
             set(self.h.ica_which_pcs_hbox, 'Parent', self.h.ica_settings_vbox);
-            set(self.h.which_pcs_label, 'Parent', self.h.ica_which_pcs_hbox.double());
-            set(self.h.which_pcs_edit, 'Parent', self.h.ica_which_pcs_hbox.double());
+            set(self.h.ica_button_vbox, 'Parent', self.h.ica_settings_vbox);
             set(self.h.runica_button, 'Parent', self.h.ica_button_vbox.double());
-            set(self.h.calc_rois_button, 'Parent', self.h.ica_button_vbox.double());
+            set(self.h.ic_show_viz_check, 'Parent', self.h.ica_button_vbox.double());
+            %set(self.h.runica_button, 'Parent', self.h.ica_settings_vbox.double());
+            %set(self.h.ic_show_viz_check, 'Parent', self.h.ica_settings_vbox.double());
+            
+            set(self.h.which_pcs_label, 'Parent', self.h.ica_which_pcs_hbox.double());
+            set(self.h.which_pcs_edit, 'Parent', self.h.ica_which_pcs_hbox.double());     
+            %set(self.h.calc_rois_button, 'Parent', self.h.ica_button_vbox.double());
+            
+            set(self.h.ica_pp_vbox, 'Parent', self.h.ica_postprocessing_panel);
+            set(self.h.ica_pp_remove_hbox, 'Parent', self.h.ica_pp_vbox);
+            set(self.h.ica_pp_filter_grid, 'Parent', self.h.ica_pp_vbox);
+            set(self.h.ica_pp_control_vbox, 'Parent', self.h.ica_pp_vbox);
+            set(self.h.post_remove_label, 'Parent', self.h.ica_pp_remove_hbox.double());
+            set(self.h.post_remove_edit, 'Parent', self.h.ica_pp_remove_hbox.double());
+            set(self.h.post_poly_label, 'Parent', self.h.ica_pp_filter_grid.double());
+            set(self.h.post_smooth_label, 'Parent', self.h.ica_pp_filter_grid.double());
+            set(self.h.post_poly_slider, 'Parent', self.h.ica_pp_filter_grid.double());
+            set(self.h.post_smooth_slider, 'Parent', self.h.ica_pp_filter_grid.double());
+            set(self.h.post_poly_edit, 'Parent', self.h.ica_pp_filter_grid.double());
+            set(self.h.post_smooth_edit, 'Parent', self.h.ica_pp_filter_grid.double());
+            set(self.h.post_run_pp_button, 'Parent', self.h.ica_pp_control_vbox.double());
+            set(self.h.post_clear_pp_button, 'Parent', self.h.ica_pp_control_vbox.double());
             
             % Viz tab
             set(self.h.viz_main_hbox, 'Parent', self.h.viz_tab);
-            set(self.h.viz_button_hbox, 'Parent', self.h.viz_main_hbox);
-            set(self.h.viz_settings_box, 'Parent', self.h.viz_main_hbox);
-            set(self.h.viz_settings_grid, 'Parent', self.h.viz_settings_box);
-            
-            set(self.h.viz_button, 'Parent', self.h.viz_button_hbox.double());
-            
+            set(self.h.viz_settings_panel, 'Parent', self.h.viz_main_hbox);
+            set(self.h.viz_settings_vbox, 'Parent', self.h.viz_settings_panel)
+            set(self.h.viz_settings_grid, 'Parent', self.h.viz_settings_vbox);
+            set(self.h.viz_button_vbox, 'Parent', self.h.viz_settings_vbox);
+            set(self.h.viz_cluster_panel, 'Parent', self.h.viz_main_hbox);
+            set(self.h.viz_cluster_vbox, 'Parent', self.h.viz_cluster_panel);
+
             set(self.h.map_pow_label, 'Parent', self.h.viz_settings_grid.double());
             set(self.h.color_pow_label, 'Parent', self.h.viz_settings_grid.double());
             set(self.h.alpha_label, 'Parent', self.h.viz_settings_grid.double());
@@ -469,12 +558,17 @@ classdef ImagingComputationalMicroscope < hgsetget
             set(self.h.color_pow_indicator, 'Parent', self.h.viz_settings_grid.double());
             set(self.h.alpha_indicator, 'Parent', self.h.viz_settings_grid.double());
             
-            % Segment/Cluster tab
+            set(self.h.update_viz_button, 'Parent', self.h.viz_button_vbox.double());
+            set(self.h.clear_viz_button, 'Parent', self.h.viz_button_vbox.double());
+            
+            set(self.h.set_cluster_button, 'Parent', self.h.viz_cluster_vbox.double());
+            set(self.h.uncluster_button, 'Parent', self.h.viz_cluster_vbox.double());
+            set(self.h.estimate_clusters_button, 'Parent', self.h.viz_cluster_vbox.double());
+            
+            % Segment tab
             set(self.h.sc_main_hbox, 'Parent', self.h.sc_tab);
             set(self.h.sc_segment_panel, 'Parent', self.h.sc_main_hbox);
-            set(self.h.sc_cluster_panel, 'Parent', self.h.sc_main_hbox);
             set(self.h.sc_segment_vbox, 'Parent', self.h.sc_segment_panel);
-            set(self.h.sc_cluster_vbox, 'Parent', self.h.sc_cluster_panel);
             
             set(self.h.sc_segment_grid, 'Parent', self.h.sc_segment_vbox);
             set(self.h.sc_segment_button_hbox, 'Parent', self.h.sc_segment_vbox);
@@ -489,15 +583,11 @@ classdef ImagingComputationalMicroscope < hgsetget
             set(self.h.max_corr_thresh_button, 'Parent', self.h.sc_segment_button_hbox.double());
             set(self.h.segment_ics_button, 'Parent', self.h.sc_segment_button_hbox.double());
             
-            
-            set(self.h.set_cluster_button, 'Parent', self.h.sc_cluster_vbox.double());
-            set(self.h.uncluster_button, 'Parent', self.h.sc_cluster_vbox.double());
-            set(self.h.estimate_clusters_button, 'Parent', self.h.sc_cluster_vbox.double());
-            
             % Component axis hierarchy
             set(self.h.data_panel, 'Parent', self.h.component_pc3_vbox);
             set(self.h.component_panel, 'Parent', self.h.component_pc3_vbox);
-            set(self.h.pc3_main_panel, 'Parent', self.h.component_pc3_vbox);
+            set(self.h.viewer_tab_panel, 'Parent', self.h.component_pc3_vbox);
+            %set(self.h.pc3_main_panel, 'Parent', self.h.component_pc3_vbox);
             
             set(self.h.component_lock_vbox, 'Parent', self.h.component_panel);
             set(self.h.component_axes, 'Parent', self.h.component_lock_vbox.double());
@@ -507,34 +597,12 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             set(self.h.data_axes, 'Parent', self.h.data_panel.double());
             
-            % 3D plot hierarchy
-            set(self.h.pc3_main_hbox, 'Parent', self.h.pc3_main_panel);
+            % 3D plot tabs
+            set(self.h.pc_pixel_viewer, 'Parent', self.h.viewer_pixel_tab);
+            set(self.h.pc_ica_viewer, 'Parent', self.h.viewer_pca_tab);
+            set(self.h.ica_coherence, 'Parent', self.h.viewer_coherence_tab);
             
-            set(self.h.pc3_axes, 'Parent', self.h.pc3_main_hbox.double());
-            set(self.h.pc3_control_rotate_vbox, 'Parent', self.h.pc3_main_hbox);
-            
-            set(self.h.pc3_control_panel, 'Parent', self.h.pc3_control_rotate_vbox);
-            set(self.h.rotate_toggle, 'Parent', self.h.pc3_control_rotate_vbox.double());
-            
-            set(self.h.pc3_control_grid, 'Parent', self.h.pc3_control_panel);
-            
-            set(self.h.xl, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.yl, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.zl, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.x_popup, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.y_popup, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.z_popup, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.xy_button, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.yz_button, 'Parent', self.h.pc3_control_grid.double());
-            set(self.h.zx_button, 'Parent', self.h.pc3_control_grid.double());
-            
-            % Layout structure.
-            set(self.h.pc3_control_grid,...
-                'ColumnSizes', [self.gui.PC_PANEL_ITEM_W, -1, self.gui.PC_PANEL_ITEM_W],...
-                'RowSizes', [self.gui.BUTTON_H, self.gui.BUTTON_H, self.gui.BUTTON_H]);
-            set(self.h.pc3_control_rotate_vbox, 'Sizes', [-1, self.gui.BUTTON_H]);
-            set(self.h.pc3_main_hbox, 'Sizes', [-4, -1]);
-            
+            % Now set all of the sizes
             set(self.h.component_pc3_vbox, 'Sizes', [-1, -1, -1]);
             
             set(self.h.component_lock_vbox, 'Sizes', [-1, self.gui.BUTTON_H]);
@@ -553,6 +621,15 @@ classdef ImagingComputationalMicroscope < hgsetget
             set(self.h.sc_segment_grid, ...
                 'ColumnSizes', [self.gui.VIZ_SETTINGS_ITEM_W, -1, self.gui.VIZ_SETTINGS_ITEM_W], ...
                 'RowSizes', [self.gui.VIZ_SETTINGS_ITEM_H, self.gui.VIZ_SETTINGS_ITEM_H]);
+            
+            %set(self.h.ica_pp_remove_hbox, 'Sizes', [self.gui.VIZ_SETTINGS_ITEM_W, -1]);
+            set(self.h.ica_pp_vbox, 'Sizes', [2*self.gui.VIZ_SETTINGS_ITEM_H, -1, -1]);
+            set(self.h.ica_pp_filter_grid, ...
+                'ColumnSizes', [self.gui.VIZ_SETTINGS_ITEM_W, -1, self.gui.VIZ_SETTINGS_ITEM_W], ...
+                'RowSizes', [self.gui.VIZ_SETTINGS_ITEM_H, self.gui.VIZ_SETTINGS_ITEM_H]);
+            
+            set(self.h.pp_settings_grid, 'ColumnSizes', [-1, 30, 30, 30], 'RowSizes', [30, 30, 30]);
+            set(self.h.pp_main_vbox, 'Sizes', [-1, 30]);
             
             set(self.Parent, 'Position', [100, 100, self.Position(3), self.Position(4)]);
         end
@@ -601,8 +678,14 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.run_segmentation();
         end
         
-        function viz_button_cb(self, source_h, eventdata)
+        function update_viz_button_cb(self, source_h, eventdata)
             self.run_visualization();
+        end
+        
+        function clear_viz_button_cb(self, source_h, eventdata)
+            disp('clear_viz_button_cb');
+            self.clear_visualization();
+            self.update();
         end
         
         function estimate_clusters_cb(self, source_h, eventdata)
@@ -626,6 +709,10 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             self.gui.d(self.gui.current_trial).display = eventdata.SelectedChild;
             self.update();
+        end
+        
+        function viewer_tab_panel_cb(self, source_h, eventdata)
+            disp('viewer_tab_panel_cb');
         end
         
         function x_popup_cb(self, sh, ed)
@@ -804,9 +891,9 @@ classdef ImagingComputationalMicroscope < hgsetget
             disp('edit_ica_cb');
         end
         
-        function pp_settings_ok_cb(self, source_h, eventdata)
-            
-            % Get all of the data from the dialog. If the dialog has bad
+        function pp_settings_cb(self, source_h, eventdata)
+            disp('pp_settings_cb');
+            % Get all of the data from the gui. If there are bad
             % values, then these will be NaN. The set function will handle
             % the NaN case.
             smooth_M_val = str2double(get(self.h.pp_smooth_M, 'String'));
@@ -819,8 +906,6 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             self.set_pp_smooth_window(smooth_M_val, smooth_N_val, smooth_T_val);
             self.set_pp_down_sample(down_M_val, down_N_val, down_T_val);
-            
-            close(self.h.pp_dialog);
         end
         
         function pp_settings_cancel_cb(self, source_h, eventdata)
@@ -978,6 +1063,80 @@ classdef ImagingComputationalMicroscope < hgsetget
             disp('max_corr_thresh_button_cb');
         end
         
+        function data_clicked_cb(self, source_h, eventdata)
+            disp(eventdata);
+            idx = eventdata.ClickedIndex;
+            
+            if isfield(self.data(self.gui.current_trial).segment, 'segment_info')
+                roi_idx = find(self.data(self.gui.current_trial).segment.segment_info.ic_ids == idx);
+                self.h.roi_editor.set_selected_rois(roi_idx);
+            end
+        end
+        
+        function post_poly_slider_cb(self, source_h, eventdata)
+            disp('post_poly_slider_cb');
+            
+            val = get(source_h, 'Value');
+            
+            self.set_post_poly_order(val);
+            self.update();
+        end
+        
+        function post_poly_edit_cb(self, source_h, eventdata)
+            disp('post_poly_edit_cb');
+            
+            str = get(source_h, 'String');
+            val = round(str2num(str));
+            
+            self.set_post_poly_order(val);
+            self.update();
+        end
+        
+        function post_smooth_slider_cb(self, source_h, eventdata)
+            disp('post_smooth_slider_cb');
+            
+            val = get(source_h, 'Value');
+            
+            self.set_post_smooth_order(val);
+            self.update()
+        end
+        
+        function post_smooth_edit_cb(self, source_h, eventdata)
+            disp('post_smooth_edit_cb');
+            
+            str = get(source_h, 'String');
+            val = round(str2num(str));
+            
+            self.set_post_smooth_order(val);
+            self.update();
+        end
+        
+        function pp_remove_edit_cb(self, source_h, eventdata)
+            disp('pp_remove_edit_cb');
+        end
+        
+        function pp_run_pp_button_cb(self, source_h, eventdata)
+            disp('pp_run_pp_button_cb');
+            
+            self.run_postprocessing();
+        end
+        
+        function pp_clear_pp_button_cb(self, source_h, eventdata)
+            disp('pp_clear_pp_button_cb');
+            
+            self.clear_postprocessing();
+        end
+        
+        function ic_show_viz_check_cb(self, source_h, eventdata)
+            disp('ic_show_viz_check_cb');
+            
+            val = get(source_h, 'Value');
+            self.gui.d(self.gui.current_trial).ic_show_viz = val;
+            % make sure the roi editor updates.
+            self.gui.d(self.gui.current_trial).last_display = 0;
+            self.update();
+        end
+        
         %%%%%%%%%% Main Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function update(self)
             % update(self): main update function
@@ -1009,12 +1168,28 @@ classdef ImagingComputationalMicroscope < hgsetget
                     self.gui.data_norm_frame = 1; % I guess just do this?
                 end
                 
+                data_t = self.data(self.gui.current_trial).im_z;
+                
                 data = 100 * (data ./ repmat(data(self.gui.data_norm_frame, :), size(data, 1), 1) - 1);
                 
-                plot(self.h.data_axes, data);
+                plot(self.h.data_axes, data_t, data);
             end
             
-            if self.gui.d(self.gui.current_trial).display == 6 && self.data(self.gui.current_trial).stage >= self.PostProcessingStage ...
+            if self.data(self.gui.current_trial).stage >= self.IcaStage
+                    
+                if isfield(self.data(self.gui.current_trial).ica, 'post_ics') ...
+                        && ~isempty(self.data(self.gui.current_trial).ica.post_ics)
+                    % Then we have post processed ics
+                    ics = self.data(self.gui.current_trial).ica.post_ics;
+                else
+                    ics = self.data(self.gui.current_trial).ica.ics;
+                end
+            else
+                ics = [];
+            end
+                
+            
+            if self.gui.d(self.gui.current_trial).display == 5 && self.data(self.gui.current_trial).stage >= self.PostProcessingStage ...
                     && isfield(self.data(self.gui.current_trial).segment, 'im_data') && ~isempty(self.data(self.gui.current_trial).segment.im_data)
                 
                 %                 if self.gui.d(self.gui.current_trial).last_display ~= self.gui.d(self.gui.current_trial).display
@@ -1043,7 +1218,8 @@ classdef ImagingComputationalMicroscope < hgsetget
                 cla(self.h.component_axes);
                 legend(self.h.component_axes, 'off');
                 
-                plot(self.h.component_axes, self.data(self.gui.current_trial).ica.ics(:, f), 'k');
+                data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
+                plot(self.h.component_axes, data_t, ics(:, f), 'k');
                 ica_idx = f;
                 
                 text_x = 0.90;
@@ -1053,7 +1229,7 @@ classdef ImagingComputationalMicroscope < hgsetget
                     'HorizontalAlignment', 'center', 'UserData', ica_idx, ...
                     'Color', 'k', 'ButtonDownFcn', @self.component_label_cb);
                 
-            elseif self.gui.d(self.gui.current_trial).display == 5 && self.data(self.gui.current_trial).stage >= self.PostProcessingStage ...
+            elseif self.gui.d(self.gui.current_trial).display == 6 && self.data(self.gui.current_trial).stage >= self.PostProcessingStage ...
                     && isfield(self.data(self.gui.current_trial).viz, 'im_data') && ~isempty(self.data(self.gui.current_trial).viz.im_data)
                 % View the visualization
                 if self.gui.d(self.gui.current_trial).last_display ~= self.gui.d(self.gui.current_trial).display
@@ -1072,7 +1248,8 @@ classdef ImagingComputationalMicroscope < hgsetget
                 if self.gui.d(self.gui.current_trial).last_display ~= self.gui.d(self.gui.current_trial).display
                     % Don't update the roi editor if its the same
                     if isfield(self.data(self.gui.current_trial).viz, 'component_colors') ...
-                            && ~isempty(self.data(self.gui.current_trial).viz.component_colors)
+                            && ~isempty(self.data(self.gui.current_trial).viz.component_colors) ...
+                            && self.gui.d(self.gui.current_trial).ic_show_viz
                         self.h.roi_editor.set_im_data(self.data(self.gui.current_trial).viz.component_colors, ...
                             false, self.data(self.gui.current_trial).ica.im_x, self.data(self.gui.current_trial).ica.im_y);
                     else
@@ -1086,7 +1263,9 @@ classdef ImagingComputationalMicroscope < hgsetget
                 cla(self.h.component_axes);
                 legend(self.h.component_axes, 'off');
                 
-                plot(self.h.component_axes, self.data(self.gui.current_trial).ica.ics(:, f), 'k');
+                data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
+
+                plot(self.h.component_axes, data_t, ics(:, f), 'k');
                 
             elseif self.gui.d(self.gui.current_trial).display == 3 && self.data(self.gui.current_trial).stage >= self.PcaStage
                 % Then view the PCs
@@ -1101,11 +1280,12 @@ classdef ImagingComputationalMicroscope < hgsetget
                 legend(self.h.component_axes, 'off');
                 
                 %plot(self.h.component_axes, self.data(self.gui.current_trial).pca.pcs(:, f), 'k');
-                
+                data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
+
                 if isfield(self.data(self.gui.current_trial).pca, 'pc_rec')
-                    plot(self.h.component_axes, self.data(self.gui.current_trial).pca.pc_rec(:,f));
+                    plot(self.h.component_axes, data_t, self.data(self.gui.current_trial).pca.pc_rec(:,f));
                 else
-                    plot(self.h.component_axes, self.data(self.gui.current_trial).pca.pcs(:, f), 'k');
+                    plot(self.h.component_axes, data_t, self.data(self.gui.current_trial).pca.pcs(:, f), 'k');
                 end
             elseif self.gui.d(self.gui.current_trial).display == 2 && self.data(self.gui.current_trial).stage >= self.PreProcessingStage
                 % View the Preprocessing data
@@ -1161,11 +1341,12 @@ classdef ImagingComputationalMicroscope < hgsetget
                 cla(self.h.component_axes);
                 
                 self.h.component_labels = [];
-                
+                data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
+
                 for i = 1:length(self.h.roi_editor.selected_rois)
                     c = self.gui.locked_colors(mod(i-1, length(self.gui.locked_colors))+1, :);
                     ica_idx = self.data(self.gui.current_trial).segment.segment_info.ic_ids(self.h.roi_editor.selected_rois(i));
-                    plot(self.h.component_axes, self.data(self.gui.current_trial).ica.ics(:, ica_idx), 'Color', c);
+                    plot(self.h.component_axes, data_t, ics(:, ica_idx), 'Color', c);
                     
                     text_x = 0.95 - (length(self.h.roi_editor.selected_rois) - i) * 0.05;
                     self.h.component_labels(i) = text(text_x, 0.9, num2str(ica_idx), ...
@@ -1176,6 +1357,14 @@ classdef ImagingComputationalMicroscope < hgsetget
             else
                 self.show_best_selected_components(rois);
             end
+            
+            % Update ICA settings gui
+            set(self.h.post_poly_slider, 'Value', self.data(self.gui.current_trial).settings.post.poly_order);
+            set(self.h.post_poly_edit, 'String', num2str(self.data(self.gui.current_trial).settings.post.poly_order));
+            set(self.h.post_smooth_slider, 'Value', self.data(self.gui.current_trial).settings.post.smooth_order);
+            set(self.h.post_smooth_edit, 'String', num2str(self.data(self.gui.current_trial).settings.post.smooth_order));
+            
+            set(self.h.ic_show_viz_check, 'Value', self.gui.d(self.gui.current_trial).ic_show_viz);
             
             % Update the visualization settings gui.
             set(self.h.map_pow_slider, 'Value', self.data(self.gui.current_trial).settings.viz.map_pow);
@@ -1202,9 +1391,25 @@ classdef ImagingComputationalMicroscope < hgsetget
             set(self.h.thresh_slider, 'Value', self.data(self.gui.current_trial).settings.segment.thresh);
             set(self.h.thresh_indicator, 'String', num2str(self.data(self.gui.current_trial).settings.segment.thresh));
             
+            % reset the HighDViewers if necessary
+            if self.data(self.gui.current_trial).stage >= self.PcaStage
+                %self.h.pc_pixel_viewer.set_scores(self.data(self.gui.current_trial).pca.scores);
+            else
+                self.h.pc_pixel_viewer.set_scores([]);
+            end
+            
+            
+            if self.data(self.gui.current_trial).stage >= self.IcaStage
+                % Then can use the viewer and coherence
+                %self.h.pc_ica_viewer.set_scores(self.data(self.gui.current_trial).ica.A');
+                %self.h.ica_coherence.set_data(1:size(self.data(self.gui.current_trial).ica.ics, 1), self.data(self.gui.current_trial).ica.ics');
+            else
+                self.h.pc_ica_viewer.set_scores([]);
+                self.h.ica_coherence.set_data([]);
+            end
             
             self.plot_locked_components();
-            self.plot_3d();
+            %self.plot_3d();
             
             self.build_roi_listbox();
             self.build_trial_listbox();
@@ -1499,6 +1704,8 @@ classdef ImagingComputationalMicroscope < hgsetget
                 self.data(self.gui.current_trial).pca.im_y = self.data(self.gui.current_trial).pp.im_y;
             end
             
+            self.h.pc_pixel_viewer.set_scores(self.data(self.gui.current_trial).pca.scores);
+            
             self.data(self.gui.current_trial).stage = self.PcaStage;
             self.gui.d(self.gui.current_trial).last_display = 0;
             self.update();
@@ -1654,6 +1861,11 @@ classdef ImagingComputationalMicroscope < hgsetget
                 end
             end
             
+            self.h.pc_ica_viewer.set_scores(self.data(self.gui.current_trial).ica.A');
+            
+            data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
+            self.h.ica_coherence.set_data(data_t, self.data(self.gui.current_trial).ica.ics');
+            
             self.data(self.gui.current_trial).stage = self.IcaStage;
             self.gui.d(self.gui.current_trial).last_display = 0;
             self.update();
@@ -1733,7 +1945,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.update();
         end
         
-        function run_visualization(self)
+        function run_visualization(self, pc_viz)
             % run_visualization(self): computes ica visualizations.
             
             disp('run_visualization');
@@ -1743,8 +1955,75 @@ classdef ImagingComputationalMicroscope < hgsetget
                 return;
             end
             
-            colors = viz_function(self);
+            if nargin < 2 || isempty(pc_viz)
+                % Then want to pick which ever one is currently being shown
+                selected_tab = self.h.viewer_tab_panel.SelectedChild;
+                
+                if selected_tab == 2
+                    % Then looking at the PCs
+                    pc_viz = 1;
+                elseif selected_tab == 3
+                    % Then looking at the coherence
+                    pc_viz = 0;
+                else
+                    % Then we're looking at pixels, so don't do anything.
+                    return;
+                end
+            end
+            
+            %colors = viz_function(self);
+            
+            if pc_viz
+                colors = self.h.pc_ica_viewer.gui.colors;
+            else
+                colors = self.h.ica_coherence.get_colors();
+            end
+            
             self.set_viz_colors(colors);
+        end
+        
+        function run_postprocessing(self)
+            % Runs post-processing on the ICA data.
+            
+            if self.data(self.gui.current_trial).stage < self.IcaStage
+                disp('Run ICA first');
+                return;
+            end
+            
+            s = self.data(self.gui.current_trial).settings.post;
+            
+            post_ics = self.data(self.gui.current_trial).ica.ics;
+            
+            if s.poly_order
+                post_ics = poly_subtract(post_ics', s.poly_order)';
+            end
+            
+            if s.smooth_order
+                for i = 1:size(post_ics, 2)
+                    post_ics(:,i) = smooth(post_ics(:,i), s.smooth_order);
+                end
+            end
+            
+            self.data(self.gui.current_trial).ica.post_ics = post_ics;
+            
+            data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
+            
+            
+            self.h.ica_coherence.set_data(data_t, self.data(self.gui.current_trial).ica.post_ics');
+            
+            self.update();
+        end
+        
+        function clear_postprocessing(self)
+            
+        end
+        
+        function clear_visualization(self)
+            disp('clear_visualization');
+            
+            self.data(self.gui.current_trial).viz.im_data = [];
+            self.data(self.gui.current_trial).viz.component_color_map = [];
+            self.data(self.gui.current_trial).viz.component_colors = [];
         end
         
         function set_viz_colors(self, colors)
@@ -1888,7 +2167,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             
             self.h.pp_ok_button = uicontrol('Parent', self.h.pp_button_hbox, ...
-                'Style', 'pushbutton', 'String', 'OK', 'Callback', @self.pp_settings_ok_cb);
+                'Style', 'pushbutton', 'String', 'OK', 'Callback', @self.pp_settings_cb);
             self.h.pp_cancel_button = uicontrol('Parent', self.h.pp_button_hbox, ...
                 'Style', 'pushbutton', 'String', 'Cancel', 'Callback', @self.pp_settings_cancel_cb);
             
@@ -1933,6 +2212,11 @@ classdef ImagingComputationalMicroscope < hgsetget
                 disp('Some smooth window values bad/missing.');
                 self.data(self.gui.current_trial).settings.preprocessing.smooth_window(nan_vals) = sm_old(nan_vals);
             end
+            
+            % update the gui
+            set(self.h.pp_smooth_M, 'String', self.data(self.gui.current_trial).settings.preprocessing.smooth_window(1));
+            set(self.h.pp_smooth_N, 'String', self.data(self.gui.current_trial).settings.preprocessing.smooth_window(2));
+            set(self.h.pp_smooth_T, 'String', self.data(self.gui.current_trial).settings.preprocessing.smooth_window(3));
         end
         
         function set_pp_down_sample(self, dsM, dsN, dsT)
@@ -1968,6 +2252,10 @@ classdef ImagingComputationalMicroscope < hgsetget
                 disp('Some down sample values bad/missing.');
                 self.data(self.gui.current_trial).settings.preprocessing.down_sample(nan_vals) = ds_old(nan_vals);
             end
+            
+            set(self.h.pp_down_M, 'String', self.data(self.gui.current_trial).settings.preprocessing.down_sample(1));
+            set(self.h.pp_down_N, 'String', self.data(self.gui.current_trial).settings.preprocessing.down_sample(2));
+            set(self.h.pp_down_T, 'String', self.data(self.gui.current_trial).settings.preprocessing.down_sample(3));
         end
         
         function edit_pca_settings(self)
@@ -1979,11 +2267,6 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             self.h.ica_dialog = dialog('Name', 'Edit Preprocessing Settings', 'Units', 'pixels');
             
-        end
-        
-        function set.Parent(self, val)
-            disp('Setting RoiEditor Parent');
-            set(self.h.panel, 'Parent', double(val))
         end
         
         function component = get_current_component(self)
@@ -2049,7 +2332,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             im_x = [];
             im_y = [];
             
-            if self.gui.d(self.gui.current_trial).display == 4 && self.data(self.gui.current_trial).stage == self.IcaStage
+            if self.gui.d(self.gui.current_trial).display == 4 && self.data(self.gui.current_trial).stage >= self.IcaStage
                 % Then view the ICs
                 im_data = self.data(self.gui.current_trial).ica.im_data;
                 im_x = self.data(self.gui.current_trial).ica.im_x;
@@ -2121,6 +2404,9 @@ classdef ImagingComputationalMicroscope < hgsetget
             legend(self.h.component_axes, 'off');
             hold(self.h.component_axes, 'all');
             
+            data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
+
+            
             %             if isfield(self.h, 'component_labels')
             %                 delete(self.h.component_labels);
             %             end
@@ -2137,7 +2423,7 @@ classdef ImagingComputationalMicroscope < hgsetget
                     component = component * top_vals(i);
                 end
                 
-                plot(self.h.component_axes, component, 'Color', c);
+                plot(self.h.component_axes, data_t, component, 'Color', c);
                 text_x = 0.95 - (length(top_idxs) + size(residuals, 1) - i) * 0.05;
                 self.h.component_labels(i) = text(text_x, 0.9, num2str(top_idxs(i)), ...
                     'Parent', self.h.component_axes, 'Units', 'normalized', ...
@@ -2149,7 +2435,7 @@ classdef ImagingComputationalMicroscope < hgsetget
                 for i = 1:size(residuals, 1)
                     c = self.gui.locked_colors(mod(i+length(top_idxs)-1, length(self.gui.locked_colors))+1, :);
                     
-                    plot(self.h.component_axes, residuals(i,:), ':', 'Color', c);
+                    plot(self.h.component_axes, data_t, residuals(i,:), ':', 'Color', c);
                     text_x = 0.95 - (size(residuals, 1) - i) * 0.05;
                     self.h.component_labels(i) = text(text_x, 0.9, 'res', ...
                         'Parent', self.h.component_axes, 'Units', 'normalized', ...
@@ -2399,7 +2685,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             if nargin < 2 || isempty(filename)
                 % Then ask the user for a file with the prompt
-                [file_name, path_name] = uigetfile({'*.mat;*.tif;', 'Image Files'}, 'Load Data File');
+                [file_name, path_name] = uigetfile({'*.mat;*.tif;*.tiff', 'Image Files'}, 'Load Data File');
                 %[file_name, path_name] = uigetfile();
                 
                 if file_name == 0
@@ -2412,8 +2698,11 @@ classdef ImagingComputationalMicroscope < hgsetget
             set(self.h.stage_status, 'String', 'Loading Data...');
             drawnow;
             
-            ext = filename((end-2):end);
-            if strcmp(ext, 'tif')
+            ext_idx = strfind(filename, '.');
+            
+            ext = filename((ext_idx(end)+1):end);
+            
+            if strcmp(ext, 'tif') || strcmp(ext, 'tiff')
                 % Ok we should be able to just load a file using tifread
                 data = tifread(filename);
                 self.add_trial(data);
@@ -2451,7 +2740,7 @@ classdef ImagingComputationalMicroscope < hgsetget
                 end
             else
                 % Then something is weird...
-                disp('Invalid File.');
+                disp('ICM: Invalid File.');
             end
             
             % @todo: set the trial name to be the filename here.
@@ -2473,6 +2762,19 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             % @todo: checks on inputs
             self.init_data(im, trial_idx);
+            
+            self.update();
+        end
+        
+        function set_frame_times(self, frame_times, trial_idx)
+           
+            if nargin < 3 || isempty(trial_idx)
+                trial_idx = self.gui.current_trial;
+            end
+            
+            % @todo: checks on frame_times
+            
+            self.data(trial_idx).im_z = frame_times;
             
             self.update();
         end
@@ -2523,11 +2825,12 @@ classdef ImagingComputationalMicroscope < hgsetget
                 all_warp(:,:,t) = warp(:,:,2);
                 
                 for j = 1:size(self.data(t).im_data, 3)
-                    im_data_all(:,:,c) = spatial_interp(self.data(t).im_data(:,:,j), ...
+                    im_data_all(:,:,c) = spatial_interp(double(self.data(t).im_data(:,:,j)), ...
                         all_warp(:,:,t), 'linear', 'affine', ...
                         im_x, im_y);
                     frame_ids(c) = t;
                     im_z(c) = j;
+                    %im_z(c) = self.data(t).im_z(j);
                     c = c + 1;
                 end
                 
@@ -2558,6 +2861,26 @@ classdef ImagingComputationalMicroscope < hgsetget
             disp('set_selected_trial');
             self.gui.current_trial = idx;
             self.gui.d(self.gui.current_trial).last_display = 0;
+            
+            % reset the viewer data
+            
+            % reset the HighDViewers if necessary
+            if self.data(self.gui.current_trial).stage >= self.PcaStage
+                self.h.pc_pixel_viewer.set_scores(self.data(self.gui.current_trial).pca.scores);
+            else
+                self.h.pc_pixel_viewer.set_scores([]);
+            end
+            
+            
+            if self.data(self.gui.current_trial).stage >= self.IcaStage
+                % Then can use the viewer and coherence
+                self.h.pc_ica_viewer.set_scores(self.data(self.gui.current_trial).ica.A');
+                self.h.ica_coherence.set_data(1:size(self.data(self.gui.current_trial).ica.ics, 1), self.data(self.gui.current_trial).ica.ics');
+            else
+                self.h.pc_ica_viewer.set_scores([]);
+                self.h.ica_coherence.set_data([]);
+            end
+            
             self.update();
         end
         
@@ -2727,6 +3050,49 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.update();
         end
         
+        function set_post_poly_order(self, poly_order, trial_idx)
+            % self.set_post_poly_order(poly_order, [trial_idx]): sets the
+            % order of polynomial used to fit the data. Use 0 for no fit.
+            
+            if nargin < 3 || isempty(trial_idx)
+                trial_idx = self.gui.current_trial;
+            end
+            
+            % @todo: checks on input
+            
+            % poly order must be an integer
+            poly_order = round(poly_order);
+            
+            self.data(trial_idx).settings.post.poly_order = poly_order;
+        end
+        
+        function set_post_smooth_order(self, smooth_order, trial_idx)
+            % self.set_post_smooth_order(smooth_order, [trial_idx]): sets
+            % the number of samples to use for smoothing. Use 0 for no
+            % smoothing.
+            
+            if nargin < 3 || isempty(trial_idx)
+                trial_idx = self.gui.current_trial;
+            end
+            
+            % @todo: checks on input
+            
+            % smooth order must be an integer
+            smooth_order = round(smooth_order);
+            
+            self.data(trial_idx).settings.post.smooth_order = smooth_order;
+        end            
+        
+        %%%%%%%%%% hgsetget Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                
+        function set.Parent(self, val)
+            set(self.h.panel, 'Parent', double(val))
+        end
+        
+        function val = get.Parent(self)
+            val = get(self.h.panel, 'Parent');
+        end
+        
         %%%%%%%%%% Utility Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function default_settings(self)
             % default_settings(self): sets the settings to the default.
@@ -2738,6 +3104,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.data(self.gui.current_trial).settings.preprocessing.smooth_window = [6, 6, 1];
             %self.data(self.gui.current_trial).settings.preprocessing.step_size = 2;
             self.data(self.gui.current_trial).settings.preprocessing.down_sample = [1, 1, 1];
+            
             self.data(self.gui.current_trial).settings.preprocessing.remove_frames = [];
             
             self.data(self.gui.current_trial).settings.preprocessing.motion_correct_func = @align_im_stack;
@@ -2753,6 +3120,9 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.data(self.gui.current_trial).settings.ica.init_guess = -1;
             self.data(self.gui.current_trial).settings.ica.ica_func = 'fastica';
             self.data(self.gui.current_trial).settings.ica.mu = 0.2; % This is a parameter for Cellsort ICA
+            
+            self.data(self.gui.current_trial).settings.post.poly_order = 0;
+            self.data(self.gui.current_trial).settings.post.smooth_order = 0;
             
             self.data(self.gui.current_trial).settings.segment.calc_rois_func = @calc_rois_from_components;
             self.data(self.gui.current_trial).settings.segment.segment_ics_func = @segment_ics;
@@ -2845,6 +3215,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.gui.d(trial_idx).use_wavelets = false;
             self.gui.d(trial_idx).current_roi_set = 1;
             
+            self.gui.d(trial_idx).ic_show_viz = true;
+            
             % 3d-axis state variables
             self.gui.d(trial_idx).x_pc = 1; % The PC scores to plot on the x-axis
             self.gui.d(trial_idx).y_pc = 2; % The PC scores to plot on the y-axis
@@ -2871,59 +3243,59 @@ classdef ImagingComputationalMicroscope < hgsetget
             % 3-space.
             disp('plot_3d');
             
-            if self.gui.d(self.gui.current_trial).display == 4 && self.data(self.gui.current_trial).stage == self.IcaStage
-                % Then view the ICs
-                sc = reshape(self.data(self.gui.current_trial).ica.im_data, [], size(self.data(self.gui.current_trial).ica.im_data, 3));
-                self.build_3d_gui_components(self.IcaStage)
-            elseif self.gui.d(self.gui.current_trial).display == 3 && self.data(self.gui.current_trial).stage >= self.PcaStage
-                % Then view the PCs
-                sc = self.data(self.gui.current_trial).pca.scores;
-                self.build_3d_gui_components(self.PcaStage);
-                
-            elseif self.data(self.gui.current_trial).stage == self.PcaStage
-                % Then view the PCs
-                sc = self.data(self.gui.current_trial).pca.scores;
-                self.build_3d_gui_components(self.PcaStage);
-            elseif self.data(self.gui.current_trial).stage == self.IcaStage
-                % Then view the ICs
-                sc = reshape(self.data(self.gui.current_trial).ica.im_data, [], size(self.data(self.gui.current_trial).ica.im_data, 3));
-                self.build_3d_gui_components(self.IcaStage);
-            else
-                cla(self.h.pc3_axes);
-                self.build_3d_gui_components(self.data(self.gui.current_trial).stage);
-                return;
-            end
-            
-            if isempty(sc)
-                % Then there's nothing to plot
-                return;
-            end
-            
-            % Make sure everything is in range
-            if self.gui.d(self.gui.current_trial).x_pc < 1 || self.gui.d(self.gui.current_trial).x_pc > size(sc, 2)
-                % Just set to 1 for now.
-                self.gui.d(self.gui.current_trial).x_pc = 1;
-            end
-            if self.gui.d(self.gui.current_trial).y_pc < 1 || self.gui.d(self.gui.current_trial).y_pc > size(sc, 2)
-                self.gui.d(self.gui.current_trial).y_pc = 1;
-            end
-            if self.gui.d(self.gui.current_trial).z_pc < 1 || self.gui.d(self.gui.current_trial).z_pc > size(sc, 2)
-                self.gui.d(self.gui.current_trial).z_pc = 1;
-            end
-            
-            xv = sc(:, self.gui.d(self.gui.current_trial).x_pc);
-            yv = sc(:, self.gui.d(self.gui.current_trial).y_pc);
-            zv = sc(:, self.gui.d(self.gui.current_trial).z_pc);
-            
-            [az, el] = view(self.h.pc3_axes);
-            plot3(self.h.pc3_axes, xv, yv, zv, '.k');
-            axis(self.h.pc3_axes, 'vis3d');
-            view(self.h.pc3_axes, az, el);
-            
-            popup_str = get(self.h.x_popup, 'String');
-            xlabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).x_pc});
-            ylabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).y_pc});
-            zlabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).z_pc});
+%             if self.gui.d(self.gui.current_trial).display == 4 && self.data(self.gui.current_trial).stage == self.IcaStage
+%                 % Then view the ICs
+%                 sc = reshape(self.data(self.gui.current_trial).ica.im_data, [], size(self.data(self.gui.current_trial).ica.im_data, 3));
+%                 self.build_3d_gui_components(self.IcaStage)
+%             elseif self.gui.d(self.gui.current_trial).display == 3 && self.data(self.gui.current_trial).stage >= self.PcaStage
+%                 % Then view the PCs
+%                 sc = self.data(self.gui.current_trial).pca.scores;
+%                 self.build_3d_gui_components(self.PcaStage);
+%                 
+%             elseif self.data(self.gui.current_trial).stage == self.PcaStage
+%                 % Then view the PCs
+%                 sc = self.data(self.gui.current_trial).pca.scores;
+%                 self.build_3d_gui_components(self.PcaStage);
+%             elseif self.data(self.gui.current_trial).stage == self.IcaStage
+%                 % Then view the ICs
+%                 sc = reshape(self.data(self.gui.current_trial).ica.im_data, [], size(self.data(self.gui.current_trial).ica.im_data, 3));
+%                 self.build_3d_gui_components(self.IcaStage);
+%             else
+%                 cla(self.h.pc3_axes);
+%                 self.build_3d_gui_components(self.data(self.gui.current_trial).stage);
+%                 return;
+%             end
+%             
+%             if isempty(sc)
+%                 % Then there's nothing to plot
+%                 return;
+%             end
+%             
+%             % Make sure everything is in range
+%             if self.gui.d(self.gui.current_trial).x_pc < 1 || self.gui.d(self.gui.current_trial).x_pc > size(sc, 2)
+%                 % Just set to 1 for now.
+%                 self.gui.d(self.gui.current_trial).x_pc = 1;
+%             end
+%             if self.gui.d(self.gui.current_trial).y_pc < 1 || self.gui.d(self.gui.current_trial).y_pc > size(sc, 2)
+%                 self.gui.d(self.gui.current_trial).y_pc = 1;
+%             end
+%             if self.gui.d(self.gui.current_trial).z_pc < 1 || self.gui.d(self.gui.current_trial).z_pc > size(sc, 2)
+%                 self.gui.d(self.gui.current_trial).z_pc = 1;
+%             end
+%             
+%             xv = sc(:, self.gui.d(self.gui.current_trial).x_pc);
+%             yv = sc(:, self.gui.d(self.gui.current_trial).y_pc);
+%             zv = sc(:, self.gui.d(self.gui.current_trial).z_pc);
+%             
+%             [az, el] = view(self.h.pc3_axes);
+%             plot3(self.h.pc3_axes, xv, yv, zv, '.k');
+%             axis(self.h.pc3_axes, 'vis3d');
+%             view(self.h.pc3_axes, az, el);
+%             
+%             popup_str = get(self.h.x_popup, 'String');
+%             xlabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).x_pc});
+%             ylabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).y_pc});
+%             zlabel(self.h.pc3_axes, popup_str{self.gui.d(self.gui.current_trial).z_pc});
         end
         
         function build_3d_gui_components(self, stage)

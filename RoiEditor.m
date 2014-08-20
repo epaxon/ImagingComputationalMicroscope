@@ -62,7 +62,7 @@ classdef RoiEditor < hgsetget
             if nargin < 1
                 parent = [];
             end
-            if nargin < 2
+            if nargin < 2 || isempty(im_data)
                 im_data = rand(128, 128, 10);
             end
             
@@ -158,16 +158,6 @@ classdef RoiEditor < hgsetget
             set(self.h.frame_slider, 'Value', 1);
             self.update_frame_slider();
             
-            self.h.level_scroll = VDoubleScroll();
-            self.h.level_scroll2 = VDoubleScroll();
-            self.h.level_scroll3 = VDoubleScroll();
-            set(self.h.level_scroll, 'Color', 'r');
-            set(self.h.level_scroll2, 'Color', 'g');
-            set(self.h.level_scroll3, 'Color', 'b');
-            addlistener(self.h.level_scroll, 'SelectionChanged', @self.level_scroll_cb);
-            addlistener(self.h.level_scroll2, 'SelectionChanged', @self.level_scroll_cb);
-            addlistener(self.h.level_scroll3, 'SelectionChanged', @self.level_scroll_cb);
-            
             % Play/pause button
             self.h.play_toggle = uicontrol('Style', 'togglebutton', 'Callback', @self.play_toggle_cb, ...
                 'CData', self.gui.play_button_im, 'BackgroundColor', 'w');
@@ -211,18 +201,13 @@ classdef RoiEditor < hgsetget
             self.h.main_vbox = uiextras.VBoxFlex();
             
             self.h.control_hbox = uiextras.HBox();
-            self.h.axes_level_hbox = uiextras.HBoxFlex();
             
             % Top-level hierarchy
             set(self.h.main_vbox, 'Parent', self.h.panel);
-            set(self.h.axes_level_hbox, 'Parent', self.h.main_vbox);
+            set(self.h.im_axes, 'Parent', self.h.main_vbox.double());
             set(self.h.control_hbox, 'Parent', self.h.main_vbox);
             
             % axes level
-            set(self.h.im_axes, 'Parent', self.h.axes_level_hbox.double());
-            set(self.h.level_scroll, 'Parent', self.h.axes_level_hbox.double());
-            set(self.h.level_scroll2, 'Parent', self.h.axes_level_hbox.double());
-            set(self.h.level_scroll3, 'Parent', self.h.axes_level_hbox.double());
             
             % Control
             set(self.h.play_toggle, 'Parent', self.h.control_hbox.double());
@@ -231,7 +216,6 @@ classdef RoiEditor < hgsetget
             set(self.h.move_mode_push, 'Parent', self.h.control_hbox.double());
             
             set(self.h.control_hbox, 'Sizes', [self.gui.BUTTON_W, -1, self.gui.BUTTON_W, self.gui.BUTTON_W]);
-            set(self.h.axes_level_hbox, 'Sizes', [-1, self.gui.SCROLL_W, self.gui.SCROLL_W, self.gui.SCROLL_W]);
             set(self.h.main_vbox, 'Sizes', [-1, self.gui.BUTTON_H]);
         end
         
@@ -288,6 +272,7 @@ classdef RoiEditor < hgsetget
                     self.enable_roi_editing();
                 end
             end
+
         end
         
         function image_button_down_cb(self, source_h, eventdata)
@@ -332,8 +317,8 @@ classdef RoiEditor < hgsetget
         
         function level_scroll_cb(self, source_h, eventdata)
             %disp('level_scroll_cb');
-            self.update();
-            notify(self, 'LevelsChanged');
+            %self.update();
+            %notify(self, 'LevelsChanged');
         end
         
         function frame_edit_cb(self, source_h, eventdata)
@@ -1012,49 +997,7 @@ classdef RoiEditor < hgsetget
             end
             
             %self.current_frame = 1;
-            
-            if ndims(self.im_data) == 3
-                % then set all the level scrolls to the fulll range
-                self.h.level_scroll.Min = double(min(self.im_data(:)));
-                self.h.level_scroll.Max = double(max(self.im_data(:)));
-               
-                self.h.level_scroll2.Min = double(min(self.im_data(:)));
-                self.h.level_scroll2.Max = double(max(self.im_data(:)));
-                
-                self.h.level_scroll3.Min = double(min(self.im_data(:)));
-                self.h.level_scroll3.Max = double(max(self.im_data(:)));
-                
-            else
-                % Ok if everything is between 0 and 1, then treat this like
-                % a true RGB image.
-                if min(self.im_data(:)) >= 0 && max(self.im_data(:)) <= 1
-                    self.h.level_scroll.Min = 0;
-                    self.h.level_scroll.Max = 1;
-                    self.h.level_scroll2.Min = 0;
-                    self.h.level_scroll2.Max = 1;
-                    self.h.level_scroll3.Min = 0;
-                    self.h.level_scroll3.Max = 1;
-                else
-                    % Then set them each to their channels
-                    self.h.level_scroll.Min = double(min(reshape(self.im_data(:,:,1,:), 1, [])));
-                    self.h.level_scroll.Max = double(max(reshape(self.im_data(:,:,1,:), 1, [])));
-                    self.h.level_scroll2.Min = double(min(reshape(self.im_data(:,:,2,:), 1, [])));
-                    self.h.level_scroll2.Max = double(max(reshape(self.im_data(:,:,2,:), 1, [])));
-                    self.h.level_scroll3.Min = double(min(reshape(self.im_data(:,:,3,:), 1, [])));
-                    self.h.level_scroll3.Max = double(max(reshape(self.im_data(:,:,3,:), 1, [])));
-                    % @todo: alternatively, could set to min/max of all
-                    % channels.
-                end
-            end
-            
-            self.h.level_scroll.MinStep = 0.01 * (self.h.level_scroll.Max - self.h.level_scroll.Min);
-            self.h.level_scroll.set_max_range();
-            self.h.level_scroll2.MinStep = 0.01 * (self.h.level_scroll2.Max - self.h.level_scroll2.Min);
-            self.h.level_scroll2.set_max_range();
-            self.h.level_scroll3.MinStep = 0.01 * (self.h.level_scroll3.Max - self.h.level_scroll3.Min);
-            self.h.level_scroll3.set_max_range();
-            
-            
+
             if self.current_frame > self.get_num_frames()
                 self.current_frame = self.get_num_frames();
             end
@@ -1084,75 +1027,7 @@ classdef RoiEditor < hgsetget
             % @param: range 2x1 or 2x3 matrix of full level range. Default
             % is min/max of im data.
             
-            if nargin < 4 || isempty(trigEvent)
-                % Trigger Event by default
-                trigEvent = true;
-            end
             
-            if nargin < 3 || isempty(range)
-                if ndims(self.im_data) == 3
-                    range(1, 1) = double(min(self.im_data(:)));
-                    range(2, 1) = double(max(self.im_data(:)));
-                else
-                    % Ok if everything is between 0 and 1, then treat this like
-                    % a true RGB image.
-                    if min(self.im_data(:)) >= 0 && max(self.im_data(:)) <= 1
-                        range(1, 1) = 0;
-                        range(2, 1) = 1;
-                        range(1, 2) = 0;
-                        range(2, 2) = 1;
-                        range(1, 3) = 0;
-                        range(2, 3) = 1;
-                    else
-                        % Then set them each to their channels
-                        range(1, 1) = double(min(reshape(self.im_data(:,:,1,:), 1, [])));
-                        range(2, 1) = double(max(reshape(self.im_data(:,:,1,:), 1, [])));
-                        range(1, 2) = double(min(reshape(self.im_data(:,:,2,:), 1, [])));
-                        range(2, 2) = double(max(reshape(self.im_data(:,:,2,:), 1, [])));
-                        range(1, 3) = double(min(reshape(self.im_data(:,:,3,:), 1, [])));
-                        range(2, 3) = double(max(reshape(self.im_data(:,:,3,:), 1, [])));
-                        % @todo: alternatively, could set to min/max of all
-                        % channels.
-                    end
-                end
-            end
-            
-            if numel(range) == 2
-                % Then we will set all 3 ranges to the same
-                range = repmat(range(:), 1, 3);
-            end
-            
-            % This should always be true by this point
-            assert(isequal(size(range), [2, 3]));
-            
-            % @todo: check to make sure that the im data has nothing beyond
-            % the range
-            
-            self.h.level_scroll.Min = range(1, 1);
-            self.h.level_scroll.Max = range(2, 1);
-            
-            self.h.level_scroll2.Min = range(1, 2);
-            self.h.level_scroll2.Max = range(2, 2);
-            
-            self.h.level_scroll3.Min = range(1, 3);
-            self.h.level_scroll3.Max = range(2, 3);
-            
-            if numel(levels) == 2
-                % Then again just set all the levels to the same
-                levels = repmat(levels(:), 1, 3);
-            end
-            
-            % THis should also be true now
-            assert(isequal(size(levels), [2, 3]));
-            
-            % These will all call update...
-            self.h.level_scroll.Value = levels(:, 1);
-            self.h.level_scroll2.Value = levels(:, 2);
-            self.h.level_scroll3.Value = levels(:, 3);
-            
-            if trigEvent
-                notify(self, 'LevelsChanged');
-            end
         end
         
         function levels = get_levels(self)
@@ -1160,9 +1035,6 @@ classdef RoiEditor < hgsetget
             
             levels = zeros(2,3);
             
-            levels(:, 1) = self.h.level_scroll.Value;
-            levels(:, 2) = self.h.level_scroll2.Value;
-            levels(:, 3) = self.h.level_scroll3.Value;
         end
         
         function play_settings(self, play_rate, frame_step)
@@ -1227,6 +1099,11 @@ classdef RoiEditor < hgsetget
             %
             % @param: frame_num the desired frame number.
             % @return: nframe MxN or MxNx3 image.
+            % get_nframe: returns the globally normalized version of
+            % desired frame.
+            %
+            % @param: frame_num the desired frame number.
+            % @return: nframe MxN or MxNx3 image.
             
             if frame_num > self.get_num_frames()
                 % Then we are out of range.
@@ -1235,26 +1112,16 @@ classdef RoiEditor < hgsetget
             end
             
              if ndims(self.im_data) <= 3
-                % Then we have MxNxt or MxNx1 (if its only 2 dimensional) 
+                % Then we have MxNxt or MxNx1 (if its only 2 dimensional)                
                 frame = double(self.im_data(:,:, frame_num));
-                
-                % Ok so now lets get the level_scroll and rescale the frame
-                levels = self.h.level_scroll.Value;
-                frame(frame < levels(1)) = levels(1);
-                frame(frame > levels(2)) = levels(2);
-
-                nframe = (frame - levels(1))./(levels(2) - levels(1)) ; % now stretch to full range
+                min_v = double(min(self.im_data(:)));
+                max_v = double(max(self.im_data(:)));
+                nframe = (frame - min_v) ./ (max_v - min_v);
             else
                 % Then we have MxNx3xt
                 frame = self.im_data(:,:,:, frame_num);
-                
-                rlevels = self.h.level_scroll.Value;
-                glevels = self.h.level_scroll2.Value;
-                blevels = self.h.level_scroll3.Value;
-                
-                nframe(:,:,1) = (max(min(frame(:,:,1), rlevels(2)), rlevels(1)) - rlevels(1)) ./ (rlevels(2) - rlevels(1));
-                nframe(:,:,2) = (max(min(frame(:,:,2), glevels(2)), glevels(1)) - glevels(1)) ./ (glevels(2) - glevels(1));
-                nframe(:,:,3) = (max(min(frame(:,:,3), blevels(2)), blevels(1)) - blevels(1)) ./ (blevels(2) - blevels(1));
+                % @todo: implement this.
+                nframe = frame; % Do nothing for now.
             end
         end        
         

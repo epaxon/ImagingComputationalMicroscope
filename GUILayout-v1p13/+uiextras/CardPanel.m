@@ -118,7 +118,7 @@ classdef CardPanel < uiextras.Container
         function showSelectedChild( obj, contentPos )
             % Generic function for showing just one child
             
-            page_offset = 2500; % The amount by which widgets are moved when making invisible
+            page_offset = 25000; % The amount by which widgets are moved when making invisible
             C = obj.Children;
             nC = numel(C);
             if ~isempty( obj.SelectedChild )
@@ -129,17 +129,21 @@ classdef CardPanel < uiextras.Container
                 otherPages( otherPages==obj.SelectedChild ) = [];
                 for page=otherPages
                     oldunits = get( C(page), 'Units' );
-                    set( C(page), 'Units', 'pixels' );
+                    %%% epaxon: added visible off to this set command
+                    set( C(page), 'Units', 'pixels', 'Visible', 'off' );
                     p = get(C(page), 'Position');
+
                     if p(1)<page_offset || p(2)<page_offset
                         newPosition = p + [page_offset page_offset 0 0];
-                        obj.repositionChild( C(page), newPosition )
+                        obj.repositionChild( C(page), newPosition );
                     end
                     set( C(page), 'Units', oldunits );
                 end
                 
                 % And put the selected one on view
                 obj.repositionChild( C(obj.SelectedChild), contentPos );
+                %%% epaxon: added visible on to this set command.
+                set(C(obj.SelectedChild), 'Visible', 'on');
                 % Hack: to fix problems with axes, give them a wiggle
                 iWiggleAxes(C(obj.SelectedChild));
             end

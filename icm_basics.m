@@ -38,6 +38,7 @@ icm = ImagingComputationalMicroscope();
 % Programatically:
 icm.load_data('sample_data.mat');
 
+%%
 % Alternatively data can be entered from a matlab variable:
 load('sample_data.mat'); % produces data
 icm.set_data(data);
@@ -63,18 +64,15 @@ disp(icm.data(1).settings.pca);
 disp('ICA Settings:');
 disp(icm.data(1).settings.ica);
 
-% An important setting for ica is [which_pcs] this tells ICA which
-% principal components to look at, and determines the number of ICs the
-% algorithm returns. Here we will use the first 100 PCs, to look at the
-% data. 
-icm.data(1).settings.ica.which_pcs = 1:100;
-
 %% Motion Correction
 % A simple image-registration based motion correction algorithm is part of
 % the ICM. The motion correction function can be changed to an outside
 % function and you can get the GUI to call it by changing the settings:
 
-icm.data(1).settings.preprocessing.motion_correction_func = @align_im_stack
+icm.data(1).settings.preprocessing.motion_correction_func = @align_im_stack;
+% This has already been done for the sample data provided, so no need.
+%icm.run_motion_correction(); 
+
 % Note: you'll have to make sure the function arguments are the same as
 % [align_im_stack] in order for the GUI to call the function correctly.
 
@@ -111,7 +109,12 @@ disp(icm.data(1).pca);
 % statistics of the PCA decomposition. This will pull out signals coming
 % from a single cell. 
 
+% An important setting for ica is [which_pcs] this tells ICA which
+% principal components to look at, and determines the number of ICs the
+% algorithm returns. Here we will use the first 50 PCs, to look at the
+% data. 
 icm.data(1).settings.ica.which_pcs = 1:50;
+
 icm.run_ica();
 
 % Note that ICA looks for a fixed number of components based on the number
@@ -152,3 +155,4 @@ icm.data(1).settings.segment.down_size = 2;
 icm.data(1).settings.segment.thresh = 3.2;
 
 icm.run_segmentation();
+
