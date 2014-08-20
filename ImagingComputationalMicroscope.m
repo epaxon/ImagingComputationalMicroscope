@@ -1078,7 +1078,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             val = get(source_h, 'Value');
             
-            self.set_poly_order(val);
+            self.set_post_poly_order(val);
+            self.update();
         end
         
         function post_poly_edit_cb(self, source_h, eventdata)
@@ -1087,7 +1088,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             str = get(source_h, 'String');
             val = round(str2num(str));
             
-            self.set_poly_order(val);
+            self.set_post_poly_order(val);
+            self.update();
         end
         
         function post_smooth_slider_cb(self, source_h, eventdata)
@@ -1095,7 +1097,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             val = get(source_h, 'Value');
             
-            self.set_smooth_order(val);
+            self.set_post_smooth_order(val);
+            self.update()
         end
         
         function post_smooth_edit_cb(self, source_h, eventdata)
@@ -1104,7 +1107,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             str = get(source_h, 'String');
             val = round(str2num(str));
             
-            self.set_smooth_order(val);
+            self.set_post_smooth_order(val);
+            self.update();
         end
         
         function pp_remove_edit_cb(self, source_h, eventdata)
@@ -1171,6 +1175,20 @@ classdef ImagingComputationalMicroscope < hgsetget
                 plot(self.h.data_axes, data_t, data);
             end
             
+            if self.data(self.gui.current_trial).stage >= self.IcaStage
+                    
+                if isfield(self.data(self.gui.current_trial).ica, 'post_ics') ...
+                        && ~isempty(self.data(self.gui.current_trial).ica.post_ics)
+                    % Then we have post processed ics
+                    ics = self.data(self.gui.current_trial).ica.post_ics;
+                else
+                    ics = self.data(self.gui.current_trial).ica.ics;
+                end
+            else
+                ics = [];
+            end
+                
+            
             if self.gui.d(self.gui.current_trial).display == 5 && self.data(self.gui.current_trial).stage >= self.PostProcessingStage ...
                     && isfield(self.data(self.gui.current_trial).segment, 'im_data') && ~isempty(self.data(self.gui.current_trial).segment.im_data)
                 
@@ -1201,7 +1219,7 @@ classdef ImagingComputationalMicroscope < hgsetget
                 legend(self.h.component_axes, 'off');
                 
                 data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
-                plot(self.h.component_axes, data_t, self.data(self.gui.current_trial).ica.ics(:, f), 'k');
+                plot(self.h.component_axes, data_t, ics(:, f), 'k');
                 ica_idx = f;
                 
                 text_x = 0.90;
@@ -1247,7 +1265,7 @@ classdef ImagingComputationalMicroscope < hgsetget
                 
                 data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
 
-                plot(self.h.component_axes, data_t, self.data(self.gui.current_trial).ica.ics(:, f), 'k');
+                plot(self.h.component_axes, data_t, ics(:, f), 'k');
                 
             elseif self.gui.d(self.gui.current_trial).display == 3 && self.data(self.gui.current_trial).stage >= self.PcaStage
                 % Then view the PCs
@@ -1328,7 +1346,7 @@ classdef ImagingComputationalMicroscope < hgsetget
                 for i = 1:length(self.h.roi_editor.selected_rois)
                     c = self.gui.locked_colors(mod(i-1, length(self.gui.locked_colors))+1, :);
                     ica_idx = self.data(self.gui.current_trial).segment.segment_info.ic_ids(self.h.roi_editor.selected_rois(i));
-                    plot(self.h.component_axes, data_t, self.data(self.gui.current_trial).ica.ics(:, ica_idx), 'Color', c);
+                    plot(self.h.component_axes, data_t, ics(:, ica_idx), 'Color', c);
                     
                     text_x = 0.95 - (length(self.h.roi_editor.selected_rois) - i) * 0.05;
                     self.h.component_labels(i) = text(text_x, 0.9, num2str(ica_idx), ...
@@ -1972,6 +1990,28 @@ classdef ImagingComputationalMicroscope < hgsetget
                 return;
             end
             
+            s = self.data(self.gui.current_trial).settings.post;
+            
+            post_ics = self.data(self.gui.current_trial).ica.ics;
+            
+            if s.poly_order
+                post_ics = poly_subtract(post_ics', s.poly_order)';
+            end
+            
+            if s.smooth_order
+                for i = 1:size(post_ics, 2)
+                    post_ics(:,i) = smooth(post_ics(:,i), s.smooth_order);
+                end
+            end
+            
+            self.data(self.gui.current_trial).ica.post_ics = post_ics;
+            
+            data_t = self.data(self.gui.current_trial).im_z(self.data(self.gui.current_trial).pp.im_z);
+            
+            
+            self.h.ica_coherence.set_data(data_t, self.data(self.gui.current_trial).ica.post_ics');
+            
+            self.update();
         end
         
         function clear_postprocessing(self)
@@ -2785,12 +2825,12 @@ classdef ImagingComputationalMicroscope < hgsetget
                 all_warp(:,:,t) = warp(:,:,2);
                 
                 for j = 1:size(self.data(t).im_data, 3)
-                    im_data_all(:,:,c) = spatial_interp(self.data(t).im_data(:,:,j), ...
+                    im_data_all(:,:,c) = spatial_interp(double(self.data(t).im_data(:,:,j)), ...
                         all_warp(:,:,t), 'linear', 'affine', ...
                         im_x, im_y);
                     frame_ids(c) = t;
-                    %im_z(c) = j;
-                    im_z(c) = self.data(t).im_z(j);
+                    im_z(c) = j;
+                    %im_z(c) = self.data(t).im_z(j);
                     c = c + 1;
                 end
                 
