@@ -26,9 +26,9 @@ if nargin < 5 || isempty(alias)
 end
 
 %% Other parameters
-offset = 10;
-%xlimits
-label_x_offsets = 30;
+offset = 5;
+x_limits = [0 10];
+label_x_offsets = 0;
 
 %%
 
@@ -227,40 +227,33 @@ if ismember(base, rois)
         'Color', cols(base,:), 'FontWeight', 'bold', 'FontSize', 18);
     
     % Ok want to take base out of rois so don't redraw
-    rois2 = rois;
     idx = find(rois==base);
-    rois2(idx) = [];
     sidx2 = sidx;
-    sidx2(idx) = [];
-    alias2 = alias;
-    if length(alias2) > idx
-        alias2(idx) = [];
-    end
+    sidx2(sidx==idx) = [];
+
 else
     if ~isempty(base)
         plot(data_t, traces(:, base), 'LineWidth', 2, 'Color', 'k');
     end
-    rois2 = rois;
     sidx2 = sidx;
-    alias2 = alias;
 end
 
-for i = 1:length(rois2)
-    plot(data_t, traces(:, rois2(sidx2(i))) - i * offset, 'LineWidth', 2, 'Color', cols(rois2(sidx2(i)), :));
+for i = 1:length(sidx2)
+    plot(data_t, traces(:, rois(sidx2(i))) - i * offset, 'LineWidth', 2, 'Color', cols(rois(sidx2(i)), :));
     
-    if length(alias2) >= i
-        name = alias2{sidx2(i)};
+    if length(alias) >= sidx2(i)
+        name = alias{sidx2(i)};
     else
-        name = num2str(rois2(sidx2(i)));
+        name = num2str(rois(sidx2(i)));
     end
     
     text(data_t(end) + 0.05 * data_t(end), -i * offset + 0.5, name,...
-        'Color', cols(rois2(sidx2(i)),:), 'FontWeight', 'bold', 'FontSize', 18);
+        'Color', cols(rois(sidx2(i)),:), 'FontWeight', 'bold', 'FontSize', 18);
 end
 
 xlabel('Time (s)');
-%xlim(ax_traces, [0 10]);
-xlim(ax_traces, [0 1600]);
+xlim(ax_traces, x_limits);
+%xlim(ax_traces, [0 1600]);
 
 
 %%
@@ -274,7 +267,8 @@ viz_y = icm.data(trial_idx).viz.im_y;
 imagesc(viz_x, viz_y, viz_im);
 
 axis(ax_im, 'equal');
-axis(ax_im, 'xy');
+%axis(ax_im, 'xy');
+axis(ax_im, 'ij');
 set(ax_im, 'XColor', 'w', 'YColor', 'w', 'Box', 'off', 'XTick', [], 'YTick', []);
 
 seg_ic_ids = icm.data(trial_idx).segment.segment_info.ic_ids;

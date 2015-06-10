@@ -117,6 +117,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.gui.locked_components.handle_ids = [];
             self.gui.locked_colors = lines(7);
             
+            self.gui.concat_mode = false;
+            
             self.default_settings();
         end
         
@@ -1457,7 +1459,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             s = self.data(self.gui.current_trial).settings.preprocessing;
             
-            if isfield(self.data(1), 'concat') % @todo: and some other flag
+            if isfield(self.data(1), 'concat') && self.gui.concat_mode % @todo: and some other flag
                 disp('concat pp');
                 % Then we're running the concatenated ICA
                 im_data = self.data(1).concat.im_data;
@@ -1563,7 +1565,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             end
             
             % Ok, so if we are doing the concat then restructure the data
-            if isfield(self.data(1), 'concat') % @todo: some other flag
+            if isfield(self.data(1), 'concat') && self.gui.concat_mode % @todo: some other flag
                 % Right, so put the all data together in the concat struct,
                 % and then split the data back to the trials.
                 
@@ -1623,7 +1625,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             s = self.data(self.gui.current_trial).settings.pca;
             
-            if isfield(self.data(1), 'concat') && isfield(self.data(1).concat, 'pp_im_data') % @todo: another flag?
+            if isfield(self.data(1), 'concat') && isfield(self.data(1).concat, 'pp_im_data') ...
+                    && self.gui.concat_mode % @todo: another flag?
                 disp('concat pca');
                 
                 d = reshape(self.data(1).concat.pp_im_data, [], size(self.data(1).concat.pp_im_data, 3))';
@@ -1839,7 +1842,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.data(self.gui.current_trial).ica.im_x = self.data(self.gui.current_trial).pca.im_x;
             self.data(self.gui.current_trial).ica.im_y = self.data(self.gui.current_trial).pca.im_y;
             
-            if isfield(self.data(1), 'concat') && isfield(self.data(1).concat, 'pca_pcs')
+            if isfield(self.data(1), 'concat') && isfield(self.data(1).concat, 'pca_pcs') ...
+                    && self.gui.concat_mode
                 % OK, so we just do the ica on the scores, so now can get
                 % the ics for all of the rest of the trials by multiplying
                 % by the pcs
@@ -1936,6 +1940,34 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             self.h.roi_editor.set_rois(self.data(self.gui.current_trial).rois{self.gui.d(self.gui.current_trial).current_roi_set}, false);
             
+            if isfield(self.data(1), 'concat') && self.data(1).pp.is_concat
+                % Ok so the trials are concatenated, so add the same
+                % segments to each trial
+                
+                current_trial = self.gui.current_trial;
+                
+                for i = 1:length(self.data)
+                    if i == current_trial
+                        % Then we already added the segments above.
+                        continue
+                    end
+                    
+                    self.gui.current_trial = i;
+
+                    self.data(self.gui.current_trial).segment.im_data = im_data;
+                    self.data(self.gui.current_trial).segment.im_x = self.data(self.gui.current_trial).ica.im_x;
+                    self.data(self.gui.current_trial).segment.im_y = self.data(self.gui.current_trial).ica.im_y;
+                    self.data(self.gui.current_trial).segment.segment_info = segment_info;
+                    
+                    self.create_new_roi_set('Segment_ROIs', true);
+                    self.data(self.gui.current_trial).rois{self.gui.d(self.gui.current_trial).current_roi_set} = segment_info.rois;
+                    
+                    self.h.roi_editor.set_rois(self.data(self.gui.current_trial).rois{self.gui.d(self.gui.current_trial).current_roi_set}, false);
+                    
+                end
+            end
+
+            
             self.update();
             
             
@@ -1979,6 +2011,13 @@ classdef ImagingComputationalMicroscope < hgsetget
                 colors = self.h.ica_coherence.get_colors();
             end
             
+            
+            if isfield(self.data(self.gui.current_trial).ica, 'remove') ...
+                    && ~isempty(self.data(self.gui.current_trial).ica.remove)
+                % just get rid of the colors for the removed ICs
+                colors(self.data(self.gui.current_trial).ica.remove, :) = 0;
+            end                
+            
             self.set_viz_colors(colors);
         end
         
@@ -1994,9 +2033,9 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             post_ics = self.data(self.gui.current_trial).ica.ics;
             
-            if s.poly_order
-                post_ics = poly_subtract(post_ics', s.poly_order)';
-            end
+            %if s.poly_order
+            post_ics = poly_subtract(post_ics', s.poly_order)';
+            %end
             
             if s.smooth_order
                 for i = 1:size(post_ics, 2)
@@ -2852,6 +2891,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.data(1).concat.im_z = im_z;
             self.data(1).concat.all_warp = all_warp;
             self.data(1).concat.frame_ids = frame_ids;
+            
+            self.gui.concat_mode = true;
         end
         
         function set_selected_trial(self, idx)
@@ -2861,6 +2902,9 @@ classdef ImagingComputationalMicroscope < hgsetget
             disp('set_selected_trial');
             self.gui.current_trial = idx;
             self.gui.d(self.gui.current_trial).last_display = 0;
+            
+            % reset the rois
+            self.h.roi_editor.set_rois(self.data(self.gui.current_trial).rois{self.gui.d(self.gui.current_trial).current_roi_set}, false);
             
             % reset the viewer data
             
@@ -2893,11 +2937,21 @@ classdef ImagingComputationalMicroscope < hgsetget
         
         function reset(self)
             % reset(self); resets to the init stage.
-            self.data(self.gui.current_trial).stage = self.InitStage;
-            self.data(self.gui.current_trial).pp = [];
-            self.data(self.gui.current_trial).pca = [];
-            self.data(self.gui.current_trial).ica = [];
+            i = self.gui.current_trial;
+            self.data(i).stage = self.InitStage;
+            self.data(i).pp = [];
+            self.data(i).pca = [];
+            self.data(i).ica = [];
+            self.data(i).segment = [];
+            self.data(i).viz = [];
+            self.data(1).concat = [];
+            
             self.update();
+        end
+        
+        function clear(self)
+            self.data = [];
+            self.init_data([], 1, true);
         end
         
         function load_session(self, filename)
@@ -2923,7 +2977,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             ext = filename((end-2):end);
             
-            ds = load(filename);
+            ds = load(filename, '-mat');
             
             if isstruct(ds)
                 % Ok well it should be a struct no matter what
@@ -2954,6 +3008,8 @@ classdef ImagingComputationalMicroscope < hgsetget
                 disp('Data in file invalid.');
                 return;
             end
+            
+            self.check_data_struct();
             
             self.update();
             set(self.h.stage_status, 'String', 'Load Complete');
@@ -3479,7 +3535,12 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.data(self.gui.current_trial).viz.ccm_y = self.data(self.gui.current_trial).ica.im_y;
             %self.data(self.gui.current_trial).viz.ccm_z = self.data(self.gui.current_trial).ica.im_z;
             
-            nccd = repmat(mean(self.data(self.gui.current_trial).im_data, 3), [1 1 3]);
+            if self.data(self.gui.current_trial).pp.is_concat
+                % Then just use the first trial image
+                nccd = repmat(mean(self.data(1).im_data, 3), [1 1 3]);
+            else
+                nccd = repmat(mean(self.data(self.gui.current_trial).im_data, 3), [1 1 3]);
+            end
             component_resize = zeros(size(nccd));
             
             % These will be real values at some point...
@@ -3502,6 +3563,25 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.gui.d(self.gui.current_trial).last_display = 0;
             
             self.update();
+        end
+        
+        function check_data_struct(self)
+            % check_data_struct(self): checks the data structure and makes
+            % sure its up to date. 
+            %
+            % This needs to be updated so that old versions of the session
+            % files can be loaded and remain valid.
+            
+            % Older versions don't have this
+            if ~isfield(self.data(1).settings, 'post')
+                
+                for t = 1:length(self.data)
+                    self.data(t).settings.post.poly_order = 0;
+                    self.data(t).settings.post.smooth_order = 0;
+                end
+                
+            end
+            
         end
     end
     

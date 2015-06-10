@@ -39,7 +39,7 @@ im = double(im);
 
 im_stack = zeros(size(im));
 warp = [];
-final_warp = eye(2,3)
+final_warp = eye(2,3);
 for i = 1:size(im, 3)
     [results, final_warp, warped_image] = ecc(im(:,:,i), im(:,:,1), n_levels, n_iters, transform, final_warp);
     
