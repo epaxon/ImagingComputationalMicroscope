@@ -105,6 +105,8 @@ classdef RoiEditor < hgsetget
             
             self.move_mode = RoiEditor.MoveAll; % all, after, current
             self.show_inactive_rois = 1;
+            
+            self.gui.dynamic_contrast = 0;
         end
         
         function self = init_gui(self, parent)
@@ -395,11 +397,12 @@ classdef RoiEditor < hgsetget
             else
                 set(self.h.play_toggle, 'CData', self.gui.play_button_im)
                 stop(self.gui.play_timer);
-            end
+                notify(self, 'FrameChanged');
+            end                      
         end
         
         function play_timer_cb(self, source_h, eventdata)
-            self.set_current_frame(self.current_frame + self.gui.frame_step);
+            self.set_current_frame(self.current_frame + self.gui.frame_step, 0);
 %             self.current_frame = self.current_frame + self.gui.frame_step;
 %             if self.current_frame > size(self.im_data, 3)
 %                 % Then start back at the beginning
@@ -1001,6 +1004,10 @@ classdef RoiEditor < hgsetget
             if self.current_frame > self.get_num_frames()
                 self.current_frame = self.get_num_frames();
             end
+            
+            % contrast values
+            self.gui.min_im_v = double(min(self.im_data(:)));
+            self.gui.max_im_v = double(max(self.im_data(:)));
 
             % Check to make sure the ROIs are the right size.
             if size(self.rois.xyrra, 3) < size(self.im_data, 3)
@@ -1111,12 +1118,27 @@ classdef RoiEditor < hgsetget
                 return;
             end
             
-             if ndims(self.im_data) <= 3
+            if ndims(self.im_data) <= 3
                 % Then we have MxNxt or MxNx1 (if its only 2 dimensional)                
                 frame = double(self.im_data(:,:, frame_num));
-                min_v = double(min(self.im_data(:)));
-                max_v = double(max(self.im_data(:)));
-                nframe = (frame - min_v) ./ (max_v - min_v);
+                
+                if self.gui.dynamic_contrast > 0     
+                    % we look for the min and max around the current frame
+                    f_st = max(frame_num - self.gui.dynamic_contrast, 1);
+                    f_en = min(frame_num + self.gui.dynamic_contrast, self.get_num_frames());
+                    
+                    im_dyn = self.im_data(:,:,f_st:f_en);
+                    min_v = double(min(im_dyn(:)));
+                    max_v = double(max(im_dyn(:)));
+                    
+                    nframe = (frame - min_v) ./ (max_v - min_v);
+                else
+                    if ~isfield(self.gui, 'min_im_v') || ~isfield(self.gui, 'max_im_v')
+                        self.gui.min_im_v = double(min(self.im_data(:)));
+                        self.gui.max_im_v = double(max(self.im_data(:)));
+                    end
+                    nframe = (frame - self.gui.min_im_v) ./ (self.gui.max_im_v - self.gui.min_im_v);
+                end
             else
                 % Then we have MxNx3xt
                 frame = self.im_data(:,:,:, frame_num);
