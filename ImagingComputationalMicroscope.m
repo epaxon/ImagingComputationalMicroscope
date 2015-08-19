@@ -359,6 +359,8 @@ classdef ImagingComputationalMicroscope < hgsetget
                 'Separator', 'on');
             self.h.save_session_item = uimenu('Parent', self.h.main_menu, ...
                 'Label', 'Save Session', 'Callback', @self.save_session_cb);
+            self.h.shallow_save_session_item = uimenu('Parent', self.h.main_menu, ...
+                'Label', 'Shallow Save', 'Callback', @self.shallow_save_session_cb);
             
             self.h.load_settings_item = uimenu('Parent', self.h.main_menu, ...
                 'Label', 'Load Settings', 'Callback', @self.load_settings_cb);
@@ -838,18 +840,21 @@ classdef ImagingComputationalMicroscope < hgsetget
         
         function re_new_rois_cb(self, source_h, eventdata)
             disp('re_new_rois_cb');
+            self.update_roi_data(eventdata.data.roi_idxs);
             self.update_current_roi_set();
             self.update();
         end
         
         function re_altered_rois_cb(self, source_h, eventdata)
             disp('re_altered_rois_cb');
+            self.update_roi_data(eventdata.data.roi_idxs);
             self.update_current_roi_set();
             self.update();
         end
         
         function re_deleted_rois_cb(self, source_h, eventdata)
             disp('re_deleted_rois_cb');
+            
             self.update_current_roi_set();
             self.update();
         end
@@ -997,6 +1002,10 @@ classdef ImagingComputationalMicroscope < hgsetget
         
         function save_session_cb(self, source_h, eventdata)
             self.save_session();
+        end
+        
+        function shallow_save_session_cb(self, source_h, eventdata)
+            self.shallow_save_session();
         end
         
         function viz_settings_cb(self, source_h, eventdata)
@@ -1154,16 +1163,19 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             set(self.h.stage_tab_panel, 'SelectedChild', self.gui.d(self.gui.current_trial).display);
             
-            rois = self.h.roi_editor.rois.xyrra(self.h.roi_editor.selected_rois, :, 1);
+            
+            roi_idxs = self.h.roi_editor.selected_rois;
+            rois = self.h.roi_editor.rois.xyrra(roi_idxs, :, 1);
             
             cla(self.h.data_axes);
-            if ~isempty(rois)
+            if ~isempty(roi_idxs)
                 % plot the original data from the ROI.
-                if isfield(self.data(self.gui.current_trial).pp, 'im_data_mc')
-                    data = mean_roi(self.data(self.gui.current_trial).pp.im_data_mc, rois, self.data(self.gui.current_trial).pp.mc_x, self.data(self.gui.current_trial).pp.mc_y);
-                else
-                    data = mean_roi(self.data(self.gui.current_trial).im_data, rois);
-                end
+                % if isfield(self.data(self.gui.current_trial).pp, 'im_data_mc')
+                %     data = mean_roi(self.data(self.gui.current_trial).pp.im_data_mc, rois, self.data(self.gui.current_trial).pp.mc_x, self.data(self.gui.current_trial).pp.mc_y);
+                % else
+                %     data = mean_roi(self.data(self.gui.current_trial).im_data, rois);
+                % end
+                data = self.get_roi_data(roi_idxs);
                 
                 % need to do a check on norm_frame
                 if size(data, 1) < self.gui.data_norm_frame
@@ -1172,9 +1184,13 @@ classdef ImagingComputationalMicroscope < hgsetget
                 
                 data_t = self.data(self.gui.current_trial).im_z;
                 
-                data = 100 * (data ./ repmat(data(self.gui.data_norm_frame, :), size(data, 1), 1) - 1);
+                %data = 100 * (data ./ repmat(data(self.gui.data_norm_frame, :), size(data, 1), 1) - 1);
                 
                 plot(self.h.data_axes, data_t, data);
+                hold(self.h.data_axes, 'on');
+                disp('time_plot');
+                yl = ylim(self.h.data_axes);
+                plot(self.h.data_axes, [data_t(f), data_t(f)], yl, ':k', 'LineWidth', 2);
             end
             
             if self.data(self.gui.current_trial).stage >= self.IcaStage
@@ -1497,8 +1513,19 @@ classdef ImagingComputationalMicroscope < hgsetget
             end
             
             block = ones(s.smooth_window) ./ (prod(s.smooth_window));
+            %im_conv = convn(im_data, block, 'same');
             
-            im_conv = convn(im_data, block, 'same');
+            im_conv = im_data;
+            
+            if s.smooth_window(1) > 1
+                im_conv = convn(im_conv, ones([s.smooth_window(1), 1, 1]) ./ s.smooth_window(1), 'same');
+            end
+            if s.smooth_window(2) > 1
+                im_conv = convn(im_conv, ones([1, s.smooth_window(2), 1]) ./ s.smooth_window(2), 'same');
+            end
+            if s.smooth_window(3) > 1
+                im_conv = convn(im_conv, ones([1, 1, s.smooth_window(3)]) ./ s.smooth_window(3), 'same');
+            end
             
             xs_remove = floor((size(block, 2)-1)/2);
             xe_remove = (size(block, 2)-1) - xs_remove;
@@ -1528,41 +1555,41 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.data(self.gui.current_trial).pp.im_z = im_z(zidx);
             
             self.data(self.gui.current_trial).pp.im_data = im_conv(yidx, xidx, zidx);
-            self.data(self.gui.current_trial).pp.data = reshape(self.data(self.gui.current_trial).pp.im_data, [], size(self.data(self.gui.current_trial).pp.im_data, 3));
+            %self.data(self.gui.current_trial).pp.data = reshape(self.data(self.gui.current_trial).pp.im_data, [], size(self.data(self.gui.current_trial).pp.im_data, 3));
             
-            self.data(self.gui.current_trial).pp.use_wavelets = self.gui.d(self.gui.current_trial).use_wavelets;
+            %self.data(self.gui.current_trial).pp.use_wavelets = self.gui.d(self.gui.current_trial).use_wavelets;
             
-            if self.data(self.gui.current_trial).pp.use_wavelets
+            %if self.data(self.gui.current_trial).pp.use_wavelets
                 % Then we want to do the wavelet decomposition
-                disp('Computing Wavelets...');
-                set(self.h.stage_status, 'String', 'Computing Wavelets...');
-                drawnow;
-                
-                cwt_struct = cwtft(self.data(self.gui.current_trial).pp.data(1,:));
-                num_scales = length(cwt_struct.scales);
-                num_frames = size(self.data(self.gui.current_trial).pp.data, 2);
-                
-                self.data(self.gui.current_trial).pp.cwt_data = zeros(size(self.data(self.gui.current_trial).pp.data, 1), 2 * num_scales * num_frames);
-                
-                rcwt = real(cwt_struct.cfs);
-                icwt = imag(cwt_struct.cfs);
-                
-                self.data(self.gui.current_trial).pp.cwt_data(1, :) = reshape([rcwt, icwt], 1, []);
-                
-                self.data(self.gui.current_trial).pp.cwt_struct = cwt_struct;
-                
-                for i = 2:size(self.data(self.gui.current_trial).pp.data, 1)
-                    cwt_struct = cwtft(self.data(self.gui.current_trial).pp.data(i, :));
-                    
-                    rcwt = real(cwt_struct.cfs);
-                    icwt = imag(cwt_struct.cfs);
-                    
-                    self.data(self.gui.current_trial).pp.cwt_data(i, :) = reshape([rcwt, icwt], 1, []);
-                end
+                %disp('Computing Wavelets...');
+                %set(self.h.stage_status, 'String', 'Computing Wavelets...');
+                %drawnow;
+                %
+                %cwt_struct = cwtft(self.data(self.gui.current_trial).pp.data(1,:));
+                %num_scales = length(cwt_struct.scales);
+                %num_frames = size(self.data(self.gui.current_trial).pp.data, 2);
+                %
+                %self.data(self.gui.current_trial).pp.cwt_data = zeros(size(self.data(self.gui.current_trial).pp.data, 1), 2 * num_scales * num_frames);
+                %
+                %rcwt = real(cwt_struct.cfs);
+                %icwt = imag(cwt_struct.cfs);
+                %
+                %self.data(self.gui.current_trial).pp.cwt_data(1, :) = reshape([rcwt, icwt], 1, []);
+                % 
+                %self.data(self.gui.current_trial).pp.cwt_struct = cwt_struct;
+                %
+                %for i = 2:size(self.data(self.gui.current_trial).pp.data, 1)
+                %    cwt_struct = cwtft(self.data(self.gui.current_trial).pp.data(i, :));
+                %    
+                %    rcwt = real(cwt_struct.cfs);
+                %    icwt = imag(cwt_struct.cfs);
+                %    
+                %    self.data(self.gui.current_trial).pp.cwt_data(i, :) = reshape([rcwt, icwt], 1, []);
+                %end
                 
                 % @todo: other things with the wavelets, like removing
                 % frequencies etc. Things that can be done to cwt_data
-            end
+            %end
             
             % Ok, so if we are doing the concat then restructure the data
             if isfield(self.data(1), 'concat') && self.gui.concat_mode % @todo: some other flag
@@ -1637,14 +1664,15 @@ classdef ImagingComputationalMicroscope < hgsetget
                     [scores, pcs, eigs] = princomp(d);
                 end
                 
-                self.data(1).concat.pca_scores = scores;
+                %self.data(1).concat.pca_scores = scores;
                 self.data(1).concat.pca_pcs = pcs;
                 self.data(1).concat.pca_eigs = eigs;
-                self.data(1).concat.pca_im_data = reshape(self.data(1).concat.pca_scores, ...
+                self.data(1).concat.pca_im_data = reshape(scores, ...
                     size(self.data(1).concat.pp_im_data,1), size(self.data(1).concat.pp_im_data,2), size(self.data(1).concat.pca_scores, 2));
                 
                 for i = 1:length(self.data)
-                    self.data(i).pca.scores = self.data(1).concat.pca_scores;
+                    %self.data(i).pca.scores = self.data(1).concat.pca_scores;
+                    % This is stupid, need to reconfigure concat ICA
                     self.data(i).pca.im_data = self.data(1).concat.pca_im_data;
                     self.data(i).pca.eigs = self.data(1).concat.pca_eigs;
                     self.data(i).pca.im_x = self.data(1).concat.pp_im_x;
@@ -1657,57 +1685,73 @@ classdef ImagingComputationalMicroscope < hgsetget
                 end
                 
             else
-                if self.data(self.gui.current_trial).pp.use_wavelets
-                    if s.corr_pca == 1
-                        d = zscore(self.data(self.gui.current_trial).pp.cwt_data');
-                    else
-                        d = self.data(self.gui.current_trial).pp.cwt_data';
-                    end
-                    
-                    if exist('pca') == 2
-                        [scores, pcs, eigs] = pca(d);
-                    else
-                        [scores, pcs, eigs] = princomp(d);
-                    end
-                    
-                    % Reconstruct the original data from wavelets
-                    cwt_struct = self.data(self.gui.current_trial).pp.cwt_struct;
-                    num_frames = size(self.data(self.gui.current_trial).pp.data, 2);
-                    wavelet_rec = zeros(num_frames, size(pcs, 2));
-                    for i = 1:size(pcs, 2)
-                        pc_cfs = reshape(pcs(:,i), length(cwt_struct.scales), []);
-                        cwt_struct.cfs = complex(pc_cfs(:, 1:num_frames), pc_cfs(:, (num_frames+1):end));
-                        
-                        wavelet_rec(:, i) = icwtft(cwt_struct);
-                    end
-                    self.data(self.gui.current_trial).pca.pc_rec = wavelet_rec;
+                % if self.data(self.gui.current_trial).pp.use_wavelets
+                %     if s.corr_pca == 1
+                %         d = zscore(self.data(self.gui.current_trial).pp.cwt_data');
+                %     else
+                %         d = self.data(self.gui.current_trial).pp.cwt_data';
+                %     end
+                % 
+                %     if exist('pca') == 2
+                %         [scores, pcs, eigs] = pca(d);
+                %     else
+                %         [scores, pcs, eigs] = princomp(d);
+                %     end
+                % 
+                %     % Reconstruct the original data from wavelets
+                %     cwt_struct = self.data(self.gui.current_trial).pp.cwt_struct;
+                %     num_frames = size(self.data(self.gui.current_trial).pp.data, 2);
+                %     wavelet_rec = zeros(num_frames, size(pcs, 2));
+                %     for i = 1:size(pcs, 2)
+                %         pc_cfs = reshape(pcs(:,i), length(cwt_struct.scales), []);
+                %         cwt_struct.cfs = complex(pc_cfs(:, 1:num_frames), pc_cfs(:, (num_frames+1):end));
+                % 
+                %         wavelet_rec(:, i) = icwtft(cwt_struct);
+                %     end
+                %     self.data(self.gui.current_trial).pca.pc_rec = wavelet_rec;
+                % else
+                %     if s.corr_pca == 1
+                %         d = zscore(self.data(self.gui.current_trial).pp.data');
+                %     else
+                %         d = self.data(self.gui.current_trial).pp.data';
+                %     end
+                % 
+                %     if exist('pca') == 2
+                %         [scores, pcs, eigs] = pca(d);
+                %     else
+                %         [scores, pcs, eigs] = princomp(d);
+                %     end
+                % end
+                
+                d = reshape(self.data(self.gui.current_trial).pp.im_data, [], size(self.data(self.gui.current_trial).pp.im_data, 3));
+                
+                if s.corr_pca == 1
+                    d = zscore(d');
                 else
-                    if s.corr_pca == 1
-                        d = zscore(self.data(self.gui.current_trial).pp.data');
-                    else
-                        d = self.data(self.gui.current_trial).pp.data';
-                    end
-                    
-                    if exist('pca') == 2
-                        [scores, pcs, eigs] = pca(d);
-                    else
-                        [scores, pcs, eigs] = princomp(d);
-                    end
+                    d = d';
                 end
                 
-                self.data(self.gui.current_trial).pca.scores = scores;
+                if exist('pca') == 2
+                    [scores, pcs, eigs] = pca(d);
+                else
+                    [scores, pcs, eigs] = princomp(d);
+                end
+                
+                %self.data(self.gui.current_trial).pca.scores = scores;
                 self.data(self.gui.current_trial).pca.pcs = pcs;
                 self.data(self.gui.current_trial).pca.eigs = eigs;
                 
                 
-                self.data(self.gui.current_trial).pca.im_data = reshape(self.data(self.gui.current_trial).pca.scores, ...
-                    size(self.data(self.gui.current_trial).pp.im_data,1), size(self.data(self.gui.current_trial).pp.im_data,2), size(self.data(self.gui.current_trial).pca.scores, 2));
+                self.data(self.gui.current_trial).pca.im_data = reshape(scores, ...
+                    size(self.data(self.gui.current_trial).pp.im_data,1), ...
+                    size(self.data(self.gui.current_trial).pp.im_data,2), ...
+                    size(scores, 2));
                 
                 self.data(self.gui.current_trial).pca.im_x = self.data(self.gui.current_trial).pp.im_x;
                 self.data(self.gui.current_trial).pca.im_y = self.data(self.gui.current_trial).pp.im_y;
             end
             
-            self.h.pc_pixel_viewer.set_scores(self.data(self.gui.current_trial).pca.scores);
+            self.h.pc_pixel_viewer.set_scores(scores);
             
             self.data(self.gui.current_trial).stage = self.PcaStage;
             self.gui.d(self.gui.current_trial).last_display = 0;
@@ -1730,9 +1774,12 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             s = self.data(self.gui.current_trial).settings.ica;
             
+            scores = reshape(self.data(self.gui.current_trial).pca.im_data, ...
+                [], size(self.data(self.gui.current_trial).pca.im_data, 3));
+            
             % Make sure that the pcs requested are in range.
             which_pcs = s.which_pcs;
-            which_pcs(which_pcs > size(self.data(self.gui.current_trial).pca.scores, 2)) = [];
+            which_pcs(which_pcs > size(scores, 2)) = [];
             
             if strcmp(s.ica_func, 'CellsortICA')
                 disp('Running CellsortICA');
@@ -1751,11 +1798,11 @@ classdef ImagingComputationalMicroscope < hgsetget
                     % matrix.
                     if isfield(self.data(self.gui.current_trial).ica, 'A') && size(self.data(self.gui.current_trial).ica.A, 1) == length(which_pcs)
                         % Then the last A matrix is valid.
-                        [icasig, A, W] = fastica(self.data(self.gui.current_trial).pca.scores(:, which_pcs)', 'initGuess', self.data(self.gui.current_trial).ica.A);
+                        [icasig, A, W] = fastica(scores(:, which_pcs)', 'initGuess', self.data(self.gui.current_trial).ica.A);
                     else
                         % Then the last A matrix is invalid.
                         disp('Could not use previous A as initial guess.');
-                        [icasig, A, W] = fastica(self.data(self.gui.current_trial).pca.scores(:, which_pcs)');
+                        [icasig, A, W] = fastica(scores(:, which_pcs)');
                     end
                 elseif s.init_guess == 0
                     % Then we just use the normal random guess.
@@ -1763,16 +1810,16 @@ classdef ImagingComputationalMicroscope < hgsetget
                     %[icasig, A, W] = fastica(self.data(self.gui.current_trial).pca.scores(:, which_pcs)');
                     %%% Messing around with the other fastica params
                     disp('fastica params');
-                    [icasig, A, W] = fastica(self.data(self.gui.current_trial).pca.scores(:, which_pcs)', 'g', 'tanh', 'a1', 3, 'stabilization', 'on');
+                    [icasig, A, W] = fastica(scores(:, which_pcs)', 'g', 'tanh', 'a1', 3, 'stabilization', 'on');
                     %%%
                 else
                     % Then s.init_guess should be the A matrix itself.
                     if size(s.init_guess, 1) == length(which_pcs)
                         disp('Using Init Guess');
-                        [icasig, A, W] = fastica(self.data(self.gui.current_trial).pca.scores(:, which_pcs)', 'initGuess', s.init_guess);
+                        [icasig, A, W] = fastica(scores(:, which_pcs)', 'initGuess', s.init_guess);
                     else
                         disp('Initial Guess incorrectly formatted.');
-                        [icasig, A, W] = fastica(self.data(self.gui.current_trial).pca.scores(:, which_pcs)');
+                        [icasig, A, W] = fastica(scores(:, which_pcs)');
                     end
                 end
                 
@@ -1829,9 +1876,9 @@ classdef ImagingComputationalMicroscope < hgsetget
             elseif strcmp(s.ica_func, 'icasso')
                 
             elseif strcmp(s.ica_func, 'fourierica')
-                [S_Ft, A, W] = fourierica(self.data(self.gui.current_trial).pca.scores(:, which_pcs)', length(which_pcs), 50, 0, 20);
+                [S_Ft, A, W] = fourierica(scores(:, which_pcs)', length(which_pcs), 50, 0, 20);
                 
-                icasig = (W * self.data(self.gui.current_trial).pca.scores(:, which_pcs)')';
+                icasig = (W * scores(:, which_pcs)')';
                 self.data(self.gui.current_trial).ica.ics = self.data(self.gui.current_trial).pca.pcs(:, which_pcs) * A;
                 
                 self.data(self.gui.current_trial).ica.im_data = reshape(icasig, ...
@@ -2623,7 +2670,10 @@ classdef ImagingComputationalMicroscope < hgsetget
                 self.run_pca();
             end
             
-            pc_scores = self.data(self.gui.current_trial).pca.scores(:, which_pcs)';
+            % @todo: input checks
+            
+            pc_scores = reshape(self.data(self.gui.current_trial).pca.im_data(:,:, which_pcs), ...
+                [], length(which_pcs))';
             
             % reformat the masks into scores form
             ic_scores = reshape(masks, [], size(masks, 3))';
@@ -2677,6 +2727,41 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.h.roi_editor.set_rois(self.data(self.gui.current_trial).rois{self.gui.d(self.gui.current_trial).current_roi_set}, false);
             
             self.update();
+        end
+        
+        function data = get_roi_data(self, roi_idxs, roi_set)
+            
+            if nargin < 3 || isempty(roi_set)
+                roi_set = self.gui.d(self.gui.current_trial).current_roi_set;
+            end
+            
+            if nargin < 2 || isempty(roi_idxs)
+                roi_idxs = self.h.roi_editor.selected_rois; % is this right?
+            end
+            
+            if roi_set < 1 || roi_set > length(self.data(self.gui.current_trial).roi_data)
+                % Then we have an invalid roi_set...
+                
+            end
+            
+            rdata = self.data(self.gui.current_trial).roi_data{roi_set};
+            invalid_idxs = [];
+            
+            for i = 1:length(roi_idxs)
+                if roi_idxs(i) > size(rdata, 1)
+                    invalid_idxs = [invalid_idxs, roi_idxs(i)];
+                elseif any(isnan(rdata(roi_idxs(i), :)))
+                    invalid_idxs = [invalid_idxs, roi_idxs(i)];
+                end
+            end
+            
+            % Now we need to reupdate all of the invalid indexes
+            if ~isempty(invalid_idxs)
+                new_data = self.update_roi_data(invalid_idxs, roi_set);
+                rdata(invalid_idxs, :) = new_data;
+            end
+            
+            data = rdata(roi_idxs, :);
         end
         
         function set_cluster(self, ic_idxs)
@@ -2910,7 +2995,9 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             % reset the HighDViewers if necessary
             if self.data(self.gui.current_trial).stage >= self.PcaStage
-                self.h.pc_pixel_viewer.set_scores(self.data(self.gui.current_trial).pca.scores);
+                scores = reshape(self.data(self.gui.current_trial).pca.im_data, ...
+                    [], size(self.data(self.gui.current_trial).pca.im_data, 3));
+                self.h.pc_pixel_viewer.set_scores(scores);
             else
                 self.h.pc_pixel_viewer.set_scores([]);
             end
@@ -3010,8 +3097,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             end
             
             self.check_data_struct();
-            
-            self.update();
+            self.set_selected_trial(1); % reset
+            %self.update();
             set(self.h.stage_status, 'String', 'Load Complete');
             drawnow;
         end
@@ -3055,12 +3142,95 @@ classdef ImagingComputationalMicroscope < hgsetget
                 filename = [filename '.icp'];
             end
             
-            % Ok, so baically we just save data to the file
+            % Ok, so basically we just save data to the file
             data = self.data;
+            
+            % Remove any extraneous data if needed
+            for i = 1:length(data)
+                if isfield(data(i).pp, 'data')
+                    data(i).pp = rmfield(data(i).pp, 'data');
+                end
+                
+                if isfield(data(i).pca, 'scores')
+                    data(i).pca = rmfield(data(i).pca, 'scores');
+                end
+            end
             
             save(filename, '-mat', '-v7.3', 'data');
             
             set(self.h.stage_status, 'String', 'Session Saved');
+            drawnow;
+        end
+        
+        function shallow_save_session(self, filename)
+            if nargin < 2 || isempty(filename)
+                % Then ask the user for a file with the prompt
+                [file_name, path_name] = uiputfile({'*.mat;*.icp;', 'ICM Session Files'}, 'Load Session File');
+                %[file_name, path_name] = uigetfile();
+                
+                if file_name == 0
+                    % cancelled
+                    return;
+                end
+                filename = [path_name file_name];
+            end
+            
+            % @todo: this is only something you would do after running
+            % pca/ica
+            
+            
+            set(self.h.stage_status, 'String', 'Shallow-Saving Session...');
+            drawnow;
+            
+            % First lets get the extension
+            if filename(end-3) == '.'
+                % Then there is an extension
+                ext = filename((end-2):end);
+                
+                % So now just make sure it is mat or icp
+                if strcmp(ext, 'mat') || strcmp(ext, 'icp')
+                    % Then we're good.
+                else
+                    % Then replace the extension
+                    filename((end-2):end) = 'icp';
+                end
+            else
+                % Then no extension so add one
+                filename = [filename '.icp'];
+            end
+            
+            % Ok, so baically we just save data to the file
+            data = self.data;
+            
+            % but now just clear out some parts of data that aren't needed
+            for i = 1:length(data)
+                data(i).im_data = mean(data(i).im_data, 3);
+                %data(i).im_z = mean(data(i).im_z);
+                
+                data(i).pp.im_data = mean(data(i).pp.im_data, 3);
+                %data(i).pp.im_z = mean(data(i).pp.im_z);
+                
+                if isfield(data(i).pp, 'data')
+                    data(i).pp = rmfield(data(i).pp, 'data');
+                end
+                
+                if isfield(data(i).pca, 'scores')
+                    data(i).pca = rmfield(data(i).pca, 'scores');
+                end
+                
+                
+                if data(i).settings.file_io.keep_pcs
+                    data(i).pca.im_data = data(i).pca.im_data(:,:, data(i).settings.file_io.keep_pcs);
+                    data(i).pca.pcs = data(i).pca.pcs(:, data(i).settings.file_io.keep_pcs);
+                end
+            end
+            
+            save(filename, '-mat', '-v7.3', 'data');
+            disp(data);
+            disp(data(1).pp);
+            disp(data(1).pca);
+            
+            set(self.h.stage_status, 'String', 'Shallow-Session Saved');
             drawnow;
         end
         
@@ -3157,7 +3327,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             
             %self.settings.preprocessing.block_size = 6;
-            self.data(self.gui.current_trial).settings.preprocessing.smooth_window = [6, 6, 1];
+            self.data(self.gui.current_trial).settings.preprocessing.smooth_window = [1, 1, 1];
             %self.data(self.gui.current_trial).settings.preprocessing.step_size = 2;
             self.data(self.gui.current_trial).settings.preprocessing.down_sample = [1, 1, 1];
             
@@ -3200,6 +3370,8 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.data(self.gui.current_trial).settings.visualize.num_best_components = 3;
             self.data(self.gui.current_trial).settings.visualize.show_residual = true;
             self.data(self.gui.current_trial).settings.visualize.best_selection_type = 1;
+            
+            self.data(self.gui.current_trial).settings.file_io.keep_pcs = 1:1000;
         end
         
         function init_data(self, im_data, trial_idx, isdefault)
@@ -3237,6 +3409,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             self.data(trial_idx).rois{1} = [];
             self.data(trial_idx).roi_names{1} = 'ROI_set_1';
+            self.data(trial_idx).roi_data{1} = [];
             self.data(trial_idx).is_component_set = false;
             
             self.init_gui_display(trial_idx);
@@ -3365,7 +3538,7 @@ classdef ImagingComputationalMicroscope < hgsetget
                     set(self.h.z_popup, 'String', {'None'}, 'Value', 1);
                     return;
                 case self.PcaStage
-                    popup_str = cellfun(@(n) ['PC ' num2str(n)], num2cell(1:size(self.data(self.gui.current_trial).pca.scores, 2)), ...
+                    popup_str = cellfun(@(n) ['PC ' num2str(n)], num2cell(1:size(self.data(self.gui.current_trial).pca.im_data, 3)), ...
                         'UniformOutput', 0);
                     set(self.h.x_popup, 'String', popup_str);
                     set(self.h.y_popup, 'String', popup_str);
@@ -3443,6 +3616,31 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             self.data(self.gui.current_trial).rois{self.gui.d(self.gui.current_trial).current_roi_set} = self.h.roi_editor.rois.xyrra(:,:,1);
             self.update();
+        end
+        
+        function data = update_roi_data(self, roi_idxs, roi_set)
+            % updates the roi data
+            
+            disp('update_roi_data');
+            if nargin < 3 || isempty(roi_set)
+                roi_set = self.gui.d(self.gui.current_trial).current_roi_set;
+            end
+            
+            if nargin < 2 || isempty(roi_idxs)
+                % Then update all rois
+                roi_idxs = 1:size(self.data(self.gui.current_trial).rois{roi_set}, 1);
+            end
+            
+            rois = self.h.roi_editor.rois.xyrra(roi_idxs, :, 1);
+            
+            % plot the original data from the ROI.
+            if isfield(self.data(self.gui.current_trial).pp, 'im_data_mc')
+                data = mean_roi(self.data(self.gui.current_trial).pp.im_data_mc, rois, self.data(self.gui.current_trial).pp.mc_x, self.data(self.gui.current_trial).pp.mc_y);
+            else
+                data = mean_roi(self.data(self.gui.current_trial).im_data, rois);
+            end
+            
+            self.data(self.gui.current_trial).roi_data{roi_set}(roi_idxs, :) = data;
         end
         
         function draw_clustered_rois(self)
@@ -3580,6 +3778,12 @@ classdef ImagingComputationalMicroscope < hgsetget
                     self.data(t).settings.post.smooth_order = 0;
                 end
                 
+            end
+            
+            if ~isfield(self.data(1).settings, 'file_io')
+                for t = 1:length(self.data)
+                    self.data(t).settings.file_io.keep_pcs = 1:1000;
+                end
             end
             
         end

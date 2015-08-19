@@ -1,4 +1,4 @@
-function [fh, rois] = export_viz_figure(icm, trial_idx, pc_coh_flag, rois, alias)
+function [fh, rois, cols] = export_viz_figure(icm, trial_idx, pc_coh_flag, rois, alias)
 % fh = export_viz_figure(icm, trial_idx, pc_coh_flag, rois): creates a nice
 % figure from analysis using icm.
 %
@@ -26,8 +26,8 @@ if nargin < 5 || isempty(alias)
 end
 
 %% Other parameters
-offset = 5;
-x_limits = [0 10];
+offset = .02;
+%x_limits = [0 10];
 label_x_offsets = 0;
 
 %%
@@ -49,7 +49,7 @@ ax_plot = axes('Parent', fh(2));
 ax_im = axes('Parent', fh(3), 'Position', [0 0 1 1]);
 
 set(ax_im, 'XTick', [], 'YTick', [], 'Box', 'on');
-%
+%%
 
 if pc_coh_flag
     % Then we're doing the coherence
@@ -201,7 +201,8 @@ end
 %%
 
 if isfield(icm.data(trial_idx).ica, 'post_ics')
-    traces = icm.data(trial_idx).ica.post_ics;
+    %traces = icm.data(trial_idx).ica.post_ics;
+    traces = icm.data(trial_idx).ica.ics;
 else
     traces = icm.data(trial_idx).ica.ics;
 end
@@ -252,7 +253,7 @@ for i = 1:length(sidx2)
 end
 
 xlabel('Time (s)');
-xlim(ax_traces, x_limits);
+%xlim(ax_traces, x_limits);
 %xlim(ax_traces, [0 1600]);
 
 
@@ -267,8 +268,8 @@ viz_y = icm.data(trial_idx).viz.im_y;
 imagesc(viz_x, viz_y, viz_im);
 
 axis(ax_im, 'equal');
-%axis(ax_im, 'xy');
-axis(ax_im, 'ij');
+axis(ax_im, 'xy');
+%axis(ax_im, 'ij');
 set(ax_im, 'XColor', 'w', 'YColor', 'w', 'Box', 'off', 'XTick', [], 'YTick', []);
 
 seg_ic_ids = icm.data(trial_idx).segment.segment_info.ic_ids;

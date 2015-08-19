@@ -10,9 +10,16 @@ addpath(thisdir);
 addpath(fullfile(thisdir, 'ecc'));
 addpath(fullfile(thisdir, 'FastICA_25'));
 addpath(fullfile(thisdir, 'Resources'));
-cd(fullfile(thisdir, 'GUILayout-v1p13'));
-install();
-cd(currentdir);
+addpath(fullfile(thisdir, 'hdf5prop'));
+addpath(genpath(fullfile(thisdir, 'chronux')));
+
+if verLessThan('matlab', '8.4')
+    cd(fullfile(thisdir, 'GUILayout-v1p13'));
+    install();
+    cd(currentdir);
+else
+    disp('You must install the GUILayout Toolbox');
+end
 
 if savepath()
     % Then save failed
