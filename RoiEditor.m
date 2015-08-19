@@ -94,6 +94,10 @@ classdef RoiEditor < hgsetget
             
             self.gui.play_button_im = imread('Resources/play_button.png');
             self.gui.pause_button_im = imread('Resources/pause_button.png');
+            self.gui.play_back_im = self.gui.play_button_im;
+            for i = 1:size(self.gui.play_back_im, 3)
+                self.gui.play_back_im(:,:,i) = fliplr(self.gui.play_back_im(:,:,i));
+            end
             
             self.gui.play_rate = 0.01;
             self.gui.frame_step = 1;
@@ -106,7 +110,7 @@ classdef RoiEditor < hgsetget
             self.move_mode = RoiEditor.MoveAll; % all, after, current
             self.show_inactive_rois = 1;
             
-            self.gui.dynamic_contrast = 0;
+            self.gui.dynamic_contrast = 10;
         end
         
         function self = init_gui(self, parent)
@@ -138,7 +142,7 @@ classdef RoiEditor < hgsetget
             % Create the main panel.
             %self.h.panel = uipanel('Parent', self.h.Parent, 'Units', 'pixels');
             %set(self.h.panel, 'BorderType', 'none');
-            self.h.panel = uiextras.BoxPanel('Parent', self.h.Parent, 'Title', 'ROI Editor', 'Units', 'pixels');
+            self.h.panel = uiextras.BoxPanel('Parent', self.h.Parent, 'Title', 'ROI Editor', 'Units', 'normalized', 'Position', [0 0 1 1]);
             
             % Image
             self.h.im_axes = axes('Units', 'normalized', 'Position', [0 0 1 1]);
@@ -163,6 +167,14 @@ classdef RoiEditor < hgsetget
             % Play/pause button
             self.h.play_toggle = uicontrol('Style', 'togglebutton', 'Callback', @self.play_toggle_cb, ...
                 'CData', self.gui.play_button_im, 'BackgroundColor', 'w');
+            % Fast-forward/frame skip
+            self.h.ff_button = uicontrol('Style', 'pushbutton', 'Callback', @self.ff_button_cb, ...
+                'CData', imresize(self.gui.play_button_im, 0.5), 'BackgroundColor', 'w');
+            self.h.rew_button = uicontrol('Style', 'pushbutton', 'Callback', @self.rew_button_cb, ...
+                'CData', imresize(self.gui.play_back_im, 0.5));
+            self.h.frame_step_edit = uicontrol('Style', 'edit', 'Callback', @self.frame_step_edit_cb);
+            set(self.h.frame_step_edit, 'String', num2str(self.gui.frame_step));
+            
             
             % Frame display
             self.h.frame_edit = uicontrol('Style', 'edit', 'Callback', @self.frame_edit_cb);
@@ -203,6 +215,8 @@ classdef RoiEditor < hgsetget
             self.h.main_vbox = uiextras.VBoxFlex();
             
             self.h.control_hbox = uiextras.HBox();
+            self.h.frame_step_vbox = uiextras.VBox();
+            self.h.ff_rew_hbox = uiextras.HBox();
             
             % Top-level hierarchy
             set(self.h.main_vbox, 'Parent', self.h.panel);
@@ -211,13 +225,20 @@ classdef RoiEditor < hgsetget
             
             % axes level
             
+            % Frame step hierarchy
+            set(self.h.frame_step_edit, 'Parent', self.h.frame_step_vbox.double());
+            set(self.h.ff_rew_hbox, 'Parent', self.h.frame_step_vbox);
+            set(self.h.rew_button, 'Parent', self.h.ff_rew_hbox.double());
+            set(self.h.ff_button, 'Parent', self.h.ff_rew_hbox.double());
+            
             % Control
             set(self.h.play_toggle, 'Parent', self.h.control_hbox.double());
+            set(self.h.frame_step_vbox, 'Parent', self.h.control_hbox);
             set(self.h.frame_slider, 'Parent', self.h.control_hbox.double());
             set(self.h.frame_edit, 'Parent', self.h.control_hbox.double());
             set(self.h.move_mode_push, 'Parent', self.h.control_hbox.double());
             
-            set(self.h.control_hbox, 'Sizes', [self.gui.BUTTON_W, -1, self.gui.BUTTON_W, self.gui.BUTTON_W]);
+            set(self.h.control_hbox, 'Sizes', [self.gui.BUTTON_W, self.gui.BUTTON_W, -1, self.gui.BUTTON_W, self.gui.BUTTON_W]);
             set(self.h.main_vbox, 'Sizes', [-1, self.gui.BUTTON_H]);
         end
         
@@ -410,6 +431,19 @@ classdef RoiEditor < hgsetget
 %             end
 %             self.update();
 %             notify(self, 'FrameChanged');
+        end
+        
+        function ff_button_cb(self, source_h, eventdata)
+            self.play_settings([], self.gui.frame_step + 1);
+        end
+        
+        function rew_button_cb(self, source_h, eventdata)
+            self.play_settings([], self.gui.frame_step - 1);
+        end
+    
+        function frame_step_edit_cb(self, source_h, eventdata)
+            val = str2num(get(self.h.frame_step_edit, 'String'));
+            self.play_settings([], val);
         end
         
         %%%%%%%%%% Main Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
@@ -615,7 +649,7 @@ classdef RoiEditor < hgsetget
             end
             
             if trigEvent
-                d = struct('rois', rois);
+                d = struct('rois', rois, 'roi_idxs', nidx);
                 notify(self, 'NewRois', DataEvent(d));
             end
             % We must notify the add before changing the selection, in case
@@ -1006,8 +1040,8 @@ classdef RoiEditor < hgsetget
             end
             
             % contrast values
-            self.gui.min_im_v = double(min(self.im_data(:)));
-            self.gui.max_im_v = double(max(self.im_data(:)));
+            %self.gui.min_im_v = double(min(self.im_data(:)));
+            %self.gui.max_im_v = double(max(self.im_data(:)));
 
             % Check to make sure the ROIs are the right size.
             if size(self.rois.xyrra, 3) < size(self.im_data, 3)
@@ -1055,11 +1089,16 @@ classdef RoiEditor < hgsetget
                 frame_step = 1;
             end
             
+            % @todo: checks on input
+            
             self.gui.play_rate = play_rate;
             self.gui.frame_step = frame_step;
             
+            set(self.h.frame_step_edit, 'String', num2str(frame_step));
             set(self.gui.play_timer, 'Period', self.gui.play_rate);
         end
+        
+        
         
         %%%%%%%%%% hgsetget functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function set.Parent(self, val)
@@ -1091,12 +1130,12 @@ classdef RoiEditor < hgsetget
                 return;
             end
             
-            if ndims(self.im_data) <= 3
+            if length(size(self.im_data)) <= 3
                 % Then we have MxNxt or MxNx1 (if its only 2 dimensional)                
                 frame = self.im_data(:,:, frame_num);
             else
-                % Then we have MxNx3xt
-                frame = self.im_data(:,:,:, frame_num);
+                % Then we have MxNxtx1
+                frame = self.im_data(:,:,frame_num, 1);
             end
         end
         
@@ -1118,7 +1157,7 @@ classdef RoiEditor < hgsetget
                 return;
             end
             
-            if ndims(self.im_data) <= 3
+            if length(size(self.im_data)) <= 3
                 % Then we have MxNxt or MxNx1 (if its only 2 dimensional)                
                 frame = double(self.im_data(:,:, frame_num));
                 
@@ -1141,19 +1180,36 @@ classdef RoiEditor < hgsetget
                 end
             else
                 % Then we have MxNx3xt
-                frame = self.im_data(:,:,:, frame_num);
+                %frame = self.im_data(:,:,:, frame_num);
                 % @todo: implement this.
-                nframe = frame; % Do nothing for now.
+                %nframe = frame; % Do nothing for now.
+                
+                frame = double(self.im_data(:,:,frame_num,1));
+                
+                 if self.gui.dynamic_contrast > 0     
+                    % we look for the min and max around the current frame
+                    f_st = max(frame_num - self.gui.dynamic_contrast, 1);
+                    f_en = min(frame_num + self.gui.dynamic_contrast, self.get_num_frames());
+                    
+                    im_dyn = self.im_data(:,:,f_st:f_en, 1);
+                    min_v = double(min(im_dyn(:)));
+                    max_v = double(max(im_dyn(:)));
+                    
+                    nframe = (frame - min_v) ./ (max_v - min_v);
+                 else
+                     nframe = (frame - min(frame(:))) ./ (max(frame(:)) - min(frame(:)));
+                 end
+                
             end
         end        
         
         function nframes = get_num_frames(self)
             % get_num_frames: returns the total number of frames.
             
-            if ndims(self.im_data) <= 3
+            if length(size(self.im_data)) <= 3
                 nframes = size(self.im_data, 3);
             else
-                nframes = size(self.im_data, 4);
+                nframes = size(self.im_data, 3);
             end            
         end
         

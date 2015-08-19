@@ -34,7 +34,11 @@ if nargin < 4 || isempty(im_y)
     im_y = 1:size(ccd_movie, 1);
 end
 
-if (size(roi_data, 2) == 4)
+% We are going to make this work for hdf5prop
+if strcmp(class(ccd_movie), 'hdf5prop')
+    disp('hdf5prop ROI');
+    data = mean_roi_hdf5(ccd_movie, roi_data, im_x, im_y);
+elseif (size(roi_data, 2) == 4)
     % Then we have a xyrr form roi_data
     data = mean_roi_xyrr(ccd_movie, roi_data, im_x, im_y);
 elseif (size(roi_data, 2) == 5)
@@ -187,3 +191,28 @@ function data = mean_roi_xyrra_all(ccd_movie, roi_data, im_x, im_y)
         data(:, j) = nanmean(reshape(square_movie(d_all), [], nframes));
     end
 end
+
+function data = mean_roi_hdf5(ccd_movie, roi_data, im_x, im_y)
+
+    nframes = size(ccd_movie, 3);
+    data = zeros(nframes, size(roi_data, 1));
+    counts = zeros(size(roi_data, 1), 1);
+
+    for j = 1:size(roi_data, 1)
+        [d, box] = xyrra_image(roi_data(j, :), im_x, im_y);
+
+        % load the box, then do the normal splice in RAM
+        xvals = find(im_x >= box(1) & im_x <= box(2));
+        yvals = find(im_y >= box(3) & im_y <= box(4));
+
+        d_all = repmat(d, [1, 1, nframes]);
+
+        square_movie = squeeze(ccd_movie(yvals, xvals, :, 1));
+
+        data(:, j) = nanmean(reshape(square_movie(d_all), [], nframes));
+    end
+
+end
+
+
+

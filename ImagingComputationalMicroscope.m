@@ -840,18 +840,21 @@ classdef ImagingComputationalMicroscope < hgsetget
         
         function re_new_rois_cb(self, source_h, eventdata)
             disp('re_new_rois_cb');
+            self.update_roi_data(eventdata.data.roi_idxs);
             self.update_current_roi_set();
             self.update();
         end
         
         function re_altered_rois_cb(self, source_h, eventdata)
             disp('re_altered_rois_cb');
+            self.update_roi_data(eventdata.data.roi_idxs);
             self.update_current_roi_set();
             self.update();
         end
         
         function re_deleted_rois_cb(self, source_h, eventdata)
             disp('re_deleted_rois_cb');
+            
             self.update_current_roi_set();
             self.update();
         end
@@ -1160,16 +1163,19 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             set(self.h.stage_tab_panel, 'SelectedChild', self.gui.d(self.gui.current_trial).display);
             
-            rois = self.h.roi_editor.rois.xyrra(self.h.roi_editor.selected_rois, :, 1);
+            
+            roi_idxs = self.h.roi_editor.selected_rois;
+            rois = self.h.roi_editor.rois.xyrra(roi_idxs, :, 1);
             
             cla(self.h.data_axes);
-            if ~isempty(rois)
+            if ~isempty(roi_idxs)
                 % plot the original data from the ROI.
-                if isfield(self.data(self.gui.current_trial).pp, 'im_data_mc')
-                    data = mean_roi(self.data(self.gui.current_trial).pp.im_data_mc, rois, self.data(self.gui.current_trial).pp.mc_x, self.data(self.gui.current_trial).pp.mc_y);
-                else
-                    data = mean_roi(self.data(self.gui.current_trial).im_data, rois);
-                end
+                % if isfield(self.data(self.gui.current_trial).pp, 'im_data_mc')
+                %     data = mean_roi(self.data(self.gui.current_trial).pp.im_data_mc, rois, self.data(self.gui.current_trial).pp.mc_x, self.data(self.gui.current_trial).pp.mc_y);
+                % else
+                %     data = mean_roi(self.data(self.gui.current_trial).im_data, rois);
+                % end
+                data = self.get_roi_data(roi_idxs);
                 
                 % need to do a check on norm_frame
                 if size(data, 1) < self.gui.data_norm_frame
@@ -1181,6 +1187,10 @@ classdef ImagingComputationalMicroscope < hgsetget
                 %data = 100 * (data ./ repmat(data(self.gui.data_norm_frame, :), size(data, 1), 1) - 1);
                 
                 plot(self.h.data_axes, data_t, data);
+                hold(self.h.data_axes, 'on');
+                disp('time_plot');
+                yl = ylim(self.h.data_axes);
+                plot(self.h.data_axes, [data_t(f), data_t(f)], yl, ':k', 'LineWidth', 2);
             end
             
             if self.data(self.gui.current_trial).stage >= self.IcaStage
@@ -1505,10 +1515,17 @@ classdef ImagingComputationalMicroscope < hgsetget
             block = ones(s.smooth_window) ./ (prod(s.smooth_window));
             %im_conv = convn(im_data, block, 'same');
             
-            im_conv = convn(im_data, ones([s.smooth_window(1), 1, 1]) ./ s.smooth_window(1), 'same');
-            im_conv = convn(im_conv, ones([1, s.smooth_window(2), 1]) ./ s.smooth_window(2), 'same');
-            im_conv = convn(im_conv, ones([1, 1, s.smooth_window(3)]) ./ s.smooth_window(3), 'same');
-
+            im_conv = im_data;
+            
+            if s.smooth_window(1) > 1
+                im_conv = convn(im_conv, ones([s.smooth_window(1), 1, 1]) ./ s.smooth_window(1), 'same');
+            end
+            if s.smooth_window(2) > 1
+                im_conv = convn(im_conv, ones([1, s.smooth_window(2), 1]) ./ s.smooth_window(2), 'same');
+            end
+            if s.smooth_window(3) > 1
+                im_conv = convn(im_conv, ones([1, 1, s.smooth_window(3)]) ./ s.smooth_window(3), 'same');
+            end
             
             xs_remove = floor((size(block, 2)-1)/2);
             xe_remove = (size(block, 2)-1) - xs_remove;
@@ -2712,6 +2729,41 @@ classdef ImagingComputationalMicroscope < hgsetget
             self.update();
         end
         
+        function data = get_roi_data(self, roi_idxs, roi_set)
+            
+            if nargin < 3 || isempty(roi_set)
+                roi_set = self.gui.d(self.gui.current_trial).current_roi_set;
+            end
+            
+            if nargin < 2 || isempty(roi_idxs)
+                roi_idxs = self.h.roi_editor.selected_rois; % is this right?
+            end
+            
+            if roi_set < 1 || roi_set > length(self.data(self.gui.current_trial).roi_data)
+                % Then we have an invalid roi_set...
+                
+            end
+            
+            rdata = self.data(self.gui.current_trial).roi_data{roi_set};
+            invalid_idxs = [];
+            
+            for i = 1:length(roi_idxs)
+                if roi_idxs(i) > size(rdata, 1)
+                    invalid_idxs = [invalid_idxs, roi_idxs(i)];
+                elseif any(isnan(rdata(roi_idxs(i), :)))
+                    invalid_idxs = [invalid_idxs, roi_idxs(i)];
+                end
+            end
+            
+            % Now we need to reupdate all of the invalid indexes
+            if ~isempty(invalid_idxs)
+                new_data = self.update_roi_data(invalid_idxs, roi_set);
+                rdata(invalid_idxs, :) = new_data;
+            end
+            
+            data = rdata(roi_idxs, :);
+        end
+        
         function set_cluster(self, ic_idxs)
             % set_cluster(self, ic_idxs): Sets the ics given by ic_idxs as
             % a cluster.
@@ -3275,7 +3327,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             
             %self.settings.preprocessing.block_size = 6;
-            self.data(self.gui.current_trial).settings.preprocessing.smooth_window = [6, 6, 1];
+            self.data(self.gui.current_trial).settings.preprocessing.smooth_window = [1, 1, 1];
             %self.data(self.gui.current_trial).settings.preprocessing.step_size = 2;
             self.data(self.gui.current_trial).settings.preprocessing.down_sample = [1, 1, 1];
             
@@ -3357,6 +3409,7 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             self.data(trial_idx).rois{1} = [];
             self.data(trial_idx).roi_names{1} = 'ROI_set_1';
+            self.data(trial_idx).roi_data{1} = [];
             self.data(trial_idx).is_component_set = false;
             
             self.init_gui_display(trial_idx);
@@ -3563,6 +3616,31 @@ classdef ImagingComputationalMicroscope < hgsetget
             
             self.data(self.gui.current_trial).rois{self.gui.d(self.gui.current_trial).current_roi_set} = self.h.roi_editor.rois.xyrra(:,:,1);
             self.update();
+        end
+        
+        function data = update_roi_data(self, roi_idxs, roi_set)
+            % updates the roi data
+            
+            disp('update_roi_data');
+            if nargin < 3 || isempty(roi_set)
+                roi_set = self.gui.d(self.gui.current_trial).current_roi_set;
+            end
+            
+            if nargin < 2 || isempty(roi_idxs)
+                % Then update all rois
+                roi_idxs = 1:size(self.data(self.gui.current_trial).rois{roi_set}, 1);
+            end
+            
+            rois = self.h.roi_editor.rois.xyrra(roi_idxs, :, 1);
+            
+            % plot the original data from the ROI.
+            if isfield(self.data(self.gui.current_trial).pp, 'im_data_mc')
+                data = mean_roi(self.data(self.gui.current_trial).pp.im_data_mc, rois, self.data(self.gui.current_trial).pp.mc_x, self.data(self.gui.current_trial).pp.mc_y);
+            else
+                data = mean_roi(self.data(self.gui.current_trial).im_data, rois);
+            end
+            
+            self.data(self.gui.current_trial).roi_data{roi_set}(roi_idxs, :) = data;
         end
         
         function draw_clustered_rois(self)
